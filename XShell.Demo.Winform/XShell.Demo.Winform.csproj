@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{13F55218-0A83-4AF6-84B2-8C11437B7F36}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>XShell.Demo.Winform</RootNamespace>
+    <AssemblyName>XShell.Demo.Winform</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DryIoc">
+      <HintPath>..\ThirdParty\DryIoc.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WeifenLuo.WinFormsUI.Docking">
+      <HintPath>..\ThirdParty\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\XDockContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\XForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\XToolStripMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Screens\Popup\IMyPopup.cs" />
+    <Compile Include="Screens\Popup\MyPopupController.cs" />
+    <Compile Include="Screens\Popup\MyPopupView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Screens\Popup\MyPopupView.Designer.cs">
+      <DependentUpon>MyPopupView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Screens\ScreenWithoutInterface\ScreenWithoutInterfaceController.cs" />
+    <Compile Include="Screens\ScreenWithoutInterface\ScreenWithoutInterfaceView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Screens\ScreenWithoutInterface\ScreenWithoutInterfaceView.Designer.cs">
+      <DependentUpon>ScreenWithoutInterfaceView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Screens\Screen\IMyScreen.cs" />
+    <Compile Include="Screens\Screen\MyScreenController.cs" />
+    <Compile Include="Screens\Screen\MyScreenView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Screens\Screen\MyScreenView.Designer.cs">
+      <DependentUpon>MyScreenView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Screens\SimpleScreen\SimpleScreenView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Screens\SimpleScreen\SimpleScreenView.Designer.cs">
+      <DependentUpon>SimpleScreenView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Service\IService.cs" />
+    <Compile Include="Services\Service\ServiceImpl.cs" />
+    <Compile Include="Services\Shell\FormDockPanelScreenManager.cs" />
+    <Compile Include="Services\Shell\ToolStripMenuManager.cs" />
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Screens\Popup\MyPopupView.resx">
+      <DependentUpon>MyPopupView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Screens\ScreenWithoutInterface\ScreenWithoutInterfaceView.resx">
+      <DependentUpon>ScreenWithoutInterfaceView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Screens\Screen\MyScreenView.resx">
+      <DependentUpon>MyScreenView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Screens\SimpleScreen\SimpleScreenView.resx">
+      <DependentUpon>SimpleScreenView.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\XShell\XShell.csproj">
+      <Project>{e3ba6fe5-ac17-4a5d-9012-6de56f68c006}</Project>
+      <Name>XShell</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
