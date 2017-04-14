@@ -3,7 +3,7 @@ using XShell.Mvc;
 
 namespace XShell.Demo.Winform.Screens.Popup
 {
-    public class MyPopupController : AbstractScreenController, IMyPopup
+    public class MyPopupController : AbstractController, IMyPopup
     {
         private readonly IService service;
 

@@ -41,12 +41,15 @@
   <ItemGroup>
     <Compile Include="Extensions.cs" />
     <Compile Include="IPersistable.cs" />
-    <Compile Include="Mvc\AbstractScreenController.cs" />
-    <Compile Include="Mvc\AbstractPersistableScreenController.cs" />
-    <Compile Include="Mvp\AbstractPersistableScreenPresenter.cs" />
-    <Compile Include="Mvp\AbstractScreenPresenter.cs" />
-    <Compile Include="Mvvm\AbstractPersistableScreenViewModel.cs" />
-    <Compile Include="Mvvm\AbstractScreenViewModel.cs" />
+    <Compile Include="Mvc\AbstractParameterizedController.cs" />
+    <Compile Include="Mvc\AbstractController.cs" />
+    <Compile Include="Mvp\AbstractParameterizedPresenter.cs" />
+    <Compile Include="Mvp\AbstractPresenter.cs" />
+    <Compile Include="Mvvm\AbstractParameterizedViewModel.cs" />
+    <Compile Include="Mvvm\AbstractViewModel.cs" />
+    <Compile Include="PopupAttribute.cs" />
+    <Compile Include="Services\AbstractLogic.cs" />
+    <Compile Include="Services\IInternalScreen.cs" />
     <Compile Include="Services\IScreenHost.cs" />
     <Compile Include="Services\PersistenceService.cs" />
     <Compile Include="Services\AbstractMenuManager.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using XShell.Core;
 
 namespace XShell.Services
@@ -31,7 +32,8 @@ namespace XShell.Services
         {
             CheckParameters(idType, viewType, logicType);
 
-            factories[idType] = new ScreenFactory(idType, viewType, logicType, register, resolve);
+            var popupAttribute = idType.GetCustomAttribute<PopupAttribute>(true);
+            factories[idType] = new ScreenFactory(idType, viewType, logicType, register, resolve, popupAttribute);
 
             if (menuManager != null)
             {
@@ -52,14 +54,14 @@ namespace XShell.Services
 
         #region Implementation of IScreenManager
 
-        public void Display(Type idType, string instanceId = null)
+        public void Display(Type idType, string instanceId = null, object parameter = null)
         {
-            Show(idType, instanceId, false);
+            Show(idType, instanceId, parameter, false);
         }
 
-        public void Popup(Type idType, string instanceId = null)
+        public void Popup(Type idType, string instanceId = null, object parameter = null)
         {
-            Show(idType, instanceId, true);
+            Show(idType, instanceId, parameter, true);
         }
 
         public void Close(Type idType, string instanceId = null)
@@ -95,7 +97,7 @@ namespace XShell.Services
                 throw new ArgumentException("The logicType which will resolve and display screen has to implement " + idType.FullName + " interface, but was: " + logicType.FullName, "logicType");
         }
 
-        private void Show(Type idType, string instanceId, bool isPopup)
+        private void Show(Type idType, string instanceId, object parameter, bool isPopup)
         {
             var key = new NamedType(idType, instanceId);
             ScreenHost host;
@@ -111,15 +113,19 @@ namespace XShell.Services
             IScreen logic;
             TBaseView view;
             Exception e;
-            if (!factory.TryCreate(out logic, out view, out e))
+            if (!factory.TryCreate(instanceId, parameter, out logic, out view, out e))
             {
                 OnException(string.Format("Unable to create screen: {0}", key), e);
                 return;
             }
 
-            host = new ScreenHost(key, view, logic, CreateScreen, CreatePopup);
+            host = new ScreenHost(key, view, logic, CreateScreen, CreatePopup, factory.PopupAttribute);
             screens.Add(key, host);
             host.Closed += OnHostClosed;
+
+            var setupable = logic as IInternalScreen;
+            if(setupable != null)
+                setupable.Setup(host.Close);
 
             if (!host.Restore(persistenceService, out e))
                 OnException(string.Format("Unable to restore screen: {0}", key), e);
@@ -150,7 +156,7 @@ namespace XShell.Services
 
         protected abstract IScreenHost CreateScreen(TBaseView view);
 
-        protected abstract IScreenHost CreatePopup(TBaseView view);
+        protected abstract IScreenHost CreatePopup(TBaseView view, PopupAttribute popupAttribute);
 
         protected abstract void OnException(string message, Exception e);
 
@@ -162,10 +168,13 @@ namespace XShell.Services
             private readonly Func<Type, object> resolve;
             private readonly Func<IScreen, TBaseView> factory;
 
-            public ScreenFactory(Type idType, Type viewType, Type logicType, Action<Type, Type> register, Func<Type, object> resolve)
+            public PopupAttribute PopupAttribute { get; private set; }
+            
+            public ScreenFactory(Type idType, Type viewType, Type logicType, Action<Type, Type> register, Func<Type, object> resolve, PopupAttribute popupAttribute)
             {
                 this.idType = idType;
                 this.resolve = resolve;
+                this.PopupAttribute = popupAttribute;
 
                 factory = idType != viewType
                     ? viewType.CreateFactory<TBaseView>(idType)
@@ -174,12 +183,16 @@ namespace XShell.Services
                 register(idType, logicType);
             }
 
-            public bool TryCreate(out IScreen logic, out TBaseView view, out Exception ex)
+            public bool TryCreate(string instanceId, object parameter, out IScreen logic, out TBaseView view, out Exception ex)
             {
                 ex = null;
                 try
                 {
                     logic = resolve(idType) as IScreen;
+                    var setupable = logic as IInternalScreen;
+                    if(setupable != null)
+                        setupable.Setup(instanceId, parameter);
+
                     view = factory(logic);
                     return true;
                 }
@@ -199,7 +212,8 @@ namespace XShell.Services
             private readonly TBaseView view;
             private readonly IScreen screen;
             private readonly Func<TBaseView, IScreenHost> createScreen;
-            private readonly Func<TBaseView, IScreenHost> createPopup;
+            private readonly Func<TBaseView, PopupAttribute, IScreenHost> createPopup;
+            private readonly PopupAttribute popupAttribute;
 
             private bool isInPopup;
             private IScreenHost host;
@@ -210,13 +224,15 @@ namespace XShell.Services
                 TBaseView view,
                 IScreen screen,
                 Func<TBaseView, IScreenHost> createScreen,
-                Func<TBaseView, IScreenHost> createPopup)
+                Func<TBaseView, PopupAttribute, IScreenHost> createPopup,
+                PopupAttribute popupAttribute)
             {
                 this.key = key;
                 this.view = view;
                 this.screen = screen;
                 this.createScreen = createScreen;
                 this.createPopup = createPopup;
+                this.popupAttribute = popupAttribute;
                 this.screen.TitleChanged += OnTitleChanged;
             }
 
@@ -229,7 +245,7 @@ namespace XShell.Services
 
             public void Show(bool isPopup)
             {
-                host = isPopup ? createPopup(view) : createScreen(view);
+                host = isPopup ? createPopup(view, popupAttribute) : createScreen(view);
 
                 if (screen != null)
                     host.Title = screen.Title;
@@ -268,10 +284,8 @@ namespace XShell.Services
 
                     var persistable = view as IPersistable;
                     if (persistable != null)
-                    {
-
                         svc.Restore(GetViewName(), view as IPersistable);
-                    }
+                    
                     if (ReferenceEquals(screen, view)) return true; // In case of there is no screen type defined
 
                     // ReSharper disable SuspiciousTypeConversion.Global

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using XShell.Services;
 
 namespace XShell.Mvvm
 {
-    public class AbstractScreenViewModel : INotifyPropertyChanged, IScreen
+    public class AbstractViewModel : AbstractLogic, INotifyPropertyChanged, IScreen
     {
         #region Implementation of INotifyPropertyChanged
 
@@ -15,6 +16,7 @@ namespace XShell.Mvvm
 
         public event Action TitleChanged;
 
+        private static readonly PropertyChangedEventArgs titlePropertyChanged = new PropertyChangedEventArgs("Title");
         private string title;
         public string Title
         {
@@ -25,6 +27,7 @@ namespace XShell.Mvvm
 
                 title = value;
                 RaiseTitleChanged();
+                RaisePropertyChanged(titlePropertyChanged);
             }
         }
 

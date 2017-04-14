@@ -33,12 +33,12 @@ namespace XShell
 
         #region IScreenContainer extensions
 
-        public static void Display<TScreen>(this IScreenManager manager, string instanceId = null) where TScreen : IScreen
+        public static void Display<TScreen>(this IScreenManager manager, string instanceId = null, object parameter = null) where TScreen : IScreen
         {
             manager.Display(typeof(TScreen), instanceId);
         }
 
-        public static void Popup<TScreen>(this IScreenManager manager, string instanceId = null) where TScreen : IScreen
+        public static void Popup<TScreen>(this IScreenManager manager, string instanceId = null, object parameter = null) where TScreen : IScreen
         {
             manager.Popup(typeof(TScreen), instanceId);
         }

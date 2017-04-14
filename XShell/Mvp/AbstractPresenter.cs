@@ -1,8 +1,9 @@
 ﻿using System;
+using XShell.Services;
 
 namespace XShell.Mvp
 {
-    public class AbstractScreenPresenter : IScreen
+    public class AbstractPresenter : AbstractLogic, IScreen
     {
         #region Implementation of IScreen
 

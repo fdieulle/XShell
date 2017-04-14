@@ -1,8 +1,9 @@
 ﻿using System;
+using XShell.Services;
 
 namespace XShell.Mvc
 {
-    public class AbstractScreenController : IScreen
+    public class AbstractController : AbstractLogic, IScreen
     {
         #region Implementation of IScreen
 

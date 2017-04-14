@@ -47,6 +47,7 @@ namespace XShell.Services
 
                     var buffer = ms.GetBuffer();
                     var length = (int) ms.Length;
+                    if (length == 0) return;
 
                     var filePath = GetFilePath(folder, name);
                     using (var writer = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.Read))

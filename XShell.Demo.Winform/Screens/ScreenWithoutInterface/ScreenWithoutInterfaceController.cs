@@ -4,7 +4,7 @@ using XShell.Mvc;
 namespace XShell.Demo.Winform.Screens.ScreenWithoutInterface
 {
     [ScreenMenuItem("Screens/Screen without Interface")]
-    public class ScreenWithoutInterfaceController : AbstractScreenController
+    public class ScreenWithoutInterfaceController : AbstractController
     {
         private readonly IService service;
 

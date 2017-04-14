@@ -4,7 +4,7 @@ using XShell.Mvvm;
 namespace XShell.Demo.Wpf.Screens.ScreenWithoutInterface
 {
     [ScreenMenuItem("Screens/Screen without Interface")]
-    public class ScreenWithoutInterfaceViewModel : AbstractScreenViewModel
+    public class ScreenWithoutInterfaceViewModel : AbstractViewModel
     {
         private readonly IService service;
 

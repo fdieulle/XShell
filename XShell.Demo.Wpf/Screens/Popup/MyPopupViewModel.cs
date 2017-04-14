@@ -3,7 +3,7 @@ using XShell.Mvvm;
 
 namespace XShell.Demo.Wpf.Screens.Popup
 {
-    public class MyPopupViewModel: AbstractScreenViewModel, IMyPopup
+    public class MyPopupViewModel: AbstractViewModel, IMyPopup
     {
         private readonly IService service;
 

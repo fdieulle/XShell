@@ -3,7 +3,7 @@ using XShell.Mvvm;
 
 namespace XShell.Demo.Wpf.Screens.Screen
 {
-    public class MyScreenViewModel : AbstractScreenViewModel, IMyScreen
+    public class MyScreenViewModel : AbstractViewModel, IMyScreen
     {
         private readonly IService service;
 

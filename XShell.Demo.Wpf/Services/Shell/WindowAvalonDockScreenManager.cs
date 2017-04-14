@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using XShell.Demo.Wpf.Controls;
 using XShell.Services;
 using Xceed.Wpf.AvalonDock.Layout;
@@ -31,11 +33,66 @@ namespace XShell.Demo.Wpf.Services.Shell
             return doc;
         }
 
-        protected override IScreenHost CreatePopup(FrameworkElement view)
+        protected override IScreenHost CreatePopup(FrameworkElement view, PopupAttribute attribute)
         {
             var popup = new XWindow { Owner = mainWindow, Content = view };
+
+            if (attribute != null)
+                SetupPopup(popup, attribute);
+
             popup.Show();
             return popup;
+        }
+
+        private void SetupPopup(Window popup, PopupAttribute attribute)
+        {
+            switch (attribute.StartupLocation)
+            {
+                case StartupLocation.Manual:
+                    popup.WindowStartupLocation = WindowStartupLocation.Manual;
+                    popup.Top = attribute.Top;
+                    popup.Left = attribute.Left;
+                    break;
+                case StartupLocation.MousePosition:
+                    popup.WindowStartupLocation = WindowStartupLocation.Manual;
+                    var position = Mouse.GetPosition(Application.Current.MainWindow);
+                    position = Application.Current.MainWindow.PointToScreen(position);
+                    popup.Top = position.Y;
+                    popup.Left = position.X;
+                    break;
+                case StartupLocation.CenterScreen:
+                    popup.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                    break;
+                case StartupLocation.CenterOwner:
+                    popup.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    break;
+            }
+
+            if (attribute.Width > 0)
+                popup.Width = attribute.Width;
+            if (attribute.Height > 0)
+                popup.Height = attribute.Height;
+
+            switch (attribute.ResizeMode)
+            {
+                case ResizeMode.AutoSize:
+                    popup.SizeToContent = SizeToContent.WidthAndHeight;
+                    break;
+                case ResizeMode.NoResize:
+                    popup.ResizeMode = System.Windows.ResizeMode.NoResize;
+                    break;
+                case ResizeMode.CanResizeWithGrip:
+                    popup.ResizeMode = System.Windows.ResizeMode.CanResizeWithGrip;
+                    break;
+                case ResizeMode.CanResize:
+                    popup.ResizeMode = System.Windows.ResizeMode.CanResize;
+                    break;
+            }
+
+            if (!string.IsNullOrEmpty(attribute.Icon))
+                popup.Icon = new BitmapImage(new Uri(attribute.Icon));
+
+            popup.Topmost = attribute.TopMost;
         }
 
         protected override void OnException(string message, Exception e)

@@ -3,7 +3,7 @@ using XShell.Mvc;
 
 namespace XShell.Demo.Winform.Screens.Screen
 {
-    public class MyScreenController : AbstractScreenController, IMyScreen
+    public class MyScreenController : AbstractController, IMyScreen
     {
         private readonly IService service;
 
