@@ -64,6 +64,21 @@ namespace XShell.Services
             Show(idType, instanceId, parameter, true);
         }
 
+        public void SetParameter(Type idType, string instanceId, object parameter)
+        {
+            var key = new NamedType(idType, instanceId);
+            ScreenHost host;
+            if (screens.TryGetValue(key, out host))
+                host.SetParameter(parameter);
+        }
+
+        public object GetParameter(Type idType, string instanceId)
+        {
+            var key = new NamedType(idType, instanceId);
+            ScreenHost host;
+            return screens.TryGetValue(key, out host) ? host.GetParameter() : null;
+        }
+
         public void Close(Type idType, string instanceId = null)
         {
             var key = new NamedType(idType, instanceId);
@@ -190,8 +205,11 @@ namespace XShell.Services
                 {
                     logic = resolve(idType) as IScreen;
                     var setupable = logic as IInternalScreen;
-                    if(setupable != null)
-                        setupable.Setup(instanceId, parameter);
+                    if (setupable != null)
+                    {
+                        setupable.Setup(instanceId);
+                        setupable.Parameter = parameter;
+                    }
 
                     view = factory(logic);
                     return true;
@@ -271,6 +289,19 @@ namespace XShell.Services
                 var handler = Closed;
                 if (handler != null)
                     handler(this);
+            }
+
+            public void SetParameter(object parameter)
+            {
+                var cast = screen as IInternalScreen;
+                if (cast != null)
+                    cast.Parameter = parameter;
+            }
+
+            public object GetParameter()
+            {
+                var cast = screen as IInternalScreen;
+                return cast != null ? cast.Parameter : null;
             }
 
             #region Persistency

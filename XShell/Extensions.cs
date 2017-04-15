@@ -43,6 +43,21 @@ namespace XShell
             manager.Popup(typeof(TScreen), instanceId);
         }
 
+        public static void SetParameter<TScreen>(this IScreenManager manager, object parameter) where TScreen : IScreen
+        {
+            manager.SetParameter(typeof(TScreen), null, parameter);
+        }
+
+        public static void SetParameter<TScreen>(this IScreenManager manager, string instanceId, object parameter) where TScreen : IScreen
+        {
+            manager.SetParameter(typeof(TScreen), instanceId, parameter);
+        }
+
+        public static object GetParameter<TScreen>(this IScreenManager manager, string instanceId = null) where TScreen : IScreen
+        {
+            return manager.GetParameter(typeof(TScreen), instanceId);
+        }
+
         public static void Close<TScreen>(this IScreenManager manager, string instanceId = null) where TScreen : IScreen
         {
             manager.Close(typeof(TScreen), instanceId);

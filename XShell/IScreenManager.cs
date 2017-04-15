@@ -8,6 +8,10 @@ namespace XShell
 
         void Popup(Type idType, string instanceId = null, object parameter = null);
 
+        void SetParameter(Type idType, string instanceId, object parameter);
+
+        object GetParameter(Type idType, string instanceId);
+
         void Close(Type idType, string instanceId = null);
 
         void CloseAll(Type idType);

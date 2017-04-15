@@ -4,7 +4,9 @@ namespace XShell.Services
 {
     internal interface IInternalScreen
     {
-        void Setup(string instanceId, object parameter);
+        object Parameter { get; set; }
+
+        void Setup(string instanceId);
 
         void Setup(Action onClose);
     }

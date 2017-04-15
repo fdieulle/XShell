@@ -11,13 +11,24 @@ namespace XShell.Services
 
         #region Implementation of IInternalScreen
 
-        void IInternalScreen.Setup(string instanceId, object parameter)
+        private object parameter;
+        object IInternalScreen.Parameter
         {
-            InstanceId = instanceId;
-            Setup(parameter);
+            get { return parameter; }
+            set
+            {
+                if (parameter == value) return;
+                parameter = value;
+                Setup(parameter);
+            }
         }
 
-        internal virtual void Setup(object parameter) { }
+        void IInternalScreen.Setup(string instanceId)
+        {
+            InstanceId = instanceId;
+        }
+
+        internal virtual void Setup(object param) { }
 
         void IInternalScreen.Setup(Action onClose)
         {
