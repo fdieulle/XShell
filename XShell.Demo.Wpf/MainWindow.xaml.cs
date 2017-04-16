@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using DryIoc;
+﻿using DryIoc;
 using XShell.Demo.Wpf.Screens.Popup;
 using XShell.Demo.Wpf.Screens.Screen;
 using XShell.Demo.Wpf.Screens.ScreenWithoutInterface;
@@ -13,7 +12,7 @@ namespace XShell.Demo.Wpf
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         private readonly IContainer container;
 
@@ -34,6 +33,9 @@ namespace XShell.Demo.Wpf
             container.RegisterInstance<IMenuManager>(menuManager);
             container.RegisterInstance<IScreenContainer>(screenManager);
             container.RegisterInstance<IScreenManager>(screenManager);
+            container.Register<IUiDispatcher, UiDispatcher>(Reuse.Singleton);
+            container.Register<IBackgroundTaskManager, BackgroundTaskManager>(Reuse.Singleton);
+            container.RegisterInstance(new StatusBarManager(BackgroundWorkerView, container.Resolve<IBackgroundTaskManager>()));
 
             RegisterServices(container);
             RegisterScreens(screenManager);

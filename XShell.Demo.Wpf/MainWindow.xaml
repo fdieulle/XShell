@@ -2,9 +2,13 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:controls="clr-namespace:XShell.Demo.Wpf.Controls"
         Title="XShell Wpf Demo" Height="350" Width="525">
     <DockPanel>
         <Menu DockPanel.Dock="Top" x:Name="MainMenu"/>
+        <StatusBar DockPanel.Dock="Bottom" x:Name="MainStatusBar" HorizontalAlignment="Stretch" Height="20">
+            <controls:BackgroundTaskView x:Name="BackgroundWorkerView" Visibility="Collapsed" />
+        </StatusBar>
         <xcad:DockingManager>
             <xcad:LayoutRoot>
                 <xcad:LayoutPanel>

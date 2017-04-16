@@ -78,7 +78,7 @@ namespace XShell.Services
             private readonly Func<IBackgroundTask, object, TResult> onWork;
             private readonly Action<TResult, object> onCompleted;
             private readonly object state;
-            private readonly bool isIndeterminated;
+            private readonly bool isIndeterminate;
 
             public BackgroundTask(
                 IUiDispatcher uiDispatcher,
@@ -86,14 +86,14 @@ namespace XShell.Services
                 Func<IBackgroundTask, object, TResult> onWork,
                 Action<TResult, object> onCompleted,
                 object state,
-                bool isIndeterminated)
+                bool isIndeterminate)
             {
                 this.uiDispatcher = uiDispatcher;
                 this.manager = manager;
                 this.onWork = onWork;
                 this.onCompleted = onCompleted;
                 this.state = state;
-                this.isIndeterminated = isIndeterminated;
+                this.isIndeterminate = isIndeterminate;
             }
 
             public void Run()
@@ -115,7 +115,7 @@ namespace XShell.Services
                 });
             }
 
-            public bool IsIndeterminated { get { return isIndeterminated; } }
+            public bool IsIndeterminate { get { return isIndeterminate; } }
 
             public void ReportState(double percent, object s)
             {

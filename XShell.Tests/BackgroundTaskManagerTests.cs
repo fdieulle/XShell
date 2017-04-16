@@ -21,7 +21,7 @@ namespace XShell.Tests
 
             manager.TaskStarted += (t, s) =>
             {
-                Assert.IsTrue(t.IsIndeterminated);
+                Assert.IsTrue(t.IsIndeterminate);
                 Assert.AreEqual(s, state);
                 Assert.AreEqual(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
                 Assert.AreEqual(4, countdown.CurrentCount);
@@ -30,7 +30,7 @@ namespace XShell.Tests
 
             manager.TaskCompleted += (t, s) =>
             {
-                Assert.IsTrue(t.IsIndeterminated);
+                Assert.IsTrue(t.IsIndeterminate);
                 Assert.AreEqual(s, state);
                 Assert.AreEqual(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
                 Assert.AreEqual(1, countdown.CurrentCount);
@@ -69,7 +69,7 @@ namespace XShell.Tests
 
             manager.TaskStarted += (t, s) =>
             {
-                Assert.IsFalse(t.IsIndeterminated);
+                Assert.IsFalse(t.IsIndeterminate);
                 Assert.AreEqual(s, state);
                 Assert.AreEqual(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
                 Assert.AreEqual(4 + steps, countdown.CurrentCount);
@@ -86,7 +86,7 @@ namespace XShell.Tests
 
             manager.TaskCompleted += (t, s) =>
             {
-                Assert.IsFalse(t.IsIndeterminated);
+                Assert.IsFalse(t.IsIndeterminate);
                 Assert.AreEqual(s, state);
                 Assert.AreEqual(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
                 Assert.AreEqual(1, countdown.CurrentCount);

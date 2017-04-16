@@ -59,6 +59,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\BackgroundTaskView.xaml.cs">
+      <DependentUpon>BackgroundTaskView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\XDockContent.cs" />
     <Compile Include="Controls\XMenuItem.cs" />
     <Compile Include="Controls\XWindow.cs" />
@@ -82,7 +85,13 @@
     <Compile Include="Services\Service\IService.cs" />
     <Compile Include="Services\Service\ServiceImpl.cs" />
     <Compile Include="Services\Shell\DefaultMenuManager.cs" />
+    <Compile Include="Services\Shell\StatusBarManager.cs" />
+    <Compile Include="Services\Shell\UiDispatcher.cs" />
     <Compile Include="Services\Shell\WindowAvalonDockScreenManager.cs" />
+    <Page Include="Controls\BackgroundTaskView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

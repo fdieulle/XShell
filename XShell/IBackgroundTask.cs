@@ -5,7 +5,7 @@
         /// <summary>
         /// Defines if the task can report its state.
         /// </summary>
-        bool IsIndeterminated { get; }
+        bool IsIndeterminate { get; }
 
         /// <summary>
         /// Reports current task state.
