@@ -70,6 +70,128 @@ namespace XShell
 
         #endregion
 
+        #region IBackgroundTaskManager extensions
+
+        /// <summary>
+        /// Run asynchronously a task in another thread. You can report at any time the state of your background task 
+        /// through the <see cref="IBackgroundTask"/> interface given in onWork function parameter. 
+        /// The report callback is send in the main ui thread.
+        /// </summary>
+        /// <typeparam name="TResult">Background work result type.</typeparam>
+        /// <param name="manager"><see cref="IBackgroundTaskManager"/> which is extended.</param>
+        /// <param name="onWork">Function which is executed asyncronously. The parameter allows you to report the state of the background work.</param>
+        /// <param name="onCompleted">Callback called in the main ui thread when the work is finished. We provide the result as parameter.</param>
+        public static void Dispatch<TResult>(this IBackgroundTaskManager manager, Func<IBackgroundTask, TResult> onWork, Action<TResult> onCompleted = null)
+        {
+            if (onWork == null) return;
+
+            manager.Dispatch(
+                (t, s) => onWork(t),
+                onCompleted != null ? (r, s) => onCompleted(r) : (Action<TResult, object>) null);
+        }
+
+        /// <summary>
+        /// Run asynchronously a task in another thread. You can report at any time the state of your background task 
+        /// through the <see cref="IBackgroundTask"/> interface given in onWork function parameter. 
+        /// The report callback is send in the main ui thread.
+        /// </summary>
+        /// <param name="manager"><see cref="IBackgroundTaskManager"/> which is extended.</param>
+        /// <param name="onWork">Function which is executed asyncronously. The 1st parameter allows you to report the state of the background work. The 2nd parameter is the state given on the Dispatch method.</param>
+        /// <param name="onCompleted">Callback called in the main ui thread when the work is finished. We provide the state as parameters.</param>
+        /// <param name="state">User instance state forward on the onWork and onComplete callbacks.</param>
+        public static void Dispatch(this IBackgroundTaskManager manager, Action<IBackgroundTask, object> onWork, Action<object> onCompleted = null, object state = null)
+        {
+            if (onWork == null) return;
+
+            manager.Dispatch(
+                (t, s) => 
+                { 
+                    onWork(t, s);
+                    return null;
+                },
+                onCompleted != null ? (r, s) => onCompleted(s) : (Action<object, object>)null);
+        }
+
+        /// <summary>
+        /// Run asynchronously a task in another thread. You can report at any time the state of your background task 
+        /// through the <see cref="IBackgroundTask"/> interface given in onWork function parameter. 
+        /// The report callback is send in the main ui thread.
+        /// </summary>
+        /// <param name="manager"><see cref="IBackgroundTaskManager"/> which is extended.</param>
+        /// <param name="onWork">Function which is executed asyncronously. The 1st parameter allows you to report the state of the background work.</param>
+        /// <param name="onCompleted">Callback called in the main ui thread when the work is finished.</param>
+        public static void Dispatch(this IBackgroundTaskManager manager, Action<IBackgroundTask> onWork, Action onCompleted = null)
+        {
+            if (onWork == null) return;
+
+            manager.Dispatch(
+                (t, s) =>
+                {
+                    onWork(t);
+                    return null;
+                },
+                onCompleted != null ? (r, s) => onCompleted() : (Action<object, object>)null);
+        }
+
+        /// <summary>
+        /// Run asynchronously a task in another thread with an indeterminate time of work. 
+        /// </summary>
+        /// <typeparam name="TResult">Background work result type.</typeparam>
+        /// <param name="manager"><see cref="IBackgroundTaskManager"/> which is extended.</param>
+        /// <param name="onWork">Function which is executed asyncronously</param>
+        /// <param name="onCompleted">Callback called in the main ui thread when the work is finished. We provide the result as parameter.</param>
+        public static void Dispatch<TResult>(this IBackgroundTaskManager manager, Func<TResult> onWork, Action<TResult> onCompleted = null)
+        {
+            if (onWork == null) return;
+
+            manager.Dispatch(
+                (t, s) => onWork(),
+                onCompleted != null ? (r, s) => onCompleted(r) : (Action<TResult, object>)null);
+        }
+
+        /// <summary>
+        /// Run asynchronously a task in another thread with an indeterminate time of work. 
+        /// </summary>
+        /// <param name="manager"><see cref="IBackgroundTaskManager"/> which is extended.</param>
+        /// <param name="onWork">Function which is executed asyncronously. The 1st parameter is the state given on the Dispatch method.</param>
+        /// <param name="onCompleted">Callback called in the main ui thread when the work is finished. We provide the state as parameters.</param>
+        /// <param name="state">User instance state forward on the onWork and onComplete callbacks.</param>
+        public static void Dispatch(this IBackgroundTaskManager manager, Action<object> onWork, Action<object> onCompleted = null, object state = null)
+        {
+            if (onWork == null) return;
+
+            manager.Dispatch(
+                (t, s) =>
+                {
+                    onWork(s);
+                    return null;
+                },
+                onCompleted != null ? (r, s) => onCompleted(s) : (Action<object, object>)null);
+        }
+
+        /// <summary>
+        /// Run asynchronously a task in another thread with an indeterminate time of work. 
+        /// </summary>
+        /// <param name="manager"><see cref="IBackgroundTaskManager"/> which is extended.</param>
+        /// <param name="onWork">Function which is executed asyncronously.</param>
+        /// <param name="onCompleted">Callback called in the main ui thread when the work is finished.</param>
+        public static void Dispatch(this IBackgroundTaskManager manager, Action onWork, Action onCompleted = null)
+        {
+            if (onWork == null) return;
+
+            manager.Dispatch(
+                (t, s) =>
+                {
+                    onWork();
+                    return null;
+                },
+                onCompleted != null ? (r, s) => onCompleted() : (Action<object, object>)null);
+        }
+
+        #endregion
+
+        #region Tools
+
         public static bool InheritsFrom(this Type type, Type baseType)
         {
             if (type == null || baseType == null) return false;
@@ -139,5 +261,7 @@ namespace XShell
             var func = (Func<TParameter, TObject>)dynamic.CreateDelegate(typeof(Func<TParameter, TObject>));
             return p => func((TParameter)p);
         }
+
+        #endregion
     }
 }

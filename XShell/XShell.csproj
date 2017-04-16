@@ -39,8 +39,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Services\BackgroundTaskManager.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="IBackgroundTask.cs" />
+    <Compile Include="IBackgroundTaskManager.cs" />
     <Compile Include="IPersistable.cs" />
+    <Compile Include="IUiDispatcher.cs" />
     <Compile Include="Mvc\AbstractParameterizedController.cs" />
     <Compile Include="Mvc\AbstractController.cs" />
     <Compile Include="Mvp\AbstractParameterizedPresenter.cs" />
