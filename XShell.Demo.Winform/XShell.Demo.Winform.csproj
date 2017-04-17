@@ -99,7 +99,9 @@
     <Compile Include="Services\Service\IService.cs" />
     <Compile Include="Services\Service\ServiceImpl.cs" />
     <Compile Include="Services\Shell\FormDockPanelScreenManager.cs" />
+    <Compile Include="Services\Shell\StatusBarManager.cs" />
     <Compile Include="Services\Shell\ToolStripMenuManager.cs" />
+    <Compile Include="Services\Shell\UiDispatcher.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

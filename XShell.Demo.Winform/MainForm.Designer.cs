@@ -30,6 +30,10 @@
         {
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.mainDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+            this.mainStatusBar = new System.Windows.Forms.StatusStrip();
+            this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.progressLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.mainStatusBar.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainMenu
@@ -45,8 +49,30 @@
             this.mainDockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainDockPanel.Location = new System.Drawing.Point(0, 24);
             this.mainDockPanel.Name = "mainDockPanel";
-            this.mainDockPanel.Size = new System.Drawing.Size(284, 261);
+            this.mainDockPanel.Size = new System.Drawing.Size(284, 215);
             this.mainDockPanel.TabIndex = 1;
+            // 
+            // mainStatusBar
+            // 
+            this.mainStatusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.progressBar,
+            this.progressLabel});
+            this.mainStatusBar.Location = new System.Drawing.Point(0, 239);
+            this.mainStatusBar.Name = "mainStatusBar";
+            this.mainStatusBar.Size = new System.Drawing.Size(284, 22);
+            this.mainStatusBar.TabIndex = 4;
+            // 
+            // progressBar
+            // 
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(100, 16);
+            this.progressBar.Visible = false;
+            // 
+            // progressLabel
+            // 
+            this.progressLabel.Name = "progressLabel";
+            this.progressLabel.Size = new System.Drawing.Size(0, 17);
+            this.progressLabel.Visible = false;
             // 
             // MainForm
             // 
@@ -55,10 +81,13 @@
             this.ClientSize = new System.Drawing.Size(284, 261);
             this.Controls.Add(this.mainDockPanel);
             this.Controls.Add(this.mainMenu);
+            this.Controls.Add(this.mainStatusBar);
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.mainMenu;
             this.Name = "MainForm";
             this.Text = "XShell Demo";
+            this.mainStatusBar.ResumeLayout(false);
+            this.mainStatusBar.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -68,6 +97,9 @@
 
         private System.Windows.Forms.MenuStrip mainMenu;
         private WeifenLuo.WinFormsUI.Docking.DockPanel mainDockPanel;
+        private System.Windows.Forms.StatusStrip mainStatusBar;
+        private System.Windows.Forms.ToolStripProgressBar progressBar;
+        private System.Windows.Forms.ToolStripStatusLabel progressLabel;
     }
 }
 

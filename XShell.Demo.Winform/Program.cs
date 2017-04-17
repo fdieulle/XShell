@@ -35,6 +35,9 @@ namespace XShell.Demo.Winform
             container.RegisterInstance<IMenuManager>(menuManager);
             container.RegisterInstance<IScreenContainer>(screenManager);
             container.RegisterInstance<IScreenManager>(screenManager);
+            container.RegisterInstance<IUiDispatcher>(new UiDispatcher(mainForm));
+            container.Register<IBackgroundTaskManager, BackgroundTaskManager>(Reuse.Singleton);
+            container.RegisterInstance(new StatusBarManager(mainForm.StatusProgressBar, mainForm.StatusProgressLabel, container.Resolve<IBackgroundTaskManager>()));
 
             RegisterServices(container);
             RegisterScreens(screenManager);
