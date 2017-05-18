@@ -1,10 +1,10 @@
-﻿using XShell.Demo.Winform.Services.Service;
-using XShell.Mvc;
+﻿using XShell.Core;
+using XShell.Demo.Winform.Services.Service;
 
 namespace XShell.Demo.Winform.Screens.ScreenWithoutInterface
 {
     [ScreenMenuItem("Screens/Screen without Interface")]
-    public class ScreenWithoutInterfaceController : AbstractController
+    public class ScreenWithoutInterfaceController : AbstractLogic
     {
         private readonly IService service;
 

@@ -1,13 +1,33 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
+using XShell.Services;
 
-namespace XShell.Services
+namespace XShell.Core
 {
-    public abstract class AbstractLogic : IInternalScreen, IPersistable, IDisposable
+    public abstract class AbstractLogic : AbstractNpc, IScreen, IInternalScreen, IPersistable, IDisposable
     {
         private Action close;
 
         public string InstanceId { get; private set; }
+
+        #region Implementation of IScreen
+
+        private static readonly PropertyChangedEventArgs titlePropertyChanged = new PropertyChangedEventArgs("Title");
+        private string title;
+        public string Title
+        {
+            get { return title; }
+            set
+            {
+                if (title == value) return;
+
+                title = value;
+                RaisePropertyChanged(titlePropertyChanged);
+            }
+        }
+
+        #endregion
 
         #region Implementation of IInternalScreen
 

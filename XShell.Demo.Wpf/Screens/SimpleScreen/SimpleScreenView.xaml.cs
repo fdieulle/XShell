@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using XShell.Demo.Wpf.Services.Service;
 
@@ -20,10 +21,16 @@ namespace XShell.Demo.Wpf.Screens.SimpleScreen
 
         #region Implementation of IScreen
 
-        public event Action TitleChanged;
-
         public string Title { get { return "Simple Screen"; } }
 
         #endregion
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

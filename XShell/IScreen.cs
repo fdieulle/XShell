@@ -1,11 +1,9 @@
-﻿using System;
+﻿using System.ComponentModel;
 
 namespace XShell
 {
-    public interface IScreen
+    public interface IScreen : INotifyPropertyChanged
     {
-        event Action TitleChanged;
-
         string Title { get; }
     }
 }

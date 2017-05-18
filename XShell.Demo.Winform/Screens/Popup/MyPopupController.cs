@@ -1,9 +1,9 @@
-﻿using XShell.Demo.Winform.Services.Service;
-using XShell.Mvc;
+﻿using XShell.Core;
+using XShell.Demo.Winform.Services.Service;
 
 namespace XShell.Demo.Winform.Screens.Popup
 {
-    public class MyPopupController : AbstractController, IMyPopup
+    public class MyPopupController : AbstractLogic, IMyPopup
     {
         private readonly IService service;
 

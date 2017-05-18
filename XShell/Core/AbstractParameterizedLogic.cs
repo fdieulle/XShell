@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace XShell.Mvvm
+namespace XShell.Core
 {
-    public abstract class AbstractParameterizedViewModel<TParameter> : AbstractViewModel
+    public abstract class AbstractParameterizedLogic<TParameter> : AbstractLogic
         where TParameter : class
     {
         internal override void Setup(object param)
@@ -32,8 +32,8 @@ namespace XShell.Mvvm
         }
     }
 
-    public abstract class AbstractParameterizedViewModel : AbstractParameterizedViewModel<object>
+    public abstract class AbstractParameterizedLogic : AbstractParameterizedLogic<object>
     {
-        
+
     }
 }

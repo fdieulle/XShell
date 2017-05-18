@@ -1,9 +1,9 @@
-﻿using XShell.Demo.Winform.Services.Service;
-using XShell.Mvc;
+﻿using XShell.Core;
+using XShell.Demo.Winform.Services.Service;
 
 namespace XShell.Demo.Winform.Screens.Screen
 {
-    public class MyScreenController : AbstractController, IMyScreen
+    public class MyScreenController : AbstractLogic, IMyScreen
     {
         private readonly IService service;
 

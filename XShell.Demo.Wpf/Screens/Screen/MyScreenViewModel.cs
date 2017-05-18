@@ -1,9 +1,9 @@
-﻿using XShell.Demo.Wpf.Services.Service;
-using XShell.Mvvm;
+﻿using XShell.Core;
+using XShell.Demo.Wpf.Services.Service;
 
 namespace XShell.Demo.Wpf.Screens.Screen
 {
-    public class MyScreenViewModel : AbstractViewModel, IMyScreen
+    public class MyScreenViewModel : AbstractLogic, IMyScreen
     {
         private readonly IService service;
 

@@ -1,10 +1,10 @@
-﻿using XShell.Demo.Wpf.Services.Service;
-using XShell.Mvvm;
+﻿using XShell.Core;
+using XShell.Demo.Wpf.Services.Service;
 
 namespace XShell.Demo.Wpf.Screens.ScreenWithoutInterface
 {
     [ScreenMenuItem("Screens/Screen without Interface")]
-    public class ScreenWithoutInterfaceViewModel : AbstractViewModel
+    public class ScreenWithoutInterfaceViewModel : AbstractLogic
     {
         private readonly IService service;
 

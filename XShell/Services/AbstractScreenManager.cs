@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using XShell.Core;
@@ -251,7 +252,7 @@ namespace XShell.Services
                 this.createScreen = createScreen;
                 this.createPopup = createPopup;
                 this.popupAttribute = popupAttribute;
-                this.screen.TitleChanged += OnTitleChanged;
+                this.screen.PropertyChanged += OnPropertyChanged;
             }
 
             public event Action<ScreenHost> Closed;
@@ -373,9 +374,10 @@ namespace XShell.Services
 
             #region Manage screen events
 
-            private void OnTitleChanged()
+            private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
             {
-                host.Title = screen.Title;
+                if(e.PropertyName == "Title")
+                    host.Title = screen.Title;
             }
 
             #endregion
@@ -384,7 +386,7 @@ namespace XShell.Services
 
             public void Dispose()
             {
-                screen.TitleChanged -= OnTitleChanged;
+                screen.PropertyChanged -= OnPropertyChanged;
                 host.ScreenClosed -= OnScreenClosed;
                 host = null;
 
