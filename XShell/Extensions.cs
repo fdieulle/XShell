@@ -195,6 +195,7 @@ namespace XShell
         public static bool InheritsFrom(this Type type, Type baseType)
         {
             if (type == null || baseType == null) return false;
+            if (type == baseType) return true;
 
             if (baseType.IsInterface)
                 return type.GetInterfaces().Any(p => p == baseType);
@@ -232,7 +233,8 @@ namespace XShell
             foreach (var ctor in ctors)
             {
                 var parameters = ctor.GetParameters();
-                if (parameters.Length != 1 && !idType.InheritsFrom(parameters[0].ParameterType)) continue;
+                if (parameters.Length != 1) continue; 
+                if(!idType.InheritsFrom(parameters[0].ParameterType)) continue;
 
                 var parameterType = parameters[0].ParameterType;
                 return (Func<IScreen, TBaseView>)createFactoryMethod.MakeGenericMethod(typeof(IScreen), typeof(TBaseView), parameterType, viewType)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using XShell.Services;
 
@@ -13,7 +12,6 @@ namespace XShell.Core
 
         #region Implementation of IScreen
 
-        private static readonly PropertyChangedEventArgs titlePropertyChanged = new PropertyChangedEventArgs("Title");
         private string title;
         public string Title
         {
@@ -23,7 +21,7 @@ namespace XShell.Core
                 if (title == value) return;
 
                 title = value;
-                RaisePropertyChanged(titlePropertyChanged);
+                RaisePropertyChanged(Properties.TitlePropertyChanged);
             }
         }
 

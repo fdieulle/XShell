@@ -43,8 +43,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackgroundTaskManagerTests.cs" />
+    <Compile Include="Checker.cs" />
+    <Compile Include="CollectionSelectorTests.cs" />
     <Compile Include="MenuManagerTests.cs" />
+    <Compile Include="ObjectEditorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RelayCommandTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XShell\XShell.csproj">

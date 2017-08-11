@@ -67,7 +67,6 @@ namespace XShell.Core
 
         #region Properties
 
-        private static readonly PropertyChangedEventArgs namePropertyChanged = new PropertyChangedEventArgs("Name");
         private string name;
         /// <summary>
         /// Name of the command.
@@ -80,11 +79,10 @@ namespace XShell.Core
                 if (name == value) return;
 
                 name = value;
-                RaisePropertyChanged(namePropertyChanged);
+                RaisePropertyChanged(Properties.NamePropertyChanged);
             }
         }
 
-        private static readonly PropertyChangedEventArgs isRunningPropertyChanged = new PropertyChangedEventArgs("IsRunning");
         private bool isRunning;
         /// <summary>
         /// Indicate if the command is in progress.
@@ -92,12 +90,12 @@ namespace XShell.Core
         public bool IsRunning
         {
             get { return isRunning; }
-            private set
+            set
             {
                 if (isRunning == value) return;
 
                 isRunning = value;
-                RaisePropertyChanged(isRunningPropertyChanged);
+                RaisePropertyChanged(Properties.IsRunningPropertyChanged);
                 InvalidateCanExecute();
             }
         }
@@ -163,12 +161,13 @@ namespace XShell.Core
 
         public void Execute(T parameter)
         {
-            IsRunning = true;
+            if (!canExecute(parameter))
+                return;
 
             // Raise execute action
             execute(parameter);
 
-            IsRunning = false;
+            InvalidateCanExecute();
         }
 
         /// <summary>

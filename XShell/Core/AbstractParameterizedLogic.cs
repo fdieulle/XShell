@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace XShell.Core
+﻿namespace XShell.Core
 {
     public abstract class AbstractParameterizedLogic<TParameter> : AbstractLogic
         where TParameter : class
@@ -11,7 +9,6 @@ namespace XShell.Core
             Parameter = param as TParameter;
         }
 
-        private static readonly PropertyChangedEventArgs parameterPropertyChanged = new PropertyChangedEventArgs("Parameter");
         private TParameter parameter;
         public TParameter Parameter
         {
@@ -22,7 +19,7 @@ namespace XShell.Core
                 var oldParameter = parameter;
                 parameter = value;
                 OnParameterChanged(oldParameter, value);
-                RaisePropertyChanged(parameterPropertyChanged);
+                RaisePropertyChanged(Properties.ParameterPropertyChanged);
             }
         }
 

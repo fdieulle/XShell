@@ -13,7 +13,7 @@ namespace XShell.Core
             RaisePropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
 
-        protected void RaisePropertyChanged(PropertyChangedEventArgs e)
+        protected virtual void RaisePropertyChanged(PropertyChangedEventArgs e)
         {
             if (e == null) return;
             var handler = PropertyChanged;
