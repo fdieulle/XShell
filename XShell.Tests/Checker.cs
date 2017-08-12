@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
 using NUnit.Framework;
 
 namespace XShell.Tests
@@ -50,6 +51,17 @@ namespace XShell.Tests
         {
             Assert.AreEqual(value, getter(data), message);
             return data;
+        }
+
+        public static T CheckCanExecute<T>(this T command, bool canExecute, object parameter = null) where T : ICommand
+        {
+            Assert.AreEqual(canExecute, command.CanExecute(parameter), "CanExecute " + command);
+            return command;
+        }
+
+        public static void Is<T>(this T value, T expected, string message = null)
+        {
+            Assert.AreEqual(expected, value, message);
         }
     }
 

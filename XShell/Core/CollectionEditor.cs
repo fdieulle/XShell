@@ -1,322 +1,298 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
-//namespace XShell.Core
-//{
-//    public interface ICollectionEditor : ICollectionSelector
-//    {
-//        bool AllowAddNew { get; set; }
-//        IRelayCommand AddNewCommand { get; }
-//        bool AllowClone { get; set; }
-//        IRelayCommand CloneCommand { get; }
-//        IRelayCommand CloneAtCommand { get; }
-//        bool AllowRemove { get; set; }
-//        IRelayCommand RemoveCommand { get; }
-//        IRelayCommand RemoveAtCommand { get; }
-//        bool AllowClear { get; set; }
-//        IRelayCommand ClearCommand { get; }
-//        bool AllowMoveUp { get; set; }
-//        IRelayCommand MoveUpCommand { get; }
-//        IRelayCommand MoveIndexUpCommand { get; }
-//        bool AllowMoveDown { get; set; }
-//        IRelayCommand MoveDownCommand { get; }
-//        IRelayCommand MoveIndexDownCommand { get; }
-//        bool AllowEditSelectedObject { get; set; }
-//        IObjectEditor SelectedObjectEditor { get; }
-//    }
-//    public class CollectionEditor<T> : CollectionSelector<T>, ICollectionEditor
-//    {
-//        private static readonly PropertyChangedEventArgs factoryPropertyChanged = new PropertyChangedEventArgs("Factory");
-//        private Func<T> factory;
-//        public Func<T> Factory
-//        {
-//            get { return factory; }
-//            set
-//            {
-//                if (ReferenceEquals(factory, value)) return;
-//                factory = value;
+namespace XShell.Core
+{
+    public interface ICollectionEditor : ICollectionSelector
+    {
+        bool AllowAdd { get; set; }
+        IRelayCommand AddCommand { get; }
 
-//                RaisePropertyChanged(factoryPropertyChanged);
-//                AddNewCommand.InvalidateCanExecute();
-//            }
-//        }
+        bool AllowRemove { get; set; }
+        IRelayCommand RemoveCommand { get; }
+        
+        bool AllowClone { get; set; }
+        IRelayCommand CloneCommand { get; }
+        
+        bool AllowClear { get; set; }
+        IRelayCommand ClearCommand { get; }
+        
+        bool AllowMove { get; set; }
+        IRelayCommand MoveUpCommand { get; }
+        IRelayCommand MoveDownCommand { get; }
+    }
 
-//        private static readonly PropertyChangedEventArgs clonePropertyChanged = new PropertyChangedEventArgs("Clone");
-//        private Func<T, T> clone;
-//        private readonly bool raiseItemsWhenListIsModified;
+    public interface ICollectionEditor<T> : ICollectionEditor
+    {
+        Func<T> Factory { get; set; }
 
-//        public Func<T, T> Clone
-//        {
-//            get { return clone; }
-//            set
-//            {
-//                if (ReferenceEquals(clone, value)) return;
-//                clone = value;
+        Func<T, T> Clone { get; set; } 
+    }
 
-//                RaisePropertyChanged(clonePropertyChanged);
-//                CloneCommand.InvalidateCanExecute();
-//            }
-//        }
+    public class CollectionEditor<T> : CollectionSelector<T>, ICollectionEditor<T>
+    {
+        public CollectionEditor(IEnumerable<T> source = null, Func<T> factory = null)
+            : this(source != null ? new ObservableCollection<T>(source) : null, factory) { }
 
-//        private static readonly PropertyChangedEventArgs allowAddNewPropertyChanged = new PropertyChangedEventArgs("AllowAddNew");
-//        private bool allowAddNew = true;
-//        public bool AllowAddNew
-//        {
-//            get { return allowAddNew; }
-//            set
-//            {
-//                if (allowAddNew == value) return;
-//                allowAddNew = value;
-//                RaisePropertyChanged(allowAddNewPropertyChanged);
-//                AddNewCommand.InvalidateCanExecute();
-//            }
-//        }
+        public CollectionEditor(IList<T> source, Func<T> factory = null)
+            : base(source)
+        {
+            this.factory = factory;
 
-//        public IRelayCommand AddNewCommand { get; private set; }
+            this.AddCommand = new RelayCommand(ExecuteAddCommand, CanExecuteAddCommand) { Name = "Add" };
+            this.RemoveCommand = new RelayCommand(ExecuteRemoveCommand, CanExecuteRemoveCommand) { Name = "Remove" };
+            this.CloneCommand = new RelayCommand(ExecuteCloneCommand, CanExecuteCloneCommand) { Name = "Clone" };
+            this.MoveUpCommand = new RelayCommand(ExecuteMoveUpCommand, CanExecuteMoveUpCommand) { Name = "Move Up" };
+            this.MoveDownCommand = new RelayCommand(ExecuteMoveDownCommand, CanExecuteMoveDownCommand) { Name = "Move Down" };
+            this.ClearCommand = new RelayCommand(ExecuteClearCommand, CanExecuteClearCommand) { Name = "Clear" };
+        }
 
-//        private static readonly PropertyChangedEventArgs allowClonePropertyChanged = new PropertyChangedEventArgs("AllowClone");
-//        private bool allowClone = true;
-//        public bool AllowClone
-//        {
-//            get { return allowClone; }
-//            set
-//            {
-//                if (allowClone == value) return;
-//                allowClone = value;
-//                RaisePropertyChanged(allowClonePropertyChanged);
-//                CloneCommand.InvalidateCanExecute();
-//                CloneAtCommand.InvalidateCanExecute();
-//            }
-//        }
+        protected override void OnItemsChanged(IList<T> oldValue, IList<T> newValue)
+        {
+            base.OnItemsChanged(oldValue, newValue);
 
-//        public IRelayCommand CloneCommand { get; private set; }
+            this.AddCommand.InvalidateCanExecute();
+            this.RemoveCommand.InvalidateCanExecute();
+            this.CloneCommand.InvalidateCanExecute();
+            this.MoveUpCommand.InvalidateCanExecute();
+            this.MoveDownCommand.InvalidateCanExecute();
+            this.ClearCommand.InvalidateCanExecute();
+        }
 
-//        public IRelayCommand CloneAtCommand { get; private set; }
+        protected override void OnSelectedIndexChanged(int oldValue, int newValue)
+        {
+            base.OnSelectedIndexChanged(oldValue, newValue);
 
-//        private static readonly PropertyChangedEventArgs allowRemovePropertyChanged = new PropertyChangedEventArgs("AllowRemove");
-//        private bool allowRemove = true;
-//        public bool AllowRemove
-//        {
-//            get { return allowRemove; }
-//            set
-//            {
-//                if (allowRemove == value) return;
-//                allowRemove = value;
-//                RaisePropertyChanged(allowRemovePropertyChanged);
-//                RemoveCommand.InvalidateCanExecute();
-//                RemoveAtCommand.InvalidateCanExecute();
-//            }
-//        }
+            this.RemoveCommand.InvalidateCanExecute();
+            this.CloneCommand.InvalidateCanExecute();
+            this.MoveUpCommand.InvalidateCanExecute();
+            this.MoveDownCommand.InvalidateCanExecute();
+        }
 
-//        public IRelayCommand RemoveCommand { get; private set; }
+        #region Add
 
-//        public IRelayCommand RemoveAtCommand { get; private set; }
+        private static readonly bool hasDefaultCtor = typeof(T).GetConstructors().Any(p => p.GetParameters().Length == 0);
 
-//        private static readonly PropertyChangedEventArgs allowClearPropertyChanged = new PropertyChangedEventArgs("AllowClear");
-//        private bool allowClear = true;
-//        public bool AllowClear
-//        {
-//            get { return allowClear; }
-//            set
-//            {
-//                if (allowClear == value) return;
-//                allowClear = value;
-//                RaisePropertyChanged(allowClearPropertyChanged);
-//                ClearCommand.InvalidateCanExecute();
-//            }
-//        }
+        private Func<T> factory;
+        public Func<T> Factory
+        {
+            get { return factory; }
+            set
+            {
+                if (ReferenceEquals(factory, value)) return;
+                factory = value;
 
-//        public IRelayCommand ClearCommand { get; private set; }
+                RaisePropertyChanged(Properties.FactoryPropertyChanged);
+                this.AddCommand.InvalidateCanExecute();
+            }
+        }
 
-//        private static readonly PropertyChangedEventArgs allowMoveUpPropertyChanged = new PropertyChangedEventArgs("AllowMoveUp");
-//        private bool allowMoveUp = true;
-//        public bool AllowMoveUp
-//        {
-//            get { return allowMoveUp; }
-//            set
-//            {
-//                if (allowMoveUp == value) return;
-//                allowMoveUp = value;
-//                RaisePropertyChanged(allowMoveUpPropertyChanged);
-//                MoveUpCommand.InvalidateCanExecute();
-//                MoveIndexUpCommand.InvalidateCanExecute();
-//            }
-//        }
+        private bool allowAdd = true;
+        public bool AllowAdd
+        {
+            get { return this.allowAdd; }
+            set
+            {
+                if (this.allowAdd == value) return;
+                this.allowAdd = value;
 
-//        public IRelayCommand MoveUpCommand { get; private set; }
+                this.RaisePropertyChanged(Properties.AllowAddPropertyChanged);
+                this.AddCommand.InvalidateCanExecute();
+            }
+        }
 
-//        private static readonly PropertyChangedEventArgs allowMoveDownPropertyChanged = new PropertyChangedEventArgs("AllowMoveDown");
-//        private bool allowMoveDown = true;
-//        public bool AllowMoveDown
-//        {
-//            get { return allowMoveDown; }
-//            set
-//            {
-//                if (allowMoveDown == value) return;
-//                allowMoveDown = value;
-//                RaisePropertyChanged(allowMoveDownPropertyChanged);
-//                MoveDownCommand.InvalidateCanExecute();
-//                MoveIndexDownCommand.InvalidateCanExecute();
-//            }
-//        }
+        public IRelayCommand AddCommand { get; private set; }
 
-//        public IRelayCommand MoveDownCommand { get; private set; }
+        private bool CanExecuteAddCommand(object parameter)
+        {
+            return this.allowAdd && this.items != null && (this.factory != null || hasDefaultCtor);
+        }
 
-//        public IRelayCommand MoveIndexUpCommand { get; private set; }
+        private void ExecuteAddCommand(object parameter)
+        {
+            T newItem;
+            if (this.factory != null)
+                newItem = this.factory();
+            else if (hasDefaultCtor) 
+                newItem = Activator.CreateInstance<T>();
+            else return;
 
-//        public IRelayCommand MoveIndexDownCommand { get; private set; }
+            this.items.Add(newItem);
+            this.SelectedIndex = this.items.Count - 1;
+        }
 
-//        private static readonly PropertyChangedEventArgs allowEditSelectedObjectPropertyChanged = new PropertyChangedEventArgs("AllowEditSelectedObject");
-//        private bool allowEditSelectedObject = true;
-//        public bool AllowEditSelectedObject
-//        {
-//            get { return allowEditSelectedObject; }
-//            set
-//            {
-//                if (allowEditSelectedObject == value) return;
-//                allowEditSelectedObject = value;
-//                RaisePropertyChanged(allowEditSelectedObjectPropertyChanged);
-//            }
-//        }
+        #endregion
 
-//        public ObjectEditor<T> SelectedObjectEditor { get; private set; } 
+        #region Remove
 
-//        public CollectionEditor(IList<T> items = null, Func<T> factory = null, Func<T, T> clone = null, bool raiseItemsWhenListIsModified = true)
-//        {
-//            this.items = items;
-//            this.factory = factory;
-//            this.clone = clone;
-//            this.raiseItemsWhenListIsModified = raiseItemsWhenListIsModified;
+        private bool allowRemove = true;
+        public bool AllowRemove
+        {
+            get { return allowRemove; }
+            set
+            {
+                if (this.allowRemove == value) return;
+                this.allowRemove = value;
 
-//            AddNewCommand = new RelayCommand(ExecuteAddNewCommand, p => this.items != null && this.factory != null && allowAddNew);
-//            CloneCommand = new RelayCommand(p => ExecuteCloneCommand(this.selectedItem), p => this.items != null && this.clone != null && allowClone);
-//            CloneAtCommand = new RelayCommand(p => ExecuteCloneCommand(this.items[this.selectedIndex])), p => this.items != null && this.clone != null && this.selectedIndex >= 0 && this.selectedIndex < this.items.Count && allowClone);
-//            RemoveCommand = new RelayCommand(ExecuteRemoveCommand, p => this.items != null && this.selectedIndex >= 0 && this.selectedIndex < this.items.Count && allowRemove);
-//            RemoveAtCommand = new RelayCommand(ExecuteRemoveAtCommand, p => this.items != null && allowRemove);
-//            ClearCommand = new RelayCommand(ExecuteClearCommand, p => this.items != null && allowClear);
-//            MoveUpCommand = new RelayCommand(p => MoveUp(this.items.IndexOf(this.selectedItem)), p => this.items != null && allowMoveUp);
-//            MoveDownCommand = new RelayCommand(p => MoveDown(this.items.IndexOf(this.selectedItem)), p => this.items != null && allowMoveDown);
-//            MoveIndexUpCommand = new RelayCommand(p => MoveUp(this.selectedIndex), p => this.items != null && this.selectedIndex > 0 && allowMoveUp);
-//            MoveIndexDownCommand = new RelayCommand(p => MoveDown(this.selectedIndex), p => this.items != null && this.selectedIndex < this.items.Count - 1 && allowMoveDown);
+                this.RaisePropertyChanged(Properties.AllowRemovePropertyChanged);
+                this.RemoveCommand.InvalidateCanExecute();
+            }
+        }
 
-//            SelectedObjectEditor = new ObjectEditor<T>(clone);
-//            SelectedObjectEditor.ApplyExecuted += OnSelectedObjectEditorApplyExecuted;
-//        }
+        public IRelayCommand RemoveCommand { get; private set; }
 
-//        private void ExecuteAddNewCommand(object parameter)
-//        {
-//            var newItem = this.factory();
-//            this.items.Add(newItem);
-//            if (this.raiseItemsWhenListIsModified)
-//                RaisePropertyChanged(itemsPropertyChanged);
-//            SelectedItem = newItem;
-//        }
+        private bool CanExecuteRemoveCommand(object parameter)
+        {
+            return this.allowRemove && this.items != null && this.selectedIndex >= 0 && this.selectedIndex < this.items.Count;
+        }
 
-//        private void ExecuteCloneCommand(T item)
-//        {
-//            var cloneItem = this.clone(item);
-//            this.items.Add(cloneItem);
-//            if (this.raiseItemsWhenListIsModified)
-//                RaisePropertyChanged(itemsPropertyChanged);
-//            SelectedItem = cloneItem;
-//        }
+        private void ExecuteRemoveCommand(object parameter)
+        {
+            this.items.RemoveAt(this.selectedIndex);
 
-//        private void ExecuteRemoveCommand(object parameter)
-//        {
-//            this.items.Remove(this.selectedItem);
-//            if (this.raiseItemsWhenListIsModified)
-//                RaisePropertyChanged(itemsPropertyChanged);
-//            SelectedItem = default(T);
-//        }
+            var mem = Math.Min(this.selectedIndex, this.items.Count - 1);
+            this.selectedIndex = -1;
+            this.SelectedIndex = mem;
+        }
 
-//        private void ExecuteRemoveAtCommand(object parameter)
-//        {
-//            this.items.RemoveAt(this.selectedIndex);
-//            if (this.raiseItemsWhenListIsModified)
-//                RaisePropertyChanged(itemsPropertyChanged);
-//            SelectedItem = default(T);
-//        }
+        #endregion
 
-//        private void ExecuteClearCommand(object parameter)
-//        {
-//            this.items.Clear();
-//            if (this.raiseItemsWhenListIsModified)
-//                RaisePropertyChanged(itemsPropertyChanged);
-//        }
+        #region Clone
 
-//        private void OnSelectedObjectEditorApplyExecuted(T oldvalue, T newvalue)
-//        {
-//            SelectedItem = newvalue;
-//            if (items != null && SelectedIndex >= 0 && SelectedIndex < items.Count)
-//            {
-//                items[SelectedIndex] = newvalue;
-//                if (this.raiseItemsWhenListIsModified)
-//                    RaisePropertyChanged(itemsPropertyChanged);
-//            }
-//        }
+        private Func<T, T> clone;
+        public Func<T, T> Clone
+        {
+            get { return clone; }
+            set
+            {
+                if (ReferenceEquals(this.clone, value)) return;
+                this.clone = value;
 
-//        public void InvalidateCommands()
-//        {
-//            AddNewCommand.InvalidateCanExecute();
-//            CloneCommand.InvalidateCanExecute();
-//            CloneAtCommand.InvalidateCanExecute();
-//            RemoveCommand.InvalidateCanExecute();
-//            RemoveAtCommand.InvalidateCanExecute();
-//            ClearCommand.InvalidateCanExecute();
-//            MoveUpCommand.InvalidateCanExecute();
-//            MoveDownCommand.InvalidateCanExecute();
-//            MoveIndexUpCommand.InvalidateCanExecute();
-//            MoveIndexDownCommand.InvalidateCanExecute();
-//        }
+                this.RaisePropertyChanged(Properties.ClonePropertyChanged);
+                this.CloneCommand.InvalidateCanExecute();
+            }
+        }
 
-//        private void MoveUp(int index)
-//        {
-//            if (index <= 0) return;
+        private bool allowClone = true;
+        public bool AllowClone
+        {
+            get { return allowClone; }
+            set
+            {
+                if (this.allowClone == value) return;
+                this.allowClone = value;
 
-//            var swap = this.items[index - 1];
-//            this.items[index - 1] = this.items[index];
-//            this.items[index] = swap;
+                this.RaisePropertyChanged(Properties.AllowClonePropertyChanged);
+                this.CloneCommand.InvalidateCanExecute();
+            }
+        }
 
-//            if (this.raiseItemsWhenListIsModified)
-//                RaisePropertyChanged(itemsPropertyChanged);
-//        }
+        public IRelayCommand CloneCommand { get; private set; }
 
-//        private void MoveDown(int index)
-//        {
-//            if (index >= this.items.Count) return;
+        private bool CanExecuteCloneCommand(object parameter)
+        {
+            return this.allowClone && this.clone != null && this.items != null && this.selectedIndex >= 0 && this.selectedIndex < this.items.Count;
+        }
 
-//            var swap = this.items[index];
-//            this.items[index] = this.items[index + 1];
-//            this.items[index + 1] = swap;
+        private void ExecuteCloneCommand(object parameter)
+        {
+            var cloned = this.clone(this.items[this.selectedIndex]);
+            this.items.Insert(this.selectedIndex + 1, cloned);
+            this.SelectedIndex = this.SelectedIndex + 1;
+        }
 
-//            if (this.raiseItemsWhenListIsModified)
-//                RaisePropertyChanged(itemsPropertyChanged);
-//        }
+        #endregion
 
-//        protected override void RaisePropertyChanged(PropertyChangedEventArgs e)
-//        {
-//            base.RaisePropertyChanged(e);
-//            switch (e.PropertyName)
-//            {
-//                case "Items":
-//                    InvalidateCommands();
-//                    break;
-//                case "SelectedItem":
-//                    CloneCommand.InvalidateCanExecute();
-//                    RemoveCommand.InvalidateCanExecute();
-//                    MoveUpCommand.InvalidateCanExecute();
-//                    MoveDownCommand.InvalidateCanExecute();
-//                    break;
-//                case "SelectedIndex":
-//                    CloneAtCommand.InvalidateCanExecute();
-//                    RemoveAtCommand.InvalidateCanExecute();
-//                    MoveIndexUpCommand.InvalidateCanExecute();
-//                    MoveIndexDownCommand.InvalidateCanExecute();
-//                    break;
-//            }
-//        }
+        #region Move
 
-//        IObjectEditor ICollectionEditor.SelectedObjectEditor { get { return SelectedObjectEditor; } }
-//    }
-//}
+        private bool allowMove = true;
+        public bool AllowMove
+        {
+            get { return this.allowMove; }
+            set 
+            { 
+                if (this.allowMove == value) return;
+                this.allowMove = value;
+
+                this.RaisePropertyChanged(Properties.AllowMovePropertyChanged);
+                this.MoveUpCommand.InvalidateCanExecute();
+                this.MoveDownCommand.InvalidateCanExecute();
+            }
+        }
+
+        public IRelayCommand MoveUpCommand { get; private set; }
+        
+        public IRelayCommand MoveDownCommand { get; private set; }
+
+        private bool CanExecuteMoveUpCommand(object parameter)
+        {
+            return this.allowMove && this.items != null && this.selectedIndex > 0 && this.selectedIndex < this.items.Count;
+        }
+
+        private void ExecuteMoveUpCommand(object parameter)
+        {
+            var oc = this.items as ObservableCollection<T>;
+            if (oc != null) oc.Move(this.selectedIndex, this.selectedIndex - 1);
+            else
+            {
+                var swap = this.items[this.selectedIndex - 1];
+                this.items[this.selectedIndex - 1] = this.items[this.selectedIndex];
+                this.items[this.selectedIndex] = swap;
+            }
+            this.SelectedIndex = this.selectedIndex - 1;
+        }
+
+        private bool CanExecuteMoveDownCommand(object parameter)
+        {
+            return this.allowMove && this.items != null && this.selectedIndex >= 0 && this.selectedIndex < this.items.Count - 1;
+        }
+
+        private void ExecuteMoveDownCommand(object parameter)
+        {
+            var oc = this.items as ObservableCollection<T>;
+            if (oc != null) oc.Move(this.selectedIndex, this.selectedIndex + 1);
+            else
+            {
+                var swap = this.items[this.selectedIndex];
+                this.items[this.selectedIndex] = this.items[this.selectedIndex + 1];
+                this.items[this.selectedIndex + 1] = swap;
+            }
+            this.SelectedIndex = this.selectedIndex + 1;
+        }
+
+        #endregion
+
+        #region Clear
+
+        private bool allowClear = true;
+        public bool AllowClear
+        {
+            get { return this.allowClear; }
+            set
+            {
+                if (this.allowClear == value) return;
+                this.allowClear = value;
+                
+                this.RaisePropertyChanged(Properties.AllowClearPropertyChanged);
+                this.ClearCommand.InvalidateCanExecute();
+            }
+        }
+
+        public IRelayCommand ClearCommand { get; private set; }
+
+        private bool CanExecuteClearCommand(object parameter)
+        {
+            return this.allowClear && this.items != null;
+        }
+
+        private void ExecuteClearCommand(object parameter)
+        {
+            this.items.Clear();
+            this.SelectedIndex = -1;
+        }
+
+        #endregion
+    }
+}

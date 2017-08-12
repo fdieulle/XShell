@@ -36,9 +36,11 @@ namespace XShell.Core
             set
             {
                 if (ReferenceEquals(this.items, value)) return;
+                var oldValue = this.items;
                 this.items = value;
 
                 this.RaisePropertyChanged(Properties.ItemsPropertyChanged);
+                this.OnItemsChanged(oldValue, value);
             }
         }
 
@@ -80,6 +82,11 @@ namespace XShell.Core
             this.items = source;
             if (this.items != null && this.items.Count > 0)
                 SelectedIndex = 0;
+        }
+
+        protected virtual void OnItemsChanged(IList<T> oldValue, IList<T> newValue)
+        {
+            
         }
 
         protected virtual void OnSelectedItemChanged(T oldValue, T newValue)

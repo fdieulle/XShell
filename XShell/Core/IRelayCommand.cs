@@ -161,7 +161,7 @@ namespace XShell.Core
 
         public void Execute(T parameter)
         {
-            if (!canExecute(parameter))
+            if (!CanExecute(parameter))
                 return;
 
             // Raise execute action
