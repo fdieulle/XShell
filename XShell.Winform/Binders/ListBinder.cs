@@ -41,21 +41,15 @@ namespace XShell.Winform.Binders
                     else
                     {
                         // Copy all items which has to be moved and remove them from the list
-                        var count = this.view.Count - e.NewStartingIndex;
-                        var tmp = new object[count];
-                        for (var i = 0; i < count; i++)
-                        {
-                            tmp[count - i - 1] = this.view[this.view.Count - 1];
-                            this.view.RemoveAt(i);
-                        }
+                        var lasts = CopyAndRemoveLastItems(this.view.Count - e.NewStartingIndex);
 
                         // Insert new items
-                        foreach (var item in e.NewItems)
-                            this.view.Add(item);
+                        for (var i = 0; i < e.NewItems.Count; i++)
+                            this.view.Add(e.NewItems[i]);
 
                         // Replace copied items after new ones
-                        foreach (var item in tmp)
-                            this.view.Add(item);
+                        for (var i = 0; i < lasts.Length; i++)
+                            this.view.Add(lasts[i]);
                     }                    
                     break;
                 case NotifyCollectionChangedAction.Remove:
@@ -63,15 +57,33 @@ namespace XShell.Winform.Binders
                         this.view.RemoveAt(e.OldStartingIndex);
                     else
                     {
-                        throw new NotImplementedException();
+                        // Copy all items which has to be moved and remove them from the list
+                        var lasts = CopyAndRemoveLastItems(this.view.Count - (e.OldStartingIndex + e.OldItems.Count));
+
+                        // Remove old items
+                        for(var i = e.OldStartingIndex + e.OldItems.Count; i >= e.OldStartingIndex; i--)
+                            this.view.RemoveAt(i);
+
+                        // Replace copied items after new ones
+                        for (var i = 0; i < lasts.Length;  i++)
+                            this.view.Add(lasts[i]);
                     }
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    if (e.NewItems.Count == 1)
+                    if (e.NewItems.Count == 1 && e.NewStartingIndex >= 0)
                         this.view[e.NewStartingIndex] = e.NewItems[0];
+                    else if (e.NewStartingIndex >= 0)
+                    {
+                        for (var i = 0; i < e.NewItems.Count; i++)
+                            this.view[e.NewStartingIndex + i] = e.NewItems[i];
+                    }
                     else
                     {
-                        throw new NotImplementedException();
+                        for (var i = 0; i < e.NewItems.Count; i++)
+                        {
+                            var index = this.view.IndexOf(e.NewItems[i]);
+                            this.view[index] = e.NewItems[i];
+                        }
                     }
                     break;
                 case NotifyCollectionChangedAction.Move:
@@ -99,5 +111,16 @@ namespace XShell.Winform.Binders
         }
 
         #endregion
+
+        private object[] CopyAndRemoveLastItems(int count)
+        {
+            var array = new object[count];
+            for (var i = 0; i < count; i++)
+            {
+                array[count - i - 1] = this.view[this.view.Count - 1];
+                this.view.RemoveAt(i);
+            }
+            return array;
+        }
     }
 }
