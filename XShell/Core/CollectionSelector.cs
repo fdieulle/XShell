@@ -16,7 +16,7 @@ namespace XShell.Core
 
     public interface ICollectionSelector<T> : INotifyPropertyChanged
     {
-        IList<T> Items { get; }
+        ObservableCollection<T> Items { get; }
 
         T SelectedItem { get; set; }
 
@@ -25,12 +25,12 @@ namespace XShell.Core
 
     public class CollectionSelector<T> : AbstractNpc, ICollectionSelector<T>, ICollectionSelector
     {
-        private bool isIndexChanging;
+        private bool skipIndexOf;
 
-        public event DataChanged<T> SelectedItemChanged; 
+        public event DataChanged<T> SelectedItemChanged;
 
-        protected IList<T> items;
-        public IList<T> Items
+        protected ObservableCollection<T> items;
+        public ObservableCollection<T> Items
         {
             get { return items; }
             set
@@ -75,14 +75,12 @@ namespace XShell.Core
         }
 
         public CollectionSelector(IEnumerable<T> source = null)
-            : this(source != null ? new ObservableCollection<T>(source) : null) { }
-
-        public CollectionSelector(IList<T> source)
         {
-            this.items = source;
-            if (this.items != null && this.items.Count > 0)
-                SelectedIndex = 0;
+            this.items = source != null 
+                ? new ObservableCollection<T>(source) 
+                : new ObservableCollection<T>();
         }
+
 
         protected virtual void OnItemsChanged(IList<T> oldValue, IList<T> newValue)
         {
@@ -94,7 +92,7 @@ namespace XShell.Core
             var handler = this.SelectedItemChanged;
             if (handler != null) this.SelectedItemChanged(oldValue, newValue);
 
-            if (this.items == null || this.isIndexChanging) return;
+            if (this.items == null || this.skipIndexOf) return;
             this.SelectedIndex = this.items.IndexOf(newValue);
         }
 
@@ -102,9 +100,9 @@ namespace XShell.Core
         {
             if (this.items == null) return;
 
-            this.isIndexChanging = true;
+            this.skipIndexOf = true;
             this.SelectedItem = newValue < 0 || newValue > this.items.Count ? default(T) : this.items[newValue];
-            this.isIndexChanging = false;
+            this.skipIndexOf = false;
         }
 
         IEnumerable ICollectionSelector.Items

@@ -33,10 +33,10 @@ namespace XShell.Winform.Binders
         {
             switch (e.PropertyName)
             {
-                case Properties.SELECTED_INDEX:
+                case Core.Properties.SELECTED_INDEX:
                     this.comboBox.SelectedIndex = this.selector.SelectedIndex;
                     break;
-                case Properties.ITEMS:
+                case Core.Properties.ITEMS:
                     this.UpdateItems();
                     break;
             }

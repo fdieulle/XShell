@@ -16,30 +16,38 @@ namespace XShell.Core
         bool AllowClone { get; set; }
         IRelayCommand CloneCommand { get; }
         
-        bool AllowClear { get; set; }
-        IRelayCommand ClearCommand { get; }
-        
         bool AllowMove { get; set; }
         IRelayCommand MoveUpCommand { get; }
         IRelayCommand MoveDownCommand { get; }
+
+        bool AllowClear { get; set; }
+        IRelayCommand ClearCommand { get; }
+
+        bool AllowImport { get; set; }
+        IRelayCommand ImportCommand { get; }
+
+        bool AllowExport { get; set; }
+        IRelayCommand ExportCommand { get; }
     }
 
     public interface ICollectionEditor<T> : ICollectionEditor
     {
-        Func<T> Factory { get; set; }
+        Func<T> ItemFactory { get; set; }
 
-        Func<T, T> Clone { get; set; } 
+        Func<T, T> ItemCloner { get; set; }
+
+        Func<IEnumerable<T>> Importer { get; set; }
+
+        Action<IEnumerable<T>> Exporter { get; set; }
     }
 
     public class CollectionEditor<T> : CollectionSelector<T>, ICollectionEditor<T>
     {
-        public CollectionEditor(IEnumerable<T> source = null, Func<T> factory = null)
-            : this(source != null ? new ObservableCollection<T>(source) : null, factory) { }
-
-        public CollectionEditor(IList<T> source, Func<T> factory = null)
+        public CollectionEditor(IEnumerable<T> source = null, Func<T> itemFactory = null, Func<T, T> itemCloner = null)
             : base(source)
         {
-            this.factory = factory;
+            this.itemFactory = itemFactory;
+            this.itemCloner = itemCloner;
 
             this.AddCommand = new RelayCommand(ExecuteAddCommand, CanExecuteAddCommand) { Name = "Add" };
             this.RemoveCommand = new RelayCommand(ExecuteRemoveCommand, CanExecuteRemoveCommand) { Name = "Remove" };
@@ -47,6 +55,8 @@ namespace XShell.Core
             this.MoveUpCommand = new RelayCommand(ExecuteMoveUpCommand, CanExecuteMoveUpCommand) { Name = "Move Up" };
             this.MoveDownCommand = new RelayCommand(ExecuteMoveDownCommand, CanExecuteMoveDownCommand) { Name = "Move Down" };
             this.ClearCommand = new RelayCommand(ExecuteClearCommand, CanExecuteClearCommand) { Name = "Clear" };
+            this.ImportCommand = new RelayCommand(ExecuteImportCommand, CanExecuteImportCommand) { Name = "Import" };
+            this.ExportCommand = new RelayCommand(ExecuteExportCommand, CanExecuteExportCommand) { Name = "Export" };
         }
 
         protected override void OnItemsChanged(IList<T> oldValue, IList<T> newValue)
@@ -59,6 +69,7 @@ namespace XShell.Core
             this.MoveUpCommand.InvalidateCanExecute();
             this.MoveDownCommand.InvalidateCanExecute();
             this.ClearCommand.InvalidateCanExecute();
+            this.ExportCommand.InvalidateCanExecute();
         }
 
         protected override void OnSelectedIndexChanged(int oldValue, int newValue)
@@ -75,16 +86,16 @@ namespace XShell.Core
 
         private static readonly bool hasDefaultCtor = typeof(T).GetConstructors().Any(p => p.GetParameters().Length == 0);
 
-        private Func<T> factory;
-        public Func<T> Factory
+        private Func<T> itemFactory;
+        public Func<T> ItemFactory
         {
-            get { return factory; }
+            get { return itemFactory; }
             set
             {
-                if (ReferenceEquals(factory, value)) return;
-                factory = value;
+                if (ReferenceEquals(itemFactory, value)) return;
+                itemFactory = value;
 
-                RaisePropertyChanged(Properties.FactoryPropertyChanged);
+                RaisePropertyChanged(Properties.ItemFactoryPropertyChanged);
                 this.AddCommand.InvalidateCanExecute();
             }
         }
@@ -107,14 +118,14 @@ namespace XShell.Core
 
         private bool CanExecuteAddCommand(object parameter)
         {
-            return this.allowAdd && this.items != null && (this.factory != null || hasDefaultCtor);
+            return this.allowAdd && this.items != null && (this.itemFactory != null || hasDefaultCtor);
         }
 
         private void ExecuteAddCommand(object parameter)
         {
             T newItem;
-            if (this.factory != null)
-                newItem = this.factory();
+            if (this.itemFactory != null)
+                newItem = this.itemFactory();
             else if (hasDefaultCtor) 
                 newItem = Activator.CreateInstance<T>();
             else return;
@@ -150,9 +161,10 @@ namespace XShell.Core
 
         private void ExecuteRemoveCommand(object parameter)
         {
+            var mem = Math.Min(this.selectedIndex, this.items.Count - 2);
+            
             this.items.RemoveAt(this.selectedIndex);
-
-            var mem = Math.Min(this.selectedIndex, this.items.Count - 1);
+            
             this.selectedIndex = -1;
             this.SelectedIndex = mem;
         }
@@ -161,16 +173,18 @@ namespace XShell.Core
 
         #region Clone
 
-        private Func<T, T> clone;
-        public Func<T, T> Clone
+        private static readonly bool implementsICloneable = typeof(T).GetInterfaces().Any(p => p == typeof(ICloneable));
+
+        private Func<T, T> itemCloner;
+        public Func<T, T> ItemCloner
         {
-            get { return clone; }
+            get { return itemCloner; }
             set
             {
-                if (ReferenceEquals(this.clone, value)) return;
-                this.clone = value;
+                if (ReferenceEquals(this.itemCloner, value)) return;
+                this.itemCloner = value;
 
-                this.RaisePropertyChanged(Properties.ClonePropertyChanged);
+                this.RaisePropertyChanged(Properties.ItemClonerPropertyChanged);
                 this.CloneCommand.InvalidateCanExecute();
             }
         }
@@ -193,12 +207,15 @@ namespace XShell.Core
 
         private bool CanExecuteCloneCommand(object parameter)
         {
-            return this.allowClone && this.clone != null && this.items != null && this.selectedIndex >= 0 && this.selectedIndex < this.items.Count;
+            return this.allowClone && (this.itemCloner != null || implementsICloneable) && this.items != null && this.selectedIndex >= 0 && this.selectedIndex < this.items.Count;
         }
 
         private void ExecuteCloneCommand(object parameter)
         {
-            var cloned = this.clone(this.items[this.selectedIndex]);
+            var cloned = this.itemCloner != null 
+                ? this.itemCloner(this.items[this.selectedIndex]) : 
+                (T)((ICloneable)this.items[this.selectedIndex]).Clone();
+            
             this.items.Insert(this.selectedIndex + 1, cloned);
             this.SelectedIndex = this.SelectedIndex + 1;
         }
@@ -233,14 +250,7 @@ namespace XShell.Core
 
         private void ExecuteMoveUpCommand(object parameter)
         {
-            var oc = this.items as ObservableCollection<T>;
-            if (oc != null) oc.Move(this.selectedIndex, this.selectedIndex - 1);
-            else
-            {
-                var swap = this.items[this.selectedIndex - 1];
-                this.items[this.selectedIndex - 1] = this.items[this.selectedIndex];
-                this.items[this.selectedIndex] = swap;
-            }
+            this.items.Move(this.selectedIndex, this.selectedIndex - 1);
             this.SelectedIndex = this.selectedIndex - 1;
         }
 
@@ -251,14 +261,7 @@ namespace XShell.Core
 
         private void ExecuteMoveDownCommand(object parameter)
         {
-            var oc = this.items as ObservableCollection<T>;
-            if (oc != null) oc.Move(this.selectedIndex, this.selectedIndex + 1);
-            else
-            {
-                var swap = this.items[this.selectedIndex];
-                this.items[this.selectedIndex] = this.items[this.selectedIndex + 1];
-                this.items[this.selectedIndex + 1] = swap;
-            }
+            this.items.Move(this.selectedIndex, this.selectedIndex + 1);
             this.SelectedIndex = this.selectedIndex + 1;
         }
 
@@ -291,6 +294,103 @@ namespace XShell.Core
         {
             this.items.Clear();
             this.SelectedIndex = -1;
+        }
+
+        #endregion
+
+        #region Import
+
+        private Func<IEnumerable<T>> importer;
+        public Func<IEnumerable<T>> Importer
+        {
+            get { return this.importer; }
+            set
+            {
+                if (this.importer == value) return;
+                this.importer = value;
+
+                this.RaisePropertyChanged(Properties.ImporterPropertyChanged);
+                this.ImportCommand.InvalidateCanExecute();
+            }
+        }
+
+        private bool allowImport = true;
+        public bool AllowImport
+        {
+            get { return this.allowImport; }
+            set
+            {
+                if (this.allowImport == value) return;
+                this.allowImport = value;
+
+                this.RaisePropertyChanged(Properties.AllowImportPropertyChanged);
+                this.ImportCommand.InvalidateCanExecute();
+            }
+        }
+
+        public IRelayCommand ImportCommand { get; private set; }
+
+        private bool CanExecuteImportCommand(object parameter)
+        {
+            return this.allowImport && this.importer != null;
+        }
+
+        private void ExecuteImportCommand(object parameter)
+        {
+            var imported = this.importer();
+            if (imported == null) return;
+
+            if (this.items == null)
+                this.items = new ObservableCollection<T>(imported);
+            else
+            {
+                foreach (var item in imported)
+                    this.items.Add(item);   
+            }
+        }
+
+        #endregion
+
+        #region Import
+
+        private Action<IEnumerable<T>> exporter;
+        public Action<IEnumerable<T>> Exporter
+        {
+            get { return this.exporter; }
+            set
+            {
+                if (this.exporter == value) return;
+                this.exporter = value;
+
+                this.RaisePropertyChanged(Properties.ExporterPropertyChanged);
+                this.ExportCommand.InvalidateCanExecute();
+            }
+        }
+
+        private bool allowExport = true;
+        public bool AllowExport
+        {
+            get { return this.allowExport; }
+            set
+            {
+                if (this.allowExport == value) return;
+                this.allowExport = value;
+
+                this.RaisePropertyChanged(Properties.AllowExportPropertyChanged);
+                this.ExportCommand.InvalidateCanExecute();
+            }
+        }
+
+        public IRelayCommand ExportCommand { get; private set; }
+
+        private bool CanExecuteExportCommand(object parameter)
+        {
+            return this.allowExport && this.items != null && this.exporter != null;
+        }
+
+        private void ExecuteExportCommand(object parameter)
+        {
+            this.exporter(this.items);
         }
 
         #endregion

@@ -10,15 +10,22 @@ namespace XShell.Winform.Binders
         private readonly Button button;
         private readonly IRelayCommand command;
         private readonly Func<object> getParameter;
+        private readonly bool bindName;
+        private readonly ToolTip toolTip;
 
-        public ButtonBinder(Button button, IRelayCommand command, Func<object> getParameter = null)
+        public ButtonBinder(Button button, IRelayCommand command, Func<object> getParameter = null, bool bindName = true, ToolTip toolTip = null)
         {
             this.button = button;
             this.command = command;
             this.getParameter = getParameter;
+            this.bindName = bindName;
+            this.toolTip = toolTip;
 
             this.button.Enabled = this.command.CanExecute(getParameter != null ? getParameter() : null);
-            this.button.Text = this.command.Name;
+            if (this.bindName)
+                this.button.Text = this.command.Name;
+            if (this.toolTip != null)
+                this.toolTip.SetToolTip(this.button, this.command.Name);
 
             this.button.Click += OnButtonClick;
             this.command.CanExecuteChanged += OnCommandCanExecuteChanged;
@@ -29,8 +36,11 @@ namespace XShell.Winform.Binders
         {
             switch (e.PropertyName)
             {
-                case Properties.NAME:
-                    this.button.Text = this.command.Name;
+                case Core.Properties.NAME:
+                    if (this.bindName)
+                        this.button.Text = this.command.Name;
+                    if (this.toolTip != null)
+                        this.toolTip.SetToolTip(this.button, this.command.Name);
                     break;
             }
         }

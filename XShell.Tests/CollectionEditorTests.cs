@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using NUnit.Framework;
 using XShell.Core;
@@ -22,15 +23,15 @@ namespace XShell.Tests
             editor.AddCommand.Name.Is("Add");
             editor.AddCommand.CheckCanExecute(false);
 
-            editor.Items = new List<string> { "Item1", "Item2", "Item3" };
+            editor.Items = new ObservableCollection<string> { "Item1", "Item2", "Item3" };
 
             editor.AddCommand.CheckCanExecute(false);
             npcQueue.CheckNext(Properties.ItemsPropertyChanged).IsEmpty();
             cmdInvQueue.CheckNext(Assert.IsNotNull).IsEmpty();
 
-            editor.Factory = () => "New Item";
+            editor.ItemFactory = () => "New Item";
             editor.AddCommand.CheckCanExecute(true);
-            npcQueue.CheckNext(Properties.FactoryPropertyChanged).IsEmpty();
+            npcQueue.CheckNext(Properties.ItemFactoryPropertyChanged).IsEmpty();
             cmdInvQueue.CheckNext(Assert.IsNotNull).IsEmpty();
 
             editor.AllowAdd = false;
@@ -63,7 +64,7 @@ namespace XShell.Tests
             editor.RemoveCommand.Name.Is("Remove");
             editor.RemoveCommand.CheckCanExecute(false);
 
-            editor.Items = new List<string> { "Item1", "Item2", "Item3" };
+            editor.Items = new ObservableCollection<string> { "Item1", "Item2", "Item3" };
             editor.RemoveCommand.CheckCanExecute(false);
             npcQueue.CheckNext(Properties.ItemsPropertyChanged).IsEmpty();
             cmdInvQueue.CheckNext(Assert.IsNotNull).IsEmpty();
@@ -107,14 +108,14 @@ namespace XShell.Tests
             editor.CloneCommand.Name.Is("Clone");
             editor.CloneCommand.CheckCanExecute(false);
 
-            editor.Items = new List<string> { "Item1", "Item2", "Item3" };
+            editor.Items = new ObservableCollection<string> { "Item1", "Item2", "Item3" };
             editor.CloneCommand.CheckCanExecute(false);
             npcQueue.CheckNext(Properties.ItemsPropertyChanged).IsEmpty();
             cmdInvQueue.CheckNext(Assert.IsNotNull).IsEmpty();
 
-            editor.Clone = p => "Clone of " + p;
+            editor.ItemCloner = p => "Clone of " + p;
             editor.CloneCommand.CheckCanExecute(false);
-            npcQueue.CheckNext(Properties.ClonePropertyChanged).IsEmpty();
+            npcQueue.CheckNext(Properties.ItemClonerPropertyChanged).IsEmpty();
             cmdInvQueue.CheckNext(Assert.IsNotNull).IsEmpty();
 
             editor.SelectedIndex = 0;
@@ -154,7 +155,7 @@ namespace XShell.Tests
             editor.MoveUpCommand.Name.Is("Move Up");
             editor.MoveUpCommand.CheckCanExecute(false);
 
-            editor.Items = new List<string> { "Item1", "Item2", "Item3" };
+            editor.Items = new ObservableCollection<string> { "Item1", "Item2", "Item3" };
             editor.MoveUpCommand.CheckCanExecute(false);
             npcQueue.CheckNext(Properties.ItemsPropertyChanged).IsEmpty();
             cmdInvQueue.CheckNext(Assert.IsNotNull).IsEmpty();
@@ -209,7 +210,7 @@ namespace XShell.Tests
             editor.MoveDownCommand.Name.Is("Move Down");
             editor.MoveDownCommand.CheckCanExecute(false);
 
-            editor.Items = new List<string> { "Item1", "Item2", "Item3" };
+            editor.Items = new ObservableCollection<string> { "Item1", "Item2", "Item3" };
             editor.MoveDownCommand.CheckCanExecute(false);
             npcQueue.CheckNext(Properties.ItemsPropertyChanged).IsEmpty();
             cmdInvQueue.CheckNext(Assert.IsNotNull).IsEmpty();
@@ -254,7 +255,7 @@ namespace XShell.Tests
         [Test]
         public void ClearTest()
         {
-            var editor = new CollectionEditor<string>();
+            var editor = new CollectionEditor<string> {Items = null};
 
             var npcQueue = new Queue<PropertyChangedEventArgs>();
             var cmdInvQueue = new Queue<EventArgs>();
@@ -264,7 +265,7 @@ namespace XShell.Tests
             editor.ClearCommand.Name.Is("Clear");
             editor.ClearCommand.CheckCanExecute(false);
 
-            editor.Items = new List<string> { "Item1", "Item2", "Item3" };
+            editor.Items = new ObservableCollection<string> { "Item1", "Item2", "Item3" };
             editor.ClearCommand.CheckCanExecute(true);
             npcQueue.CheckNext(Properties.ItemsPropertyChanged).IsEmpty();
             cmdInvQueue.CheckNext(Assert.IsNotNull).IsEmpty();
@@ -294,11 +295,11 @@ namespace XShell.Tests
             Assert.IsFalse(editor.CloneCommand.CanExecute(null));
             Assert.IsFalse(editor.MoveUpCommand.CanExecute(null));
             Assert.IsFalse(editor.MoveDownCommand.CanExecute(null));
-            Assert.IsFalse(editor.ClearCommand.CanExecute(null));
+            Assert.IsTrue(editor.ClearCommand.CanExecute(null));
 
-            editor.Factory = () => "New Item";
-            editor.Clone = p => "Cloned from " + p;
-            editor.Items = new List<string>{ "Item1", "Item2", "Item3" };
+            editor.ItemFactory = () => "New Item";
+            editor.ItemCloner = p => "Cloned from " + p;
+            editor.Items = new ObservableCollection<string> { "Item1", "Item2", "Item3" };
 
             Assert.IsTrue(editor.AddCommand.CanExecute(null));
             Assert.IsFalse(editor.RemoveCommand.CanExecute(null));

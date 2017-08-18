@@ -13,11 +13,11 @@ namespace XShell.Winform
         /// Binds a command to a button.
         /// </summary>
         /// <returns>Returns a <see cref="IDisposable"/> instance, which has to be disposed to avoid memory leaks</returns>
-        public static IDisposable Bind(this Button button, IRelayCommand command, Func<object> getParameter = null)
+        public static IDisposable Bind(this Button button, IRelayCommand command, Func<object> getParameter = null, bool bindName = true, ToolTip tooltip = null)
         {
             if (button == null || command == null) return AnonymousDisposable.Empty;
 
-            return new ButtonBinder(button, command, getParameter);
+            return new ButtonBinder(button, command, getParameter, bindName, tooltip);
         }
 
         /// <summary>
@@ -41,5 +41,33 @@ namespace XShell.Winform
 
             return new ListBinder(view, logic);
         }
+
+        //public static IDisposable BindOneWay<TView, TSource, TProperty>(this TView view, 
+        //    TSource source, Func<TSource, TProperty> getSourceProperty, string propertyName,
+        //    Action<TView, TProperty> setViewProperty)
+        //{
+            
+        //}
+
+        //public static IDisposable BindOneWayToSource<TView, TSource, TProperty>(
+        //    this TView view, Func<TView, TProperty> getViewProperty, EventHandler eventHander,
+        //    TSource source, Action<TSource, TProperty> setSourceProperty)
+        //{
+            
+        //}
+
+        //public static IDisposable BindOneTime<TView, TSource, TProperty>(this TView view,
+        //    TSource source, Func<TSource, TProperty> getSourceProperty,
+        //    Action<TView, TProperty> setViewProperty)
+        //{
+            
+        //}
+
+        //public static IDisposable Bind<TView, TViewProperty, TSource, TSourceProperty>(
+        //    this TView view, Func<TView, TViewProperty> getViewProperty, EventHandler eventHandler, Action<TView, TSourceProperty> setViewProperty,
+        //    TSource source, Func<TSource, TSource> getProperty, string propertyName, Action<TSource, TViewProperty> setSourceProperty)
+        //{
+            
+        //}
     }
 }

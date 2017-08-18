@@ -16,7 +16,7 @@ namespace XShell.Tests
             var selector = new CollectionSelector<string>(new [] { "Item 1", "Item 2", "Item 3"});
             selector.PropertyChanged += (s, p) => pcQueue.Enqueue(p);
 
-            Check(selector, 0, "Item 1");
+            Check(selector, -1, null);
             pcQueue.IsEmpty();
 
             selector.SelectedIndex = 2;

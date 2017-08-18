@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ObjectListView">
+      <HintPath>..\ThirdParty\ObjectListView.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -44,9 +47,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behaviors\BehaviorsExtensions.cs" />
     <Compile Include="Binders\ButtonBinder.cs" />
     <Compile Include="Binders\ComboBoxBinder.cs" />
     <Compile Include="Binders\ListBinder.cs" />
+    <Compile Include="Controls\CollectionEditorView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CollectionEditorView.Designer.cs">
+      <DependentUpon>CollectionEditorView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ListBoxEditorView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ListBoxEditorView.Designer.cs">
+      <DependentUpon>ListBoxEditorView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\XDockContent.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -58,17 +74,57 @@
     </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Services\FormDockPanelScreenManager.cs" />
     <Compile Include="Services\StatusBarManager.cs" />
     <Compile Include="Services\ToolStripMenuManager.cs" />
     <Compile Include="Services\UiDispatcher.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\CollectionEditorView.resx">
+      <DependentUpon>CollectionEditorView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ListBoxEditorView.resx">
+      <DependentUpon>ListBoxEditorView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XShell\XShell.csproj">
       <Project>{e3ba6fe5-ac17-4a5d-9012-6de56f68c006}</Project>
       <Name>XShell</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Images\remove.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Images\move_down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Images\move_up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Images\add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Images\clear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Images\clone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Images\export.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Images\import.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
