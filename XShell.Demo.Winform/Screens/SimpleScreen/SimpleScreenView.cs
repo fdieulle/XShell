@@ -20,8 +20,6 @@ namespace XShell.Demo.Winform.Screens.SimpleScreen
 
         #region Implementation of IScreen
 
-        public event Action TitleChanged;
-
         public string Title { get { return "Simple Screen"; } }
 
         #endregion
