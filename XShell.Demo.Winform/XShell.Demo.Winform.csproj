@@ -50,15 +50,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\XDockContent.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\XForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\XToolStripMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,11 +90,7 @@
     </Compile>
     <Compile Include="Services\Service\IService.cs" />
     <Compile Include="Services\Service\ServiceImpl.cs" />
-    <Compile Include="Services\Shell\FormDockPanelScreenManager.cs" />
     <Compile Include="Services\Shell\ShellExtensions.cs" />
-    <Compile Include="Services\Shell\StatusBarManager.cs" />
-    <Compile Include="Services\Shell\ToolStripMenuManager.cs" />
-    <Compile Include="Services\Shell\UiDispatcher.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -115,6 +102,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="Screens\Popup\MyPopupView.resx">
       <DependentUpon>MyPopupView.cs</DependentUpon>
@@ -142,12 +130,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\XShell.Winform\XShell.Winform.csproj">
+      <Project>{a19723b1-346a-4198-9f81-0d7354a79622}</Project>
+      <Name>XShell.Winform</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XShell\XShell.csproj">
       <Project>{e3ba6fe5-ac17-4a5d-9012-6de56f68c006}</Project>
       <Name>XShell</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

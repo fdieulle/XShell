@@ -6,7 +6,7 @@ using XShell.Demo.Winform.Screens.Screen;
 using XShell.Demo.Winform.Screens.ScreenWithoutInterface;
 using XShell.Demo.Winform.Screens.SimpleScreen;
 using XShell.Demo.Winform.Services.Service;
-using XShell.Demo.Winform.Services.Shell;
+using XShell.Winform.Services;
 using XShell.Services;
 
 namespace XShell.Demo.Winform
