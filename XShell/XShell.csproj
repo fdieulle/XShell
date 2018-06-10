@@ -47,6 +47,7 @@
     <Compile Include="Core\ObjectEditor.cs" />
     <Compile Include="Core\IRelayCommand.cs" />
     <Compile Include="Core\Properties.cs" />
+    <Compile Include="IViewBox.cs" />
     <Compile Include="Services\BackgroundTaskManager.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IBackgroundTask.cs" />

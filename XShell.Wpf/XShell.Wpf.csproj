@@ -63,6 +63,7 @@
     <Compile Include="Services\DefaultMenuManager.cs" />
     <Compile Include="Services\StatusBarManager.cs" />
     <Compile Include="Services\UiDispatcher.cs" />
+    <Compile Include="Services\ViewBox.cs" />
     <Compile Include="Services\WindowAvalonDockScreenManager.cs" />
   </ItemGroup>
   <ItemGroup>
