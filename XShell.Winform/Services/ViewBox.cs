@@ -4,20 +4,11 @@ namespace XShell.Winform.Services
 {
     public class ViewBox : IViewBox
     {
-        private readonly Form mainForm;
-
-        public ViewBox(Form mainForm)
-        {
-            this.mainForm = mainForm;
-        }
-
-
         public ViewBoxResult Show(string text, string caption = null, ViewboxButtons buttons = ViewboxButtons.Ok, ViewboxImage image = ViewboxImage.None)
         {
             return ToVbr(MessageBox.Show(text, caption, ToMbb(buttons), ToMbi(image)));
         }
-
-
+        
         public string[] AskFiles(string filter = null, string initialFolder = null, string defaultExt = null, bool multiSelect = false)
         {
             var dialog = new OpenFileDialog
@@ -34,13 +25,11 @@ namespace XShell.Winform.Services
 
             return dialog.ShowDialog() != DialogResult.OK ? null : dialog.FileNames;
         }
-
-
+        
         private static MessageBoxButtons ToMbb(ViewboxButtons b)
         {
             switch (b)
             {
-                case ViewboxButtons.Ok:
                 default:
                     return MessageBoxButtons.OK;
                 case ViewboxButtons.OkCancel:
