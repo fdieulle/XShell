@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
-namespace XShell.Demo.Wpf.Controls
+namespace XShell.Wpf.Controls
 {
     public class XMenuItem : MenuItem, IMenuItem
     {

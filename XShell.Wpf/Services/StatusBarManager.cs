@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows;
-using XShell.Demo.Wpf.Controls;
+using XShell.Wpf.Controls;
 
-namespace XShell.Demo.Wpf.Services.Shell
+namespace XShell.Wpf.Services.Shell
 {
     public class StatusBarManager : IDisposable
     {

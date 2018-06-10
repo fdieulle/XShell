@@ -2,7 +2,7 @@
 using XShell.Services;
 using Xceed.Wpf.AvalonDock.Layout;
 
-namespace XShell.Demo.Wpf.Controls
+namespace XShell.Wpf.Controls
 {
     public class XDockContent : LayoutDocument, IScreenHost
     {

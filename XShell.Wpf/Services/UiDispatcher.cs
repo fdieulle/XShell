@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Threading;
 
-namespace XShell.Demo.Wpf.Services.Shell
+namespace XShell.Wpf.Services.Shell
 {
     public class UiDispatcher : IUiDispatcher
     {

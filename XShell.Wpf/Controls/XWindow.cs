@@ -2,7 +2,7 @@
 using System.Windows;
 using XShell.Services;
 
-namespace XShell.Demo.Wpf.Controls
+namespace XShell.Wpf.Controls
 {
     public class XWindow : Window, IScreenHost
     {

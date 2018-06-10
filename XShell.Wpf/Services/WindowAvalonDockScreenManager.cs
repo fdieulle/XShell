@@ -2,11 +2,11 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using XShell.Demo.Wpf.Controls;
+using XShell.Wpf.Controls;
 using XShell.Services;
 using Xceed.Wpf.AvalonDock.Layout;
 
-namespace XShell.Demo.Wpf.Services.Shell
+namespace XShell.Wpf.Services.Shell
 {
     public class WindowAvalonDockScreenManager : AbstractScreenManager<FrameworkElement>
     {

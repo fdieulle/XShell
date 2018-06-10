@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace XShell.Demo.Wpf.Controls
+namespace XShell.Wpf.Controls
 {
     /// <summary>
     /// Interaction logic for BackgroundTaskView.xaml
