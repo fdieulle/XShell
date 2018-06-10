@@ -32,9 +32,7 @@ namespace XShell.Winform.Services
             if (defaultExt != null)
                 dialog.DefaultExt = defaultExt;
 
-            if (dialog.ShowDialog() ?? false)
-                return dialog.FileNames;
-            return null;
+            return dialog.ShowDialog() != DialogResult.OK ? null : dialog.FileNames;
         }
 
 
