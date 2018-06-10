@@ -6,7 +6,6 @@ using XShell.Demo.Wpf.Screens.ScreenWithoutInterface;
 using XShell.Demo.Wpf.Screens.SimpleScreen;
 using XShell.Demo.Wpf.Services.Service;
 using XShell.Services;
-using XShell.Wpf;
 using XShell.Wpf.Services.Shell;
 
 namespace XShell.Demo.Wpf
