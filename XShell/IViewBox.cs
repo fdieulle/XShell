@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace XShell
+﻿namespace XShell
 {
     public enum ViewBoxResult
     {
@@ -39,5 +33,17 @@ namespace XShell
     public interface IViewBox
     {
         ViewBoxResult Show(string text, string caption = null, ViewboxButtons buttons = ViewboxButtons.Ok, ViewboxImage image = ViewboxImage.None);
+
+        string[] AskFiles(string filter = null, string initialFolder = null, string defaultExt = null, bool multiSelect = false);
+    }
+
+    public static class ViewBoxExtensions
+    {
+        public static string AskFile(this IViewBox viewBox, string filter = null, string initialFolder = null, string defaultExt = null)
+        {
+            var files = viewBox.AskFiles(filter, initialFolder, defaultExt);
+            return files != null && files.Length > 0
+                ? files[0] : null;
+        }
     }
 }

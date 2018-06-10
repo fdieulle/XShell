@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
+using Microsoft.Win32;
 
 namespace XShell.Wpf.Services
 {
@@ -17,6 +13,26 @@ namespace XShell.Wpf.Services
             return ToVbr(MessageBox.Show(text, caption, ToMbb(buttons), ToMbi(image)));
         }
 
+        public string[] AskFiles(string filter = null, string initialFolder = null, string defaultExt = null, bool multiSelect = false)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Multiselect = multiSelect
+            };
+
+            if (filter != null)
+                dialog.Filter = filter;
+            if (initialFolder != null)
+                dialog.InitialDirectory = initialFolder;
+            if (defaultExt != null)
+                dialog.DefaultExt = defaultExt;
+
+            if (dialog.ShowDialog() ?? false)
+                return dialog.FileNames;
+            return null;
+        }
+
+        #region Helpers
 
         private static MessageBoxButton ToMbb(ViewboxButtons b)
         {
@@ -75,5 +91,7 @@ namespace XShell.Wpf.Services
                     return ViewBoxResult.None;
             }
         }
+
+        #endregion // Helpers
     }
 }

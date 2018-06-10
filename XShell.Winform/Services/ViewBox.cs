@@ -1,18 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace XShell.Winform.Services
 {
     public class ViewBox : IViewBox
     {
+        private readonly Form mainForm;
+
+        public ViewBox(Form mainForm)
+        {
+            this.mainForm = mainForm;
+        }
+
+
         public ViewBoxResult Show(string text, string caption = null, ViewboxButtons buttons = ViewboxButtons.Ok, ViewboxImage image = ViewboxImage.None)
         {
             return ToVbr(MessageBox.Show(text, caption, ToMbb(buttons), ToMbi(image)));
         }
+
+
+        public string[] AskFiles(string filter = null, string initialFolder = null, string defaultExt = null, bool multiSelect = false)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Multiselect = multiSelect
+            };
+
+            if (filter != null)
+                dialog.Filter = filter;
+            if (initialFolder != null)
+                dialog.InitialDirectory = initialFolder;
+            if (defaultExt != null)
+                dialog.DefaultExt = defaultExt;
+
+            if (dialog.ShowDialog() ?? false)
+                return dialog.FileNames;
+            return null;
+        }
+
 
         private static MessageBoxButtons ToMbb(ViewboxButtons b)
         {
