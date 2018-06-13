@@ -56,9 +56,9 @@ namespace XShell.Demo.Winform
         private static void RegisterScreens(IScreenContainer container)
         {
             container.Register<SimpleScreenView>();
-            container.Register<ScreenWithoutInterfaceView, ScreenWithoutInterfaceController>();
+            container.Register<ScreenWithoutInterfaceView, ScreenWithoutInterfaceLogic>();
             container.Register<IMyScreen, MyScreenView, MyScreenLogic>();
-            container.Register<IMyPopup, MyPopupView, MyPopupController>();
+            container.Register<IMyPopup, MyPopupView, MyPopupLogic>();
         }
     }
 }
