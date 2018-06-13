@@ -6,6 +6,7 @@ using XShell.Demo.Wpf.Screens.ScreenWithoutInterface;
 using XShell.Demo.Wpf.Screens.SimpleScreen;
 using XShell.Demo.Wpf.Services.Service;
 using XShell.Services;
+using XShell.Wpf.Services;
 using XShell.Wpf.Services.Shell;
 
 namespace XShell.Demo.Wpf
@@ -29,6 +30,7 @@ namespace XShell.Demo.Wpf
             container.RegisterInstance<IMenuManager>(menuManager);
             container.RegisterInstance<IScreenContainer>(screenManager);
             container.RegisterInstance<IScreenManager>(screenManager);
+            container.Register<IViewBox, ViewBox>();
             container.Register<IUiDispatcher, UiDispatcher>(Reuse.Singleton);
             container.Register<IBackgroundTaskManager, BackgroundTaskManager>(Reuse.Singleton);
             container.RegisterInstance(new StatusBarManager(window.BackgroundWorkerView, container.Resolve<IBackgroundTaskManager>()));

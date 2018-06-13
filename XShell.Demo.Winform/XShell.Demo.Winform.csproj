@@ -75,7 +75,7 @@
       <DependentUpon>ScreenWithoutInterfaceView.cs</DependentUpon>
     </Compile>
     <Compile Include="Screens\Screen\IMyScreen.cs" />
-    <Compile Include="Screens\Screen\MyScreenController.cs" />
+    <Compile Include="Screens\Screen\MyScreenLogic.cs" />
     <Compile Include="Screens\Screen\MyScreenView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -90,7 +90,6 @@
     </Compile>
     <Compile Include="Services\Service\IService.cs" />
     <Compile Include="Services\Service\ServiceImpl.cs" />
-    <Compile Include="Services\Shell\ShellExtensions.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

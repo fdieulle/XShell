@@ -1,15 +1,16 @@
 ﻿using System.Windows.Forms;
+using XShell.Winform.Binders;
 
 namespace XShell.Demo.Winform.Screens.Screen
 {
     public partial class MyScreenView : UserControl
     {
-        private readonly IMyScreen controller;
-
-        public MyScreenView(IMyScreen controller)
+        public MyScreenView(IMyScreen logic)
         {
-            this.controller = controller;
             InitializeComponent();
+
+            this.browseFilePathButton.Bind(logic.BrowseCommand, bindName: true, toolTip: "Browse file path ...");
+            this.filePathTextBox.Bind(logic, nameof(logic.FilePath));
         }
     }
 }

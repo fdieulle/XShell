@@ -36,6 +36,7 @@ namespace XShell.Demo.Winform
             container.RegisterInstance<IScreenContainer>(screenManager);
             container.RegisterInstance<IScreenManager>(screenManager);
             container.RegisterInstance<IUiDispatcher>(new UiDispatcher(mainForm));
+            container.Register<IViewBox, ViewBox>();
             container.Register<IBackgroundTaskManager, BackgroundTaskManager>(Reuse.Singleton);
             container.RegisterInstance(new StatusBarManager(mainForm.StatusProgressBar, mainForm.StatusProgressLabel, container.Resolve<IBackgroundTaskManager>()));
 
@@ -56,7 +57,7 @@ namespace XShell.Demo.Winform
         {
             container.Register<SimpleScreenView>();
             container.Register<ScreenWithoutInterfaceView, ScreenWithoutInterfaceController>();
-            container.Register<IMyScreen, MyScreenView, MyScreenController>();
+            container.Register<IMyScreen, MyScreenView, MyScreenLogic>();
             container.Register<IMyPopup, MyPopupView, MyPopupController>();
         }
     }
