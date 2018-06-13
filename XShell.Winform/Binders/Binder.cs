@@ -78,6 +78,23 @@ namespace XShell.Winform.Binders
             return new ComboBoxBinder(comboBox, selector);
         }
 
+        /// <summary>
+        /// Binds a data context property to a <see cref="ProgressBar.Value"/>.
+        /// </summary>
+        /// <param name="progressBar"><see cref="ProgressBar"/> to apply binding.</param>
+        /// <param name="dataContext">Data context which provides the property name.</param>
+        /// <param name="propertyName">Property name from data context.</param>
+        /// <param name="minPropertyName">Property name from data context to bind on <see cref="ProgressBar.Minimum"/>.</param>
+        /// <param name="maxPropertyName">Property name from data context to bind on <see cref="ProgressBar.Maximum"/>.</param>
+        /// <returns>Returns an <see cref="IDisposable"/> instance. Dispose it to ends binding.</returns>
+        public static IDisposable Bind(this ProgressBar progressBar, object dataContext, string propertyName,
+            string minPropertyName = null, string maxPropertyName = null)
+        {
+            if (progressBar == null) return AnonymousDisposable.Empty;
+
+            return new ProgressBarBinder(progressBar, dataContext, propertyName, minPropertyName, maxPropertyName);
+        }
+
         #region Reflection 
 
         private static readonly Dictionary<Type, Dictionary<string, PropertyAccessor>>  typesMapping = new Dictionary<Type, Dictionary<string, PropertyAccessor>>();

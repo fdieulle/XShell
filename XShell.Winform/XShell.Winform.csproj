@@ -56,6 +56,7 @@
     <Compile Include="Binders\ComboBoxBinder.cs" />
     <Compile Include="Binders\LabelBinder.cs" />
     <Compile Include="Binders\ListBinder.cs" />
+    <Compile Include="Binders\ProgressBarBinder.cs" />
     <Compile Include="Binders\TextBoxBinder.cs" />
     <Compile Include="Controls\CollectionEditorView.cs">
       <SubType>UserControl</SubType>

@@ -26,7 +26,7 @@ namespace XShell.Winform.Binders
             UpdateControl(_getPropertyValue(dataContext));
         }
 
-        private void OnDataContextPropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected virtual void OnDataContextPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if(e.PropertyName == null || e.PropertyName == _propertyName)
                 UpdateControl(_getPropertyValue(DataContext));
