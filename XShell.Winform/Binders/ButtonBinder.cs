@@ -7,29 +7,33 @@ namespace XShell.Winform.Binders
 {
     public class ButtonBinder : IDisposable
     {
-        private readonly Button button;
-        private readonly IRelayCommand command;
-        private readonly Func<object> getParameter;
-        private readonly bool bindName;
-        private readonly ToolTip toolTip;
+        private readonly Button _button;
+        private readonly IRelayCommand _command;
+        private readonly Func<object> _getParameter;
+        private readonly bool _bindName;
+        private readonly ToolTip _toolTip;
+        private readonly string _toolTipText;
 
-        public ButtonBinder(Button button, IRelayCommand command, Func<object> getParameter = null, bool bindName = true, ToolTip toolTip = null)
+        public ButtonBinder(Button button, IRelayCommand command, 
+            Func<object> getParameter = null, bool bindName = true, 
+            ToolTip toolTip = null, string toolTipText = null)
         {
-            this.button = button;
-            this.command = command;
-            this.getParameter = getParameter;
-            this.bindName = bindName;
-            this.toolTip = toolTip;
+            _button = button;
+            _command = command;
+            _getParameter = getParameter;
+            _bindName = bindName;
+            _toolTip = toolTip;
+            _toolTipText = toolTipText;
 
-            this.button.Enabled = this.command.CanExecute(getParameter != null ? getParameter() : null);
-            if (this.bindName)
-                this.button.Text = this.command.Name;
-            if (this.toolTip != null)
-                this.toolTip.SetToolTip(this.button, this.command.Name);
+            _button.Enabled = _command.CanExecute(getParameter?.Invoke());
+            if (_bindName)
+                _button.Text = _command.Name;
+            toolTip?.SetToolTip(_button, toolTipText ?? _command.Name);
 
-            this.button.Click += OnButtonClick;
-            this.command.CanExecuteChanged += OnCommandCanExecuteChanged;
-            this.command.PropertyChanged += OnCommandPropertyChanged;
+            _button.Click += OnButtonClick;
+            _command.CanExecuteChanged += OnCommandCanExecuteChanged;
+            _command.PropertyChanged += OnCommandPropertyChanged;
+            _button.Disposed += OnButtonDisposed;
         }
 
         private void OnCommandPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -37,31 +41,37 @@ namespace XShell.Winform.Binders
             switch (e.PropertyName)
             {
                 case Core.Properties.NAME:
-                    if (this.bindName)
-                        this.button.Text = this.command.Name;
-                    if (this.toolTip != null)
-                        this.toolTip.SetToolTip(this.button, this.command.Name);
+                    if (_bindName)
+                        _button.Text = _command.Name;
+                    if(_toolTipText == null)
+                        _toolTip?.SetToolTip(_button, _command.Name);
                     break;
             }
         }
 
         private void OnCommandCanExecuteChanged(object sender, EventArgs e)
         {
-            this.button.Enabled = this.command.CanExecute(getParameter != null ? getParameter() : null);
+            _button.Enabled = _command.CanExecute(_getParameter?.Invoke());
         }
 
         private void OnButtonClick(object sender, EventArgs e)
         {
-            this.command.Execute(getParameter != null ? getParameter() : null);
+            _command.Execute(_getParameter?.Invoke());
+        }
+
+        private void OnButtonDisposed(object sender, EventArgs e)
+        {
+            Dispose();
         }
 
         #region Implementation of IDisposable
 
         public void Dispose()
         {
-            this.button.Click -= OnButtonClick;
-            this.command.CanExecuteChanged -= OnCommandCanExecuteChanged;
-            this.command.PropertyChanged -= OnCommandPropertyChanged;
+            _button.Disposed -= OnButtonDisposed;
+            _button.Click -= OnButtonClick;
+            _command.CanExecuteChanged -= OnCommandCanExecuteChanged;
+            _command.PropertyChanged -= OnCommandPropertyChanged;
         }
 
         #endregion
