@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.IO;
+using System.Windows.Forms;
 
 namespace XShell.Winform.Services
 {
@@ -19,7 +20,12 @@ namespace XShell.Winform.Services
             if (filter != null)
                 dialog.Filter = filter;
             if (initialFolder != null)
-                dialog.InitialDirectory = initialFolder;
+            {
+                if(File.Exists(initialFolder))
+                    dialog.InitialDirectory = new FileInfo(initialFolder).DirectoryName;
+                else if(Directory.Exists(initialFolder))
+                    dialog.InitialDirectory = initialFolder;
+            }
             if (defaultExt != null)
                 dialog.DefaultExt = defaultExt;
 

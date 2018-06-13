@@ -6,20 +6,22 @@ namespace XShell.Winform.Binders
 {
     public class ListBinder : IDisposable
     {
-        private readonly IList view;
-        private readonly IEnumerable logic;
+        private readonly IList _view;
+        private readonly IEnumerable _logic;
 
         public ListBinder(IList view, IEnumerable logic)
         {
-            this.view = view;
-            this.logic = logic;
+            _view = view;
+            _logic = logic;
 
-            this.view.Clear();
-            foreach (var item in this.logic)
-                this.view.Add(item);
+            _view.Clear();
+            if (logic != null)
+            {
+                foreach (var item in _logic)
+                    _view.Add(item);
+            }
 
-            var ncc = logic as INotifyCollectionChanged;
-            if (ncc != null)
+            if (logic is INotifyCollectionChanged ncc)
                 ncc.CollectionChanged += OnCollectionChanged;
         }
 
@@ -28,70 +30,70 @@ namespace XShell.Winform.Binders
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Reset:
-                    this.view.Clear();
+                    _view.Clear();
                     break;
                 case NotifyCollectionChangedAction.Add:
-                    if (e.NewStartingIndex >= this.view.Count)
+                    if (e.NewStartingIndex >= _view.Count)
                     {
                         foreach (var item in e.NewItems)
-                            this.view.Add(item);
+                            _view.Add(item);
                     }
                     else if (e.NewItems.Count == 1)
-                        this.view.Insert(e.NewStartingIndex, e.NewItems[0]);
+                        _view.Insert(e.NewStartingIndex, e.NewItems[0]);
                     else
                     {
                         // Copy all items which has to be moved and remove them from the list
-                        var lasts = CopyAndRemoveLastItems(this.view.Count - e.NewStartingIndex);
+                        var lasts = CopyAndRemoveLastItems(_view.Count - e.NewStartingIndex);
 
                         // Insert new items
                         for (var i = 0; i < e.NewItems.Count; i++)
-                            this.view.Add(e.NewItems[i]);
+                            _view.Add(e.NewItems[i]);
 
                         // Replace copied items after new ones
                         for (var i = 0; i < lasts.Length; i++)
-                            this.view.Add(lasts[i]);
+                            _view.Add(lasts[i]);
                     }                    
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     if (e.OldItems.Count == 1)
-                        this.view.RemoveAt(e.OldStartingIndex);
+                        _view.RemoveAt(e.OldStartingIndex);
                     else
                     {
                         // Copy all items which has to be moved and remove them from the list
-                        var lasts = CopyAndRemoveLastItems(this.view.Count - (e.OldStartingIndex + e.OldItems.Count));
+                        var lasts = CopyAndRemoveLastItems(_view.Count - (e.OldStartingIndex + e.OldItems.Count));
 
                         // Remove old items
                         for(var i = e.OldStartingIndex + e.OldItems.Count; i >= e.OldStartingIndex; i--)
-                            this.view.RemoveAt(i);
+                            _view.RemoveAt(i);
 
                         // Replace copied items after new ones
                         for (var i = 0; i < lasts.Length;  i++)
-                            this.view.Add(lasts[i]);
+                            _view.Add(lasts[i]);
                     }
                     break;
                 case NotifyCollectionChangedAction.Replace:
                     if (e.NewItems.Count == 1 && e.NewStartingIndex >= 0)
-                        this.view[e.NewStartingIndex] = e.NewItems[0];
+                        _view[e.NewStartingIndex] = e.NewItems[0];
                     else if (e.NewStartingIndex >= 0)
                     {
                         for (var i = 0; i < e.NewItems.Count; i++)
-                            this.view[e.NewStartingIndex + i] = e.NewItems[i];
+                            _view[e.NewStartingIndex + i] = e.NewItems[i];
                     }
                     else
                     {
                         for (var i = 0; i < e.NewItems.Count; i++)
                         {
-                            var index = this.view.IndexOf(e.NewItems[i]);
-                            this.view[index] = e.NewItems[i];
+                            var index = _view.IndexOf(e.NewItems[i]);
+                            _view[index] = e.NewItems[i];
                         }
                     }
                     break;
                 case NotifyCollectionChangedAction.Move:
                     if (e.NewItems.Count == 1)
                     {
-                        var swap = this.view[e.OldStartingIndex];
-                        this.view[e.OldStartingIndex] = this.view[e.NewStartingIndex];
-                        this.view[e.NewStartingIndex] = swap;
+                        var swap = _view[e.OldStartingIndex];
+                        _view[e.OldStartingIndex] = _view[e.NewStartingIndex];
+                        _view[e.NewStartingIndex] = swap;
                     }
                     else
                     {
@@ -105,8 +107,7 @@ namespace XShell.Winform.Binders
 
         public void Dispose()
         {
-            var ncc = this.logic as INotifyCollectionChanged;
-            if (ncc != null)
+            if (_logic is INotifyCollectionChanged ncc)
                 ncc.CollectionChanged -= OnCollectionChanged;
         }
 
@@ -117,8 +118,8 @@ namespace XShell.Winform.Binders
             var array = new object[count];
             for (var i = 0; i < count; i++)
             {
-                array[count - i - 1] = this.view[this.view.Count - 1];
-                this.view.RemoveAt(i);
+                array[count - i - 1] = _view[_view.Count - 1];
+                _view.RemoveAt(i);
             }
             return array;
         }

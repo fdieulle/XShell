@@ -1,32 +1,30 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Forms;
 using XShell.Core;
 
 namespace XShell.Winform.Binders
 {
-    public class ComboBoxBinder : IDisposable
+    public class ComboBoxBinder : AbstractBinder<ComboBox>
     {
-        private readonly ComboBox comboBox;
-        private readonly ICollectionSelector selector;
-        private IDisposable itemsSuscription;
+        private readonly ICollectionSelector _selector;
+        private IDisposable _itemsSuscription;
 
         public ComboBoxBinder(ComboBox comboBox, ICollectionSelector selector)
+            :base(comboBox)
         {
-            this.comboBox = comboBox;
-            this.selector = selector;
+            _selector = selector;
 
-            this.comboBox.SelectedIndex = this.selector.SelectedIndex;
-            this.UpdateItems();
+            Control.SelectedIndex = _selector.SelectedIndex;
+            UpdateItems();
 
-            this.comboBox.SelectedIndexChanged += OnComboBoxSelectedIndexChanged;
-            this.selector.PropertyChanged += OnSelectorPropertyChanged;
+            Control.SelectedIndexChanged += OnComboBoxSelectedIndexChanged;
+            _selector.PropertyChanged += OnSelectorPropertyChanged;
         }
 
         private void OnComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            this.selector.SelectedIndex = this.comboBox.SelectedIndex;
+            _selector.SelectedIndex = Control.SelectedIndex;
         }
 
         private void OnSelectorPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -34,42 +32,30 @@ namespace XShell.Winform.Binders
             switch (e.PropertyName)
             {
                 case Core.Properties.SELECTED_INDEX:
-                    this.comboBox.SelectedIndex = this.selector.SelectedIndex;
+                    Control.SelectedIndex = _selector.SelectedIndex;
                     break;
                 case Core.Properties.ITEMS:
-                    this.UpdateItems();
+                    UpdateItems();
+                    break;
+                case Core.Properties.NULL:
+                    Control.SelectedIndex = _selector.SelectedIndex;
+                    UpdateItems();
                     break;
             }
         }
 
         private void UpdateItems()
         {
-            if(this.itemsSuscription != null)
-                this.itemsSuscription.Dispose();
-
-            if (this.selector.Items is INotifyCollectionChanged)
-                this.itemsSuscription = this.comboBox.Items.Bind(this.selector.Items);
-            else
-            {
-                this.comboBox.Items.Clear();
-                if (this.selector.Items != null)
-                {
-                    foreach (var item in this.selector.Items)
-                        this.comboBox.Items.Add(item);
-                }
-            }
+            _itemsSuscription?.Dispose();
+            _itemsSuscription = Control.Items.Bind(_selector.Items);
         }
 
-        #region Implementation of IDisposable
-
-        public void Dispose()
+        protected override void Disposing()
         {
-            if (this.itemsSuscription != null) this.itemsSuscription.Dispose();
+            _itemsSuscription?.Dispose();
 
-            this.comboBox.SelectedIndexChanged += OnComboBoxSelectedIndexChanged;
-            this.selector.PropertyChanged -= OnSelectorPropertyChanged;
+            Control.SelectedIndexChanged -= OnComboBoxSelectedIndexChanged;
+            _selector.PropertyChanged -= OnSelectorPropertyChanged;
         }
-
-        #endregion
     }
 }

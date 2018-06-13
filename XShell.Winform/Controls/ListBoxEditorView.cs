@@ -4,58 +4,57 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using XShell.Core;
 using XShell.Winform.Behaviors;
+using XShell.Winform.Binders;
 using XShell.Winform.Properties;
 
 namespace XShell.Winform.Controls
 {
     public partial class ListBoxEditorView : UserControl
     {
-        private readonly List<IDisposable> suscriptions = new List<IDisposable>();
-        private readonly ToolTip toolTip = new ToolTip();
-        private ICollectionEditor internalEditor;
-        private IDisposable itemsBinding;
+        private ICollectionEditor _internalEditor;
+        private IDisposable _itemsBinding;
 
         public ListBoxEditorView()
         {
             InitializeComponent();
 
-            this.addButton.ApplyFlatStyle(Resources.add);
-            this.removeButton.ApplyFlatStyle(Resources.remove);
-            this.cloneButton.ApplyFlatStyle(Resources.clone);
-            this.moveUpButton.ApplyFlatStyle(Resources.move_up);
-            this.moveDownButton.ApplyFlatStyle(Resources.move_down);
-            this.clearButton.ApplyFlatStyle(Resources.clear);
-            this.importButton.ApplyFlatStyle(Resources.import);
-            this.exportButton.ApplyFlatStyle(Resources.export);
+            addButton.ApplyFlatStyle(Resources.add);
+            removeButton.ApplyFlatStyle(Resources.remove);
+            cloneButton.ApplyFlatStyle(Resources.clone);
+            moveUpButton.ApplyFlatStyle(Resources.move_up);
+            moveDownButton.ApplyFlatStyle(Resources.move_down);
+            clearButton.ApplyFlatStyle(Resources.clear);
+            importButton.ApplyFlatStyle(Resources.import);
+            exportButton.ApplyFlatStyle(Resources.export);
 
-            this.listBox.SelectedIndexChanged += OnListBoxSelectedIndexChanged;
+            listBox.SelectedIndexChanged += OnListBoxSelectedIndexChanged;
 
-            Disposed += (s, e) => this.InternalDispose();
+            Disposed += (s, e) => InternalDispose();
         }
 
         private void OnListBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (this.internalEditor != null)
-                this.internalEditor.SelectedIndex = listBox.SelectedIndex;
+            if (_internalEditor != null)
+                _internalEditor.SelectedIndex = listBox.SelectedIndex;
         }
 
         public void Bind(ICollectionEditor editor)
         {
-            this.InternalDispose();
+            InternalDispose();
 
-            this.internalEditor = editor;
+            _internalEditor = editor;
             if (editor == null) return;
 
-            this.suscriptions.Add(this.addButton.Bind(editor.AddCommand, bindName: false, tooltip: toolTip));
-            this.suscriptions.Add(this.removeButton.Bind(editor.RemoveCommand, bindName: false, tooltip: toolTip));
-            this.suscriptions.Add(this.cloneButton.Bind(editor.CloneCommand, bindName: false, tooltip: toolTip));
-            this.suscriptions.Add(this.moveUpButton.Bind(editor.MoveUpCommand, bindName: false, tooltip: toolTip));
-            this.suscriptions.Add(this.moveDownButton.Bind(editor.MoveDownCommand, bindName: false, tooltip: toolTip));
-            this.suscriptions.Add(this.clearButton.Bind(editor.ClearCommand, bindName: false, tooltip: toolTip));
-            this.suscriptions.Add(this.importButton.Bind(editor.ImportCommand, bindName: false, tooltip: toolTip));
-            this.suscriptions.Add(this.exportButton.Bind(editor.ExportCommand, bindName: false, tooltip: toolTip));
+            addButton.Bind(editor.AddCommand);
+            removeButton.Bind(editor.RemoveCommand);
+            cloneButton.Bind(editor.CloneCommand);
+            moveUpButton.Bind(editor.MoveUpCommand);
+            moveDownButton.Bind(editor.MoveDownCommand);
+            clearButton.Bind(editor.ClearCommand);
+            importButton.Bind(editor.ImportCommand);
+            exportButton.Bind(editor.ExportCommand);
             
-            OnEditorPropertyChanged(this.internalEditor, Core.Properties.NullPropertyChanged);
+            OnEditorPropertyChanged(_internalEditor, Core.Properties.NullPropertyChanged);
             editor.PropertyChanged += OnEditorPropertyChanged;
         }
 
@@ -64,55 +63,51 @@ namespace XShell.Winform.Controls
             switch (e.PropertyName)
             {
                 case Core.Properties.ALLOW_ADD:
-                    this.addButton.Visible = this.internalEditor.AllowAdd;
+                    addButton.Visible = _internalEditor.AllowAdd;
                     break;
                 case Core.Properties.ALLOW_REMOVE:
-                    this.removeButton.Visible = this.internalEditor.AllowRemove;
+                    removeButton.Visible = _internalEditor.AllowRemove;
                     break;
                 case Core.Properties.ALLOW_CLONE:
-                    this.cloneButton.Visible = this.internalEditor.AllowClone;
+                    cloneButton.Visible = _internalEditor.AllowClone;
                     break;
                 case Core.Properties.ALLOW_MOVE:
-                    this.moveUpButton.Visible = this.moveDownButton.Visible = this.internalEditor.AllowMove;
+                    moveUpButton.Visible = moveDownButton.Visible = _internalEditor.AllowMove;
                     break;
                 case Core.Properties.ALLOW_CLEAR:
-                    this.clearButton.Visible = this.internalEditor.AllowClear;
+                    clearButton.Visible = _internalEditor.AllowClear;
                     break;
                 case Core.Properties.ALLOW_IMPORT:
-                    this.importButton.Visible = this.internalEditor.AllowImport;
+                    importButton.Visible = _internalEditor.AllowImport;
                     break;
                 case Core.Properties.ALLOW_EXPORT:
-                    this.exportButton.Visible = this.internalEditor.AllowExport;
+                    exportButton.Visible = _internalEditor.AllowExport;
                     break;
                 case Core.Properties.ITEMS:
-                    this.itemsBinding = this.listBox.Items.Bind(this.internalEditor.Items);
+                    _itemsBinding = listBox.Items.Bind(_internalEditor.Items);
                     break;
                 case Core.Properties.SELECTED_INDEX:
-                    this.listBox.SelectedIndex = this.internalEditor.SelectedIndex;
+                    listBox.SelectedIndex = _internalEditor.SelectedIndex;
                     break;
                 case Core.Properties.NULL:
-                    this.addButton.Visible = this.internalEditor.AllowAdd;
-                    this.removeButton.Visible = this.internalEditor.AllowRemove;
-                    this.cloneButton.Visible = this.internalEditor.AllowClone;
-                    this.moveUpButton.Visible = this.moveDownButton.Visible = this.internalEditor.AllowMove;
-                    this.clearButton.Visible = this.internalEditor.AllowClear;
-                    this.importButton.Visible = this.internalEditor.AllowImport;
-                    this.exportButton.Visible = this.internalEditor.AllowExport;
-                    this.itemsBinding = this.listBox.Items.Bind(this.internalEditor.Items);
-                    this.listBox.SelectedIndex = this.internalEditor.SelectedIndex;
+                    addButton.Visible = _internalEditor.AllowAdd;
+                    removeButton.Visible = _internalEditor.AllowRemove;
+                    cloneButton.Visible = _internalEditor.AllowClone;
+                    moveUpButton.Visible = moveDownButton.Visible = _internalEditor.AllowMove;
+                    clearButton.Visible = _internalEditor.AllowClear;
+                    importButton.Visible = _internalEditor.AllowImport;
+                    exportButton.Visible = _internalEditor.AllowExport;
+                    _itemsBinding = listBox.Items.Bind(_internalEditor.Items);
+                    listBox.SelectedIndex = _internalEditor.SelectedIndex;
                     break;
             }
         }
 
         private void InternalDispose()
         {            
-            if (this.internalEditor != null)
-                this.internalEditor.PropertyChanged -= OnEditorPropertyChanged;
-            if(this.itemsBinding != null)
-                this.itemsBinding.Dispose();
-
-            this.suscriptions.ForEach(p => p.Dispose());
-            this.suscriptions.Clear();
+            if (_internalEditor != null)
+                _internalEditor.PropertyChanged -= OnEditorPropertyChanged;
+            _itemsBinding?.Dispose();
         }
     }
 }
