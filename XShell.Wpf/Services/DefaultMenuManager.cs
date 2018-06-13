@@ -6,11 +6,11 @@ namespace XShell.Wpf.Services.Shell
 {
     public class DefaultMenuManager : AbstractMenuManager<XMenuItem>
     {
-        private readonly Menu menu;
+        private readonly Menu _menu;
 
         public DefaultMenuManager(Menu menu)
         {
-            this.menu = menu;
+            _menu = menu;
         }
 
         #region Overrides of AbstractMenuManager<XMenuItem>
@@ -21,7 +21,7 @@ namespace XShell.Wpf.Services.Shell
             
             if (parent != null)
                 parent.Items.Add(item);
-            else menu.Items.Add(item);
+            else _menu.Items.Add(item);
 
             return item;
         }
@@ -30,7 +30,7 @@ namespace XShell.Wpf.Services.Shell
         {
             if (parent != null)
                 parent.Items.Remove(item);
-            else menu.Items.Remove(item);
+            else _menu.Items.Remove(item);
         }
 
         #endregion

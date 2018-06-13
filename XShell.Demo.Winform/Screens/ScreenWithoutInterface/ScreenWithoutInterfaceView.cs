@@ -4,11 +4,11 @@ namespace XShell.Demo.Winform.Screens.ScreenWithoutInterface
 {
     public partial class ScreenWithoutInterfaceView : UserControl
     {
-        private readonly ScreenWithoutInterfaceController controller;
+        private readonly ScreenWithoutInterfaceController _controller;
 
         public ScreenWithoutInterfaceView(ScreenWithoutInterfaceController controller)
         {
-            this.controller = controller;
+            _controller = controller;
             InitializeComponent();
         }
     }

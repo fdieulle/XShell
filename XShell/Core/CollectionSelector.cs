@@ -25,58 +25,58 @@ namespace XShell.Core
 
     public class CollectionSelector<T> : AbstractNpc, ICollectionSelector<T>, ICollectionSelector
     {
-        private bool skipIndexOf;
+        private bool _skipIndexOf;
 
         public event DataChanged<T> SelectedItemChanged;
 
-        protected ObservableCollection<T> items;
+        protected ObservableCollection<T> _items;
         public ObservableCollection<T> Items
         {
-            get { return items; }
+            get => _items;
             set
             {
-                if (ReferenceEquals(this.items, value)) return;
-                var oldValue = this.items;
-                this.items = value;
+                if (ReferenceEquals(_items, value)) return;
+                var oldValue = _items;
+                _items = value;
 
-                this.RaisePropertyChanged(Properties.ItemsPropertyChanged);
-                this.OnItemsChanged(oldValue, value);
+                RaisePropertyChanged(Properties.ItemsPropertyChanged);
+                OnItemsChanged(oldValue, value);
             }
         }
 
-        protected T selectedItem;
+        protected T _selectedItem;
         public T SelectedItem
         {
-            get { return selectedItem; }
+            get => _selectedItem;
             set
             {
-                if (Equals(this.selectedItem, value)) return;
-                var oldValue = this.selectedItem;
-                this.selectedItem = value;
+                if (Equals(_selectedItem, value)) return;
+                var oldValue = _selectedItem;
+                _selectedItem = value;
                 
-                this.RaisePropertyChanged(Properties.SelectedItemPropertyChanged);
-                this.OnSelectedItemChanged(oldValue, value);
+                RaisePropertyChanged(Properties.SelectedItemPropertyChanged);
+                OnSelectedItemChanged(oldValue, value);
             }
         }
 
-        protected int selectedIndex = -1;
+        protected int _selectedIndex = -1;
         public int SelectedIndex
         {
-            get { return selectedIndex; }
+            get => _selectedIndex;
             set
             {
-                if (this.selectedIndex == value) return;
-                var oldValue = this.selectedIndex;
-                this.selectedIndex = value;
+                if (_selectedIndex == value) return;
+                var oldValue = _selectedIndex;
+                _selectedIndex = value;
 
-                this.RaisePropertyChanged(Properties.SelectedIndexPropertyChanged);
+                RaisePropertyChanged(Properties.SelectedIndexPropertyChanged);
                 OnSelectedIndexChanged(oldValue, value);
             }
         }
 
         public CollectionSelector(IEnumerable<T> source = null)
         {
-            this.items = source != null 
+            _items = source != null 
                 ? new ObservableCollection<T>(source) 
                 : new ObservableCollection<T>();
         }
@@ -89,31 +89,27 @@ namespace XShell.Core
 
         protected virtual void OnSelectedItemChanged(T oldValue, T newValue)
         {
-            var handler = this.SelectedItemChanged;
-            if (handler != null) this.SelectedItemChanged(oldValue, newValue);
+            SelectedItemChanged?.Invoke(oldValue, newValue);
 
-            if (this.items == null || this.skipIndexOf) return;
-            this.SelectedIndex = this.items.IndexOf(newValue);
+            if (_items == null || _skipIndexOf) return;
+            SelectedIndex = _items.IndexOf(newValue);
         }
 
         protected virtual void OnSelectedIndexChanged(int oldValue, int newValue)
         {
-            if (this.items == null) return;
+            if (_items == null) return;
 
-            this.skipIndexOf = true;
-            this.SelectedItem = newValue < 0 || newValue > this.items.Count ? default(T) : this.items[newValue];
-            this.skipIndexOf = false;
+            _skipIndexOf = true;
+            SelectedItem = newValue < 0 || newValue > _items.Count ? default(T) : _items[newValue];
+            _skipIndexOf = false;
         }
 
-        IEnumerable ICollectionSelector.Items
-        {
-            get { return Items; }
-        }
+        IEnumerable ICollectionSelector.Items => Items;
 
         object ICollectionSelector.SelectedItem
         {
-            get { return SelectedItem; }
-            set { SelectedItem = (T) value; }
+            get => SelectedItem;
+            set => SelectedItem = (T) value;
         }
     }
 }

@@ -5,18 +5,18 @@ namespace XShell.Winform.Services
 {
     public class UiDispatcher : IUiDispatcher
     {
-        private readonly Control control;
+        private readonly Control _control;
 
         public UiDispatcher(Control control)
         {
-            this.control = control;
+            _control = control;
         }
 
         #region Implementation of IUiDispatcher
 
         public void Dispatch(Action action)
         {
-            control.BeginInvoke(action);
+            _control.BeginInvoke(action);
         }
 
         #endregion

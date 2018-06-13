@@ -4,67 +4,67 @@ namespace XShell.Core
 {
     public static class Properties
     {
-        public const string NULL = null;
-        public static readonly PropertyChangedEventArgs NullPropertyChanged = new PropertyChangedEventArgs(NULL);
+        public const string Null = null;
+        public static readonly PropertyChangedEventArgs NullPropertyChanged = new PropertyChangedEventArgs(Null);
 
-        public const string NAME = "Name";
-        public static readonly PropertyChangedEventArgs NamePropertyChanged = new PropertyChangedEventArgs(NAME);
+        public const string Name = "Name";
+        public static readonly PropertyChangedEventArgs NamePropertyChanged = new PropertyChangedEventArgs(Name);
 
-        public const string TITLE = "Title";
-        public static readonly PropertyChangedEventArgs TitlePropertyChanged = new PropertyChangedEventArgs(TITLE);
+        public const string Title = "Title";
+        public static readonly PropertyChangedEventArgs TitlePropertyChanged = new PropertyChangedEventArgs(Title);
 
-        public const string PARAMETER = "Parameter";
-        public static readonly PropertyChangedEventArgs ParameterPropertyChanged = new PropertyChangedEventArgs(PARAMETER);
+        public const string Parameter = "Parameter";
+        public static readonly PropertyChangedEventArgs ParameterPropertyChanged = new PropertyChangedEventArgs(Parameter);
 
-        public const string IS_RUNNING = "IsRunning";
-        public static readonly PropertyChangedEventArgs IsRunningPropertyChanged = new PropertyChangedEventArgs(IS_RUNNING);
+        public const string IsRunning = "IsRunning";
+        public static readonly PropertyChangedEventArgs IsRunningPropertyChanged = new PropertyChangedEventArgs(IsRunning);
 
-        public const string OBJECT = "Object";
-        public static readonly PropertyChangedEventArgs ObjectPropertyChanged = new PropertyChangedEventArgs(OBJECT);
+        public const string Object = "Object";
+        public static readonly PropertyChangedEventArgs ObjectPropertyChanged = new PropertyChangedEventArgs(Object);
 
-        public const string EDITABLE = "Editable";
-        public static readonly PropertyChangedEventArgs EditablePropertyChanged = new PropertyChangedEventArgs(EDITABLE);
+        public const string Editable = "Editable";
+        public static readonly PropertyChangedEventArgs EditablePropertyChanged = new PropertyChangedEventArgs(Editable);
 
-        public const string ITEMS = "Items";
-        public static readonly PropertyChangedEventArgs ItemsPropertyChanged = new PropertyChangedEventArgs(ITEMS);
+        public const string Items = "Items";
+        public static readonly PropertyChangedEventArgs ItemsPropertyChanged = new PropertyChangedEventArgs(Items);
 
-        public const string SELECTED_ITEM = "SelectedItem";
-        public static readonly PropertyChangedEventArgs SelectedItemPropertyChanged = new PropertyChangedEventArgs(SELECTED_ITEM);
+        public const string SelectedItem = "SelectedItem";
+        public static readonly PropertyChangedEventArgs SelectedItemPropertyChanged = new PropertyChangedEventArgs(SelectedItem);
 
-        public const string SELECTED_INDEX = "SelectedIndex";
-        public static readonly PropertyChangedEventArgs SelectedIndexPropertyChanged = new PropertyChangedEventArgs(SELECTED_INDEX);
+        public const string SelectedIndex = "SelectedIndex";
+        public static readonly PropertyChangedEventArgs SelectedIndexPropertyChanged = new PropertyChangedEventArgs(SelectedIndex);
 
-        public const string ITEM_FACTORY = "ItemFactory";
-        public static readonly PropertyChangedEventArgs ItemFactoryPropertyChanged = new PropertyChangedEventArgs(ITEM_FACTORY);
+        public const string ItemFactory = "ItemFactory";
+        public static readonly PropertyChangedEventArgs ItemFactoryPropertyChanged = new PropertyChangedEventArgs(ItemFactory);
 
-        public const string ALLOW_ADD = "AllowAdd";
-        public static readonly PropertyChangedEventArgs AllowAddPropertyChanged = new PropertyChangedEventArgs(ALLOW_ADD);
+        public const string AllowAdd = "AllowAdd";
+        public static readonly PropertyChangedEventArgs AllowAddPropertyChanged = new PropertyChangedEventArgs(AllowAdd);
 
-        public const string ALLOW_REMOVE = "AllowRemove";
-        public static readonly PropertyChangedEventArgs AllowRemovePropertyChanged = new PropertyChangedEventArgs(ALLOW_REMOVE);
+        public const string AllowRemove = "AllowRemove";
+        public static readonly PropertyChangedEventArgs AllowRemovePropertyChanged = new PropertyChangedEventArgs(AllowRemove);
 
-        public const string ITEM_CLONER = "ItemCloner";
-        public static readonly PropertyChangedEventArgs ItemClonerPropertyChanged = new PropertyChangedEventArgs(ITEM_CLONER);
+        public const string ItemCloner = "ItemCloner";
+        public static readonly PropertyChangedEventArgs ItemClonerPropertyChanged = new PropertyChangedEventArgs(ItemCloner);
 
-        public const string ALLOW_CLONE = "AllowClone";
-        public static readonly PropertyChangedEventArgs AllowClonePropertyChanged = new PropertyChangedEventArgs(ALLOW_CLONE);
+        public const string AllowClone = "AllowClone";
+        public static readonly PropertyChangedEventArgs AllowClonePropertyChanged = new PropertyChangedEventArgs(AllowClone);
 
-        public const string ALLOW_MOVE = "AllowMove";
-        public static readonly PropertyChangedEventArgs AllowMovePropertyChanged = new PropertyChangedEventArgs(ALLOW_MOVE);
+        public const string AllowMove = "AllowMove";
+        public static readonly PropertyChangedEventArgs AllowMovePropertyChanged = new PropertyChangedEventArgs(AllowMove);
 
-        public const string ALLOW_CLEAR = "AllowClear";
-        public static readonly PropertyChangedEventArgs AllowClearPropertyChanged = new PropertyChangedEventArgs(ALLOW_CLEAR);
+        public const string AllowClear = "AllowClear";
+        public static readonly PropertyChangedEventArgs AllowClearPropertyChanged = new PropertyChangedEventArgs(AllowClear);
 
-        public const string ALLOW_IMPORT = "AllowImport";
-        public static readonly PropertyChangedEventArgs AllowImportPropertyChanged = new PropertyChangedEventArgs(ALLOW_IMPORT);
+        public const string AllowImport = "AllowImport";
+        public static readonly PropertyChangedEventArgs AllowImportPropertyChanged = new PropertyChangedEventArgs(AllowImport);
 
-        public const string IMPORTER = "Importer";
-        public static readonly PropertyChangedEventArgs ImporterPropertyChanged = new PropertyChangedEventArgs(IMPORTER);
+        public const string Importer = "Importer";
+        public static readonly PropertyChangedEventArgs ImporterPropertyChanged = new PropertyChangedEventArgs(Importer);
 
-        public const string ALLOW_EXPORT = "AllowExport";
-        public static readonly PropertyChangedEventArgs AllowExportPropertyChanged = new PropertyChangedEventArgs(ALLOW_EXPORT);
+        public const string AllowExport = "AllowExport";
+        public static readonly PropertyChangedEventArgs AllowExportPropertyChanged = new PropertyChangedEventArgs(AllowExport);
 
-        public const string EXPORTER = "Exporter";
-        public static readonly PropertyChangedEventArgs ExporterPropertyChanged = new PropertyChangedEventArgs(EXPORTER);
+        public const string Exporter = "Exporter";
+        public static readonly PropertyChangedEventArgs ExporterPropertyChanged = new PropertyChangedEventArgs(Exporter);
     }
 }

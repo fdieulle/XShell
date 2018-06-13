@@ -62,34 +62,34 @@ namespace XShell.Winform.Controls
         {
             switch (e.PropertyName)
             {
-                case Core.Properties.ALLOW_ADD:
+                case Core.Properties.AllowAdd:
                     addButton.Visible = _internalEditor.AllowAdd;
                     break;
-                case Core.Properties.ALLOW_REMOVE:
+                case Core.Properties.AllowRemove:
                     removeButton.Visible = _internalEditor.AllowRemove;
                     break;
-                case Core.Properties.ALLOW_CLONE:
+                case Core.Properties.AllowClone:
                     cloneButton.Visible = _internalEditor.AllowClone;
                     break;
-                case Core.Properties.ALLOW_MOVE:
+                case Core.Properties.AllowMove:
                     moveUpButton.Visible = moveDownButton.Visible = _internalEditor.AllowMove;
                     break;
-                case Core.Properties.ALLOW_CLEAR:
+                case Core.Properties.AllowClear:
                     clearButton.Visible = _internalEditor.AllowClear;
                     break;
-                case Core.Properties.ALLOW_IMPORT:
+                case Core.Properties.AllowImport:
                     importButton.Visible = _internalEditor.AllowImport;
                     break;
-                case Core.Properties.ALLOW_EXPORT:
+                case Core.Properties.AllowExport:
                     exportButton.Visible = _internalEditor.AllowExport;
                     break;
-                case Core.Properties.ITEMS:
+                case Core.Properties.Items:
                     _itemsBinding = listBox.Items.Bind(_internalEditor.Items);
                     break;
-                case Core.Properties.SELECTED_INDEX:
+                case Core.Properties.SelectedIndex:
                     listBox.SelectedIndex = _internalEditor.SelectedIndex;
                     break;
-                case Core.Properties.NULL:
+                case Core.Properties.Null:
                     addButton.Visible = _internalEditor.AllowAdd;
                     removeButton.Visible = _internalEditor.AllowRemove;
                     cloneButton.Visible = _internalEditor.AllowClone;

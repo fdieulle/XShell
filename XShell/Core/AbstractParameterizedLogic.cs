@@ -5,19 +5,19 @@
     {
         internal override void Setup(object param)
         {
-            base.Setup(parameter);
+            base.Setup(_parameter);
             Parameter = param as TParameter;
         }
 
-        private TParameter parameter;
+        private TParameter _parameter;
         public TParameter Parameter
         {
-            get { return parameter; }
+            get => _parameter;
             set
             {
-                if (parameter == value) return;
-                var oldParameter = parameter;
-                parameter = value;
+                if (_parameter == value) return;
+                var oldParameter = _parameter;
+                _parameter = value;
                 OnParameterChanged(oldParameter, value);
                 RaisePropertyChanged(Properties.ParameterPropertyChanged);
             }

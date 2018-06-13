@@ -5,11 +5,11 @@ namespace XShell.Demo.Wpf.Screens.Popup
 {
     public class MyPopupViewModel : AbstractLogic, IMyPopup
     {
-        private readonly IService service;
+        private readonly IService _service;
 
         public MyPopupViewModel(IService service)
         {
-            this.service = service;
+            _service = service;
             Title = "My Popup";
         }
     }

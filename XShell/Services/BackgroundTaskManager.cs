@@ -6,9 +6,9 @@ namespace XShell.Services
 {
     public class BackgroundTaskManager : IBackgroundTaskManager
     {
-        private readonly IUiDispatcher uiDispatcher;
-        private readonly Queue<Action> tasks = new Queue<Action>();
-        private bool taskIsRunning;
+        private readonly IUiDispatcher _uiDispatcher;
+        private readonly Queue<Action> _tasks = new Queue<Action>();
+        private bool _taskIsRunning;
 
         public event Action<IBackgroundTask, object> TaskStarted;
 
@@ -18,30 +18,30 @@ namespace XShell.Services
 
         public BackgroundTaskManager(IUiDispatcher uiDispatcher)
         {
-            this.uiDispatcher = uiDispatcher;
+            _uiDispatcher = uiDispatcher;
         }
 
         public void Dispatch<TResult>(Func<IBackgroundTask, object, TResult> onWork, Action<TResult, object> onCompleted = null, object state = null)
         {
-            var task = new BackgroundTask<TResult>(uiDispatcher, this, onWork, onCompleted, state, false);
+            var task = new BackgroundTask<TResult>(_uiDispatcher, this, onWork, onCompleted, state, false);
             Run(task.Run);
         }
 
         public void Dispatch<TResult>(Func<object, TResult> onWork, Action<TResult, object> onCompleted = null, object state = null)
         {
-            var task = new BackgroundTask<TResult>(uiDispatcher, this, (t,s) => onWork(s), onCompleted, state, true);
+            var task = new BackgroundTask<TResult>(_uiDispatcher, this, (t,s) => onWork(s), onCompleted, state, true);
             Run(task.Run);
         }
 
         private void Run(Action run)
         {
-            lock (tasks)
+            lock (_tasks)
             {
-                if (taskIsRunning)
-                    tasks.Enqueue(run);
+                if (_taskIsRunning)
+                    _tasks.Enqueue(run);
                 else
                 {
-                    taskIsRunning = true;
+                    _taskIsRunning = true;
                     run();
                 }
             }
@@ -64,21 +64,21 @@ namespace XShell.Services
             var handler = TaskCompleted;
             if (handler != null) handler(task, state);
 
-            lock (tasks)
+            lock (_tasks)
             {
-                if(tasks.Count > 0) uiDispatcher.Dispatch(() => tasks.Dequeue());
-                else taskIsRunning = false;
+                if(_tasks.Count > 0) _uiDispatcher.Dispatch(() => _tasks.Dequeue());
+                else _taskIsRunning = false;
             }
         }
 
         private class BackgroundTask<TResult> : IBackgroundTask
         {
-            private readonly IUiDispatcher uiDispatcher;
-            private readonly BackgroundTaskManager manager;
-            private readonly Func<IBackgroundTask, object, TResult> onWork;
-            private readonly Action<TResult, object> onCompleted;
-            private readonly object state;
-            private readonly bool isIndeterminate;
+            private readonly IUiDispatcher _uiDispatcher;
+            private readonly BackgroundTaskManager _manager;
+            private readonly Func<IBackgroundTask, object, TResult> _onWork;
+            private readonly Action<TResult, object> _onCompleted;
+            private readonly object _state;
+            private readonly bool _isIndeterminate;
 
             public BackgroundTask(
                 IUiDispatcher uiDispatcher,
@@ -88,38 +88,38 @@ namespace XShell.Services
                 object state,
                 bool isIndeterminate)
             {
-                this.uiDispatcher = uiDispatcher;
-                this.manager = manager;
-                this.onWork = onWork;
-                this.onCompleted = onCompleted;
-                this.state = state;
-                this.isIndeterminate = isIndeterminate;
+                _uiDispatcher = uiDispatcher;
+                _manager = manager;
+                _onWork = onWork;
+                _onCompleted = onCompleted;
+                _state = state;
+                _isIndeterminate = isIndeterminate;
             }
 
             public void Run()
             {
-                uiDispatcher.Dispatch(() =>
+                _uiDispatcher.Dispatch(() =>
                 {
-                    manager.RaiseTaskStarted(this, state);
+                    _manager.RaiseTaskStarted(this, _state);
                     Task.Factory.StartNew(s =>
                     {
-                        var result = onWork(this, s);
-                        uiDispatcher.Dispatch(() =>
+                        var result = _onWork(this, s);
+                        _uiDispatcher.Dispatch(() =>
                         {
-                            if (onCompleted != null)
-                                onCompleted(result, s);
+                            if (_onCompleted != null)
+                                _onCompleted(result, s);
 
-                            manager.RaiseTaskCompleted(this, state);
+                            _manager.RaiseTaskCompleted(this, _state);
                         });
-                    }, state); 
+                    }, _state); 
                 });
             }
 
-            public bool IsIndeterminate { get { return isIndeterminate; } }
+            public bool IsIndeterminate => _isIndeterminate;
 
             public void ReportState(double percent, object s)
             {
-                uiDispatcher.Dispatch(() => manager.RaiseReportStateChanged(percent, s));
+                _uiDispatcher.Dispatch(() => _manager.RaiseReportStateChanged(percent, s));
             }
         }
     }

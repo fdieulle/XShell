@@ -40,7 +40,7 @@ namespace XShell.Winform.Binders
         {
             switch (e.PropertyName)
             {
-                case Core.Properties.NAME:
+                case Core.Properties.Name:
                     if (_bindName)
                         _button.Text = _command.Name;
                     if(_toolTipText == null)

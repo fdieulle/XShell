@@ -16,9 +16,7 @@ namespace XShell.Core
         protected virtual void RaisePropertyChanged(PropertyChangedEventArgs e)
         {
             if (e == null) return;
-            var handler = PropertyChanged;
-            if (handler != null)
-                handler(this, e);
+            PropertyChanged?.Invoke(this, e);
         }
 
         #endregion

@@ -120,33 +120,33 @@ namespace XShell.Tests
 
         public class MockUiDispatcher : IUiDispatcher, IDisposable
         {
-            private readonly ManualResetEvent waiter = new ManualResetEvent(false);
-            private readonly Thread thread;
-            private readonly ConcurrentQueue<Action> tasks = new ConcurrentQueue<Action>();
-            private bool isRunning = true;
+            private readonly ManualResetEvent _waiter = new ManualResetEvent(false);
+            private readonly Thread _thread;
+            private readonly ConcurrentQueue<Action> _tasks = new ConcurrentQueue<Action>();
+            private bool _isRunning = true;
 
-            public int ThreadId { get { return thread.ManagedThreadId; } }
+            public int ThreadId { get { return _thread.ManagedThreadId; } }
 
             public MockUiDispatcher()
             {
-                thread = new Thread(Work){ IsBackground = true };
-                thread.Start();
+                _thread = new Thread(Work){ IsBackground = true };
+                _thread.Start();
             }
 
             private void Work()
             {
-                while (isRunning)
+                while (_isRunning)
                 {
-                    waiter.WaitOne();
+                    _waiter.WaitOne();
 
-                    while (tasks.Count > 0)
+                    while (_tasks.Count > 0)
                     {
                         Action action;
-                        if (tasks.TryDequeue(out action))
+                        if (_tasks.TryDequeue(out action))
                             action();
                     }
 
-                    waiter.Reset();
+                    _waiter.Reset();
                 }
             }
 
@@ -156,8 +156,8 @@ namespace XShell.Tests
             {
                 if (action == null) return;
 
-                tasks.Enqueue(action);
-                waiter.Set();
+                _tasks.Enqueue(action);
+                _waiter.Set();
             }
 
             #endregion
@@ -166,7 +166,7 @@ namespace XShell.Tests
 
             public void Dispose()
             {
-                isRunning = false;
+                _isRunning = false;
             }
 
             #endregion

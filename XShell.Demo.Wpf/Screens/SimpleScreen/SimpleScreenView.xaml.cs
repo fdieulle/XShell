@@ -11,11 +11,11 @@ namespace XShell.Demo.Wpf.Screens.SimpleScreen
     [ScreenMenuItem("Screens/Simple Screen")]
     public partial class SimpleScreenView : UserControl, IScreen
     {
-        private readonly IService service;
+        private readonly IService _service;
 
         public SimpleScreenView(IService service)
         {
-            this.service = service;
+            _service = service;
             InitializeComponent();
         }
 

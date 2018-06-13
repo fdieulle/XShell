@@ -5,11 +5,11 @@ namespace XShell.Demo.Wpf.Screens.Screen
 {
     public class MyScreenViewModel : AbstractLogic, IMyScreen
     {
-        private readonly IService service;
+        private readonly IService _service;
 
         public MyScreenViewModel(IService service)
         {
-            this.service = service;
+            _service = service;
             Title = "My screen";
         }
     }

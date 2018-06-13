@@ -18,32 +18,32 @@ namespace XShell.Core
 
     public class ObjectEditor<T> : AbstractNpc, IObjectEditor
     {
-        private readonly Func<T, T> clone;
+        private readonly Func<T, T> _clone;
 
         public event DataChanged<T> ApplyExecuted;
         public event DataChanged<T> CancelExecuted;
 
-        private T origin;
+        private T _origin;
         public T Object
         {
-            get { return origin; }
+            get => _origin;
             set
             {
-                if (ReferenceEquals(origin, value)) return;
-                origin = value;
+                if (ReferenceEquals(_origin, value)) return;
+                _origin = value;
                 RaisePropertyChanged(Properties.ObjectPropertyChanged);
-                Editable = clone(value);
+                Editable = _clone(value);
             }
         }
 
-        private T editable;
+        private T _editable;
         public T Editable
         {
-            get { return editable; }
+            get => _editable;
             set
             {
-                if (ReferenceEquals(editable, value)) return;
-                editable = value;
+                if (ReferenceEquals(_editable, value)) return;
+                _editable = value;
                 RaisePropertyChanged(Properties.EditablePropertyChanged);
             }
         }
@@ -56,8 +56,8 @@ namespace XShell.Core
             Func<T, T> clone = null,
             T data = default(T))
         {
-            this.clone = clone ?? (p => p);
-            origin = data;
+            _clone = clone ?? (p => p);
+            _origin = data;
 
             ApplyCommand = new RelayCommand(ExecuteApplyCommand);
             CancelCommand = new RelayCommand(ExecuteCancelCommand);
@@ -65,16 +65,16 @@ namespace XShell.Core
 
         private void ExecuteApplyCommand(object parameter)
         {
-            var oldValue = origin;
-            Object = editable;
-            Raise(ApplyExecuted, oldValue, origin);
+            var oldValue = _origin;
+            Object = _editable;
+            Raise(ApplyExecuted, oldValue, _origin);
         }
 
         private void ExecuteCancelCommand(object parameter)
         {
-            var oldValue = editable;
-            Editable = clone(origin);
-            Raise(CancelExecuted, oldValue, editable);
+            var oldValue = _editable;
+            Editable = _clone(_origin);
+            Raise(CancelExecuted, oldValue, _editable);
         }
 
         private void Raise(DataChanged<T> handler, T oldValue, T newValue)
@@ -85,14 +85,14 @@ namespace XShell.Core
 
         object IObjectEditor.Object
         {
-            get { return Object; } 
-            set { Object = (T)value; }
+            get => Object;
+            set => Object = (T)value;
         }
 
         object IObjectEditor.Editable
         {
-            get { return Editable; }
-            set { Editable = (T)value; }
+            get => Editable;
+            set => Editable = (T)value;
         }
     }
 }

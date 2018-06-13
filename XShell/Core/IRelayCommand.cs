@@ -60,41 +60,41 @@ namespace XShell.Core
         private static readonly Action<T> defaultExecute = p => { };
         private static readonly Func<T, bool> defaultCanExecute = p => true;
 
-        private readonly Action<T> execute;
-        private readonly Func<T, bool> canExecute;
-        private readonly Func<object, T> adaptParameter;
-        private List<Func<T, bool>> dynamicPredicates;
+        private readonly Action<T> _execute;
+        private readonly Func<T, bool> _canExecute;
+        private readonly Func<object, T> _adaptParameter;
+        private List<Func<T, bool>> _dynamicPredicates;
 
         #region Properties
 
-        private string name;
+        private string _name;
         /// <summary>
         /// Name of the command.
         /// </summary>
         public string Name
         {
-            get { return name; }
+            get => _name;
             set
             {
-                if (name == value) return;
+                if (_name == value) return;
 
-                name = value;
+                _name = value;
                 RaisePropertyChanged(Properties.NamePropertyChanged);
             }
         }
 
-        private bool isRunning;
+        private bool _isRunning;
         /// <summary>
         /// Indicate if the command is in progress.
         /// </summary>
         public bool IsRunning
         {
-            get { return isRunning; }
+            get => _isRunning;
             set
             {
-                if (isRunning == value) return;
+                if (_isRunning == value) return;
 
-                isRunning = value;
+                _isRunning = value;
                 RaisePropertyChanged(Properties.IsRunningPropertyChanged);
                 InvalidateCanExecute();
             }
@@ -118,8 +118,8 @@ namespace XShell.Core
         /// <param name="canExecute">The execution status logic.</param>
         public RelayCommand(Action<T> execute, Func<T, bool> canExecute)
         {
-            this.execute = execute ?? defaultExecute;
-            this.canExecute = canExecute ?? defaultCanExecute;
+            _execute = execute ?? defaultExecute;
+            _canExecute = canExecute ?? defaultCanExecute;
         }
 
         /// <summary>
@@ -130,9 +130,9 @@ namespace XShell.Core
         /// <param name="adaptParameter">Parameter adaptation.</param>
         public RelayCommand(Action<T> execute, Func<T, bool> canExecute, Func<object, T> adaptParameter)
         {
-            this.execute = execute ?? defaultExecute;
-            this.canExecute = canExecute ?? defaultCanExecute;
-            this.adaptParameter = adaptParameter;
+            _execute = execute ?? defaultExecute;
+            _canExecute = canExecute ?? defaultCanExecute;
+            _adaptParameter = adaptParameter;
         }
 
         #endregion // Ctors
@@ -143,13 +143,13 @@ namespace XShell.Core
         {
             try
             {
-                if (isRunning)
+                if (_isRunning)
                     return false;
 
-                var result = canExecute(parameter);
+                var result = _canExecute(parameter);
 
-                if (dynamicPredicates != null)
-                    dynamicPredicates.ForEach(p => result &= p(parameter));
+                if (_dynamicPredicates != null)
+                    _dynamicPredicates.ForEach(p => result &= p(parameter));
 
                 return result;
             }
@@ -165,7 +165,7 @@ namespace XShell.Core
                 return;
 
             // Raise execute action
-            execute(parameter);
+            _execute(parameter);
 
             InvalidateCanExecute();
         }
@@ -182,18 +182,18 @@ namespace XShell.Core
 
         public void AddCanExecute(Func<T, bool> predicate)
         {
-            if (dynamicPredicates == null)
-                dynamicPredicates = new List<Func<T, bool>>();
+            if (_dynamicPredicates == null)
+                _dynamicPredicates = new List<Func<T, bool>>();
 
-            dynamicPredicates.Add(predicate);
+            _dynamicPredicates.Add(predicate);
             InvalidateCanExecute();
         }
 
         public void RemoveCanExecute(Func<T, bool> predicate)
         {
-            if (dynamicPredicates == null) return;
+            if (_dynamicPredicates == null) return;
 
-            if (dynamicPredicates.Remove(predicate))
+            if (_dynamicPredicates.Remove(predicate))
                 InvalidateCanExecute();
         }
 
@@ -222,8 +222,8 @@ namespace XShell.Core
         /// <returns>Parameter instance adapted</returns>
         protected virtual T AdaptParameter(object parameter)
         {
-            if (adaptParameter != null)
-                return adaptParameter(parameter);
+            if (_adaptParameter != null)
+                return _adaptParameter(parameter);
 
             if (parameter is T)
                 return (T)parameter;

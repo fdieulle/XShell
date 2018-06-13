@@ -5,21 +5,19 @@ namespace XShell.Core
 {
     public class NamedType : IEquatable<NamedType>
     {
-        private readonly Type type;
-        private readonly string name;
-        private readonly int hashCode;
+        private readonly int _hashCode;
 
-        public Type Type {get { return type; }}
+        public Type Type { get; }
 
-        public string Name { get { return name; } }
+        public string Name { get; }
 
         public NamedType(Type type, string name)
         {
-            this.type = type;
-            this.name = name;
+            Type = type;
+            Name = name;
             unchecked
             {
-                hashCode = ((type != null ? type.GetHashCode() : 0) * 397) ^ (name != null ? name.GetHashCode() : 0);
+                _hashCode = ((type != null ? type.GetHashCode() : 0) * 397) ^ (name?.GetHashCode() ?? 0);
             }
         }
 
@@ -27,18 +25,18 @@ namespace XShell.Core
 
         public bool Equals(NamedType other)
         {
-            return type == other.type && string.Equals(name, other.name);
+            return other != null && (Type == other.Type && string.Equals(Name, other.Name));
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is NamedType && Equals((NamedType)obj);
+            return obj is NamedType type && Equals(type);
         }
 
         public override int GetHashCode()
         {
-            return hashCode;
+            return _hashCode;
         }
 
         public static bool operator ==(NamedType left, NamedType right)
@@ -55,31 +53,28 @@ namespace XShell.Core
 
         #region EqualityComparer
 
-        private sealed class TYPENameEqualityComparer : IEqualityComparer<NamedType>
+        private sealed class TypeNameEqualityComparer : IEqualityComparer<NamedType>
         {
             public bool Equals(NamedType x, NamedType y)
             {
-                return x.type == y.type && string.Equals(x.name, y.name);
+                if (x == null && y == null) return true;
+                if (x == null || y == null) return false;
+                return x.Type == y.Type && string.Equals(x.Name, y.Name);
             }
 
             public int GetHashCode(NamedType obj)
             {
-                return obj.hashCode;
+                return obj._hashCode;
             }
         }
 
-        private static readonly IEqualityComparer<NamedType> comparerInstance = new TYPENameEqualityComparer();
-
-        public static IEqualityComparer<NamedType> Comparer
-        {
-            get { return comparerInstance; }
-        }
+        public static IEqualityComparer<NamedType> Comparer { get; } = new TypeNameEqualityComparer();
 
         #endregion
 
         public override string ToString()
         {
-            return string.Format("Type: {0}, Name: {1}", type, name);
+            return $"Type: {Type}, Name: {Name}";
         }
     }
 }

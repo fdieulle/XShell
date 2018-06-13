@@ -6,21 +6,21 @@ namespace XShell.Core
     {
         public static readonly IDisposable Empty = new AnonymousDisposable(null);
 
-        private Action onDispose;
+        private Action _onDispose;
 
         public AnonymousDisposable(Action onDispose)
         {
-            this.onDispose = onDispose;
+            _onDispose = onDispose;
         }
 
         #region Implementation of IDisposable
 
         public void Dispose()
         {
-            if (this.onDispose == null) return;
+            if (_onDispose == null) return;
             
-            this.onDispose();
-            this.onDispose = null;
+            _onDispose();
+            _onDispose = null;
         }
 
         #endregion

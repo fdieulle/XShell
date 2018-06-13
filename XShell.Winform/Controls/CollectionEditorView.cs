@@ -9,12 +9,12 @@ namespace XShell.Winform.Controls
         {
             InitializeComponent();
 
-            this.addButton.ApplyFlatStyle(Properties.Resources.add);
-            this.removeButton.ApplyFlatStyle(Properties.Resources.remove);
-            this.cloneButton.ApplyFlatStyle(Properties.Resources.clone);
-            this.moveDownButton.ApplyFlatStyle(Properties.Resources.move_up);
-            this.moveDownButton.ApplyFlatStyle(Properties.Resources.move_down);
-            this.clearButton.ApplyFlatStyle(Properties.Resources.clear);
+            addButton.ApplyFlatStyle(Properties.Resources.add);
+            removeButton.ApplyFlatStyle(Properties.Resources.remove);
+            cloneButton.ApplyFlatStyle(Properties.Resources.clone);
+            moveDownButton.ApplyFlatStyle(Properties.Resources.move_up);
+            moveDownButton.ApplyFlatStyle(Properties.Resources.move_down);
+            clearButton.ApplyFlatStyle(Properties.Resources.clear);
         }
     }
 }

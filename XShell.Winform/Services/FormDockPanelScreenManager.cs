@@ -9,8 +9,8 @@ namespace XShell.Winform.Services
 {
     public class FormDockPanelScreenManager : AbstractScreenManager<Control>
     {
-        private readonly Form mainForm;
-        private readonly DockPanel mainPanel;
+        private readonly Form _mainForm;
+        private readonly DockPanel _mainPanel;
 
         public FormDockPanelScreenManager(
             Form mainForm,
@@ -20,8 +20,8 @@ namespace XShell.Winform.Services
             IPersistenceService persistenceService = null) 
             : base(register, resolve, menuManager, persistenceService)
         {
-            this.mainForm = mainForm;
-            this.mainPanel = mainPanel;
+            _mainForm = mainForm;
+            _mainPanel = mainPanel;
         }
 
         #region Overrides of AbstractScreenManager<TabPage>
@@ -32,7 +32,7 @@ namespace XShell.Winform.Services
             view.Dock = DockStyle.Fill;
             view.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             host.Controls.Add(view);
-            host.Show(this.mainPanel, DockState.Document);
+            host.Show(_mainPanel, DockState.Document);
             return host;
         }
 
@@ -46,7 +46,7 @@ namespace XShell.Winform.Services
             if(attribute != null)
                 SetupPopup(host, attribute);
 
-            host.Show(this.mainForm);
+            host.Show(_mainForm);
             return host;
         }
 

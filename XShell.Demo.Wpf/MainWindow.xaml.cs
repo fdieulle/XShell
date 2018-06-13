@@ -7,13 +7,13 @@ namespace XShell.Demo.Wpf
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly XShellModule module;
+        private readonly XShellModule _module;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            this.module = new XShellModule(this);
+            _module = new XShellModule(this);
         }
     }
 }

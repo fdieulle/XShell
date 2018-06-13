@@ -6,11 +6,11 @@ namespace XShell.Demo.Wpf.Screens.ScreenWithoutInterface
     [ScreenMenuItem("Screens/Screen without Interface")]
     public class ScreenWithoutInterfaceViewModel : AbstractLogic
     {
-        private readonly IService service;
+        private readonly IService _service;
 
         public ScreenWithoutInterfaceViewModel(IService service)
         {
-            this.service = service;
+            _service = service;
             Title = "Screen without Interface";
         }
     }

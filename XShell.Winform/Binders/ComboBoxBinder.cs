@@ -31,13 +31,13 @@ namespace XShell.Winform.Binders
         {
             switch (e.PropertyName)
             {
-                case Core.Properties.SELECTED_INDEX:
+                case Core.Properties.SelectedIndex:
                     Control.SelectedIndex = _selector.SelectedIndex;
                     break;
-                case Core.Properties.ITEMS:
+                case Core.Properties.Items:
                     UpdateItems();
                     break;
-                case Core.Properties.NULL:
+                case Core.Properties.Null:
                     Control.SelectedIndex = _selector.SelectedIndex;
                     UpdateItems();
                     break;

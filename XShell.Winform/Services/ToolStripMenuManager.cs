@@ -6,11 +6,11 @@ namespace XShell.Winform.Services
 {
     public class ToolStripMenuManager : AbstractMenuManager<XToolStripMenuItem>
     {
-        private readonly MenuStrip menu;
+        private readonly MenuStrip _menu;
 
         public ToolStripMenuManager(MenuStrip menu)
         {
-            this.menu = menu;
+            _menu = menu;
         }
 
         #region Overrides of AbstractMenuManager<LightToolStripMenuItem>
@@ -20,7 +20,7 @@ namespace XShell.Winform.Services
             var item = new XToolStripMenuItem();
             
             if (parent == null)
-                menu.Items.Add(item);
+                _menu.Items.Add(item);
             else parent.DropDownItems.Add(item);
 
             return item;
@@ -29,7 +29,7 @@ namespace XShell.Winform.Services
         protected override void DeleteMenuItem(XToolStripMenuItem parent, XToolStripMenuItem item)
         {
             if(parent == null)
-                menu.Items.Remove(item);
+                _menu.Items.Remove(item);
             else parent.DropDownItems.Remove(item);
         }
 

@@ -5,11 +5,11 @@ namespace XShell.Demo.Winform.Screens.Popup
 {
     public class MyPopupController : AbstractLogic, IMyPopup
     {
-        private readonly IService service;
+        private readonly IService _service;
 
         public MyPopupController(IService service)
         {
-            this.service = service;
+            _service = service;
             Title = "My Popup";
         }
     }

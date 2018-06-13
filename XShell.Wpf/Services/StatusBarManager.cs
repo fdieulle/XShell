@@ -6,50 +6,50 @@ namespace XShell.Wpf.Services.Shell
 {
     public class StatusBarManager : IDisposable
     {
-        private readonly BackgroundTaskView backgroundTaskView;
-        private readonly IBackgroundTaskManager backgroundTaskManager;
+        private readonly BackgroundTaskView _backgroundTaskView;
+        private readonly IBackgroundTaskManager _backgroundTaskManager;
 
         public StatusBarManager(
             BackgroundTaskView backgroundTaskView,
             IBackgroundTaskManager backgroundTaskManager)
         {
-            this.backgroundTaskView = backgroundTaskView;
-            this.backgroundTaskManager = backgroundTaskManager;
+            _backgroundTaskView = backgroundTaskView;
+            _backgroundTaskManager = backgroundTaskManager;
 
-            this.backgroundTaskManager.TaskStarted += OnBackgroundTaskStarted;
-            this.backgroundTaskManager.ReportStateChanged += OnBackgroundReportStateChanged;
-            this.backgroundTaskManager.TaskCompleted += OnBackgroundTaskCompleted;
+            _backgroundTaskManager.TaskStarted += OnBackgroundTaskStarted;
+            _backgroundTaskManager.ReportStateChanged += OnBackgroundReportStateChanged;
+            _backgroundTaskManager.TaskCompleted += OnBackgroundTaskCompleted;
         }
 
         private void OnBackgroundTaskStarted(IBackgroundTask task, object state)
         {
-            backgroundTaskView.Visibility = Visibility.Visible;
-            backgroundTaskView.IsIndeterminate = task.IsIndeterminate;
+            _backgroundTaskView.Visibility = Visibility.Visible;
+            _backgroundTaskView.IsIndeterminate = task.IsIndeterminate;
             if (state != null)
-                backgroundTaskView.State = state.ToString();
+                _backgroundTaskView.State = state.ToString();
         }
 
         private void OnBackgroundReportStateChanged(double percent, object state)
         {
-            backgroundTaskView.Percent = percent;
+            _backgroundTaskView.Percent = percent;
             if (state != null)
-                backgroundTaskView.State = state.ToString();
+                _backgroundTaskView.State = state.ToString();
         }
 
         private void OnBackgroundTaskCompleted(IBackgroundTask arg1, object arg2)
         {
-            backgroundTaskView.Visibility = Visibility.Collapsed;
-            backgroundTaskView.IsIndeterminate = false;
-            backgroundTaskView.State = null;
+            _backgroundTaskView.Visibility = Visibility.Collapsed;
+            _backgroundTaskView.IsIndeterminate = false;
+            _backgroundTaskView.State = null;
         }
 
         #region Implementation of IDisposable
 
         public void Dispose()
         {
-            this.backgroundTaskManager.TaskStarted -= OnBackgroundTaskStarted;
-            this.backgroundTaskManager.ReportStateChanged -= OnBackgroundReportStateChanged;
-            this.backgroundTaskManager.TaskCompleted -= OnBackgroundTaskCompleted;
+            _backgroundTaskManager.TaskStarted -= OnBackgroundTaskStarted;
+            _backgroundTaskManager.ReportStateChanged -= OnBackgroundReportStateChanged;
+            _backgroundTaskManager.TaskCompleted -= OnBackgroundTaskCompleted;
         }
 
         #endregion

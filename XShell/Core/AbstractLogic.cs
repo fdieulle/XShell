@@ -6,21 +6,21 @@ namespace XShell.Core
 {
     public abstract class AbstractLogic : AbstractNpc, IScreen, IInternalScreen, IPersistable, IDisposable
     {
-        private Action close;
+        private Action _close;
 
         public string InstanceId { get; private set; }
 
         #region Implementation of IScreen
 
-        private string title;
+        private string _title;
         public string Title
         {
-            get { return title; }
+            get => _title;
             set
             {
-                if (title == value) return;
+                if (_title == value) return;
 
-                title = value;
+                _title = value;
                 RaisePropertyChanged(Properties.TitlePropertyChanged);
             }
         }
@@ -29,15 +29,15 @@ namespace XShell.Core
 
         #region Implementation of IInternalScreen
 
-        private object parameter;
+        private object _parameter;
         object IInternalScreen.Parameter
         {
-            get { return parameter; }
+            get => _parameter;
             set
             {
-                if (parameter == value) return;
-                parameter = value;
-                Setup(parameter);
+                if (_parameter == value) return;
+                _parameter = value;
+                Setup(_parameter);
             }
         }
 
@@ -50,7 +50,7 @@ namespace XShell.Core
 
         void IInternalScreen.Setup(Action onClose)
         {
-            close = onClose;
+            _close = onClose;
         }
 
         #endregion
@@ -65,8 +65,7 @@ namespace XShell.Core
 
         protected void Close()
         {
-            if (close != null)
-                close();
+            _close?.Invoke();
         }
 
         #region Implementation of IDisposable

@@ -10,21 +10,21 @@ namespace XShell.Services
     public abstract class AbstractScreenManager<TBaseView> : IScreenManager, IScreenContainer
         where TBaseView : class
     {
-        private readonly Action<Type, Type> register;
-        private readonly Func<Type, object> resolve;
-        private readonly IMenuManager menuManager;
-        private readonly IPersistenceService persistenceService;
+        private readonly Action<Type, Type> _register;
+        private readonly Func<Type, object> _resolve;
+        private readonly IMenuManager _menuManager;
+        private readonly IPersistenceService _persistenceService;
 
-        private readonly Dictionary<Type, ScreenFactory> factories = new Dictionary<Type, ScreenFactory>();
-        private readonly Dictionary<NamedType, ScreenHost> screens = new Dictionary<NamedType, ScreenHost>();
+        private readonly Dictionary<Type, ScreenFactory> _factories = new Dictionary<Type, ScreenFactory>();
+        private readonly Dictionary<NamedType, ScreenHost> _screens = new Dictionary<NamedType, ScreenHost>();
 
         protected AbstractScreenManager(Action<Type, Type> register, Func<Type, object> resolve,
             IMenuManager menuManager = null, IPersistenceService persistenceService = null)
         {
-            this.register = register;
-            this.resolve = resolve;
-            this.menuManager = menuManager;
-            this.persistenceService = persistenceService;
+            _register = register;
+            _resolve = resolve;
+            _menuManager = menuManager;
+            _persistenceService = persistenceService;
         }
 
         #region Implementation of IScreenContainer
@@ -34,9 +34,9 @@ namespace XShell.Services
             CheckParameters(idType, viewType, logicType);
 
             var popupAttribute = idType.GetCustomAttribute<PopupAttribute>(true);
-            factories[idType] = new ScreenFactory(idType, viewType, logicType, register, resolve, popupAttribute);
+            _factories[idType] = new ScreenFactory(idType, viewType, logicType, _register, _resolve, popupAttribute);
 
-            if (menuManager != null)
+            if (_menuManager != null)
             {
                 var attribute = idType.GetCustomAttributes(typeof(ScreenMenuItemAttribute), true)
                       .OfType<ScreenMenuItemAttribute>()
@@ -46,7 +46,7 @@ namespace XShell.Services
                     var action = attribute.IsPopup
                         ? new Action(() => Popup(idType))
                         : () => Display(idType);
-                    menuManager.Add(attribute.Path, action, attribute.DisplayName, attribute.IconFilePath);
+                    _menuManager.Add(attribute.Path, action, attribute.DisplayName, attribute.IconFilePath);
                 }
             }
         }
@@ -69,7 +69,7 @@ namespace XShell.Services
         {
             var key = new NamedType(idType, instanceId);
             ScreenHost host;
-            if (screens.TryGetValue(key, out host))
+            if (_screens.TryGetValue(key, out host))
                 host.SetParameter(parameter);
         }
 
@@ -77,20 +77,20 @@ namespace XShell.Services
         {
             var key = new NamedType(idType, instanceId);
             ScreenHost host;
-            return screens.TryGetValue(key, out host) ? host.GetParameter() : null;
+            return _screens.TryGetValue(key, out host) ? host.GetParameter() : null;
         }
 
         public void Close(Type idType, string instanceId = null)
         {
             var key = new NamedType(idType, instanceId);
             ScreenHost host;
-            if (screens.TryGetValue(key, out host))
+            if (_screens.TryGetValue(key, out host))
                 host.Close();
         }
 
         public void CloseAll(Type idType)
         {
-            foreach (var key in screens.Select(p => p.Key).Where(p => p.Type == idType).ToArray())
+            foreach (var key in _screens.Select(p => p.Key).Where(p => p.Type == idType).ToArray())
                 Close(key.Type, key.Name);
         }
 
@@ -117,14 +117,14 @@ namespace XShell.Services
         {
             var key = new NamedType(idType, instanceId);
             ScreenHost host;
-            if (screens.TryGetValue(key, out host))
+            if (_screens.TryGetValue(key, out host))
             {
                 host.BringToFront(isPopup);
                 return;
             }
 
             ScreenFactory factory;
-            if (!factories.TryGetValue(key.Type, out factory)) return;
+            if (!_factories.TryGetValue(key.Type, out factory)) return;
 
             IScreen logic;
             TBaseView view;
@@ -136,14 +136,14 @@ namespace XShell.Services
             }
 
             host = new ScreenHost(key, view, logic, CreateScreen, CreatePopup, factory.PopupAttribute);
-            screens.Add(key, host);
+            _screens.Add(key, host);
             host.Closed += OnHostClosed;
 
             var setupable = logic as IInternalScreen;
             if(setupable != null)
                 setupable.Setup(host.Close);
 
-            if (!host.Restore(persistenceService, out e))
+            if (!host.Restore(_persistenceService, out e))
                 OnException(string.Format("Unable to restore screen: {0}", key), e);
 
             host.Show(isPopup);
@@ -152,9 +152,9 @@ namespace XShell.Services
         private void OnHostClosed(ScreenHost host)
         {
             host.Closed -= OnHostClosed;
-            screens.Remove(host.Key);
+            _screens.Remove(host.Key);
             Exception e;
-            if(!host.Persist(persistenceService, out e))
+            if(!host.Persist(_persistenceService, out e))
                 OnException(string.Format("Unable to restore screen: {0}", host.Key), e);
             host.Dispose();
         }
@@ -163,9 +163,9 @@ namespace XShell.Services
 
         public void Dispose()
         {
-            foreach (var key in screens.Select(p => p.Key).ToArray())
+            foreach (var key in _screens.Select(p => p.Key).ToArray())
                 Close(key.Type, key.Name);
-            factories.Clear();
+            _factories.Clear();
         }
 
         #endregion
@@ -180,19 +180,19 @@ namespace XShell.Services
 
         private class ScreenFactory
         {
-            private readonly Type idType;
-            private readonly Func<Type, object> resolve;
-            private readonly Func<IScreen, TBaseView> factory;
+            private readonly Type _idType;
+            private readonly Func<Type, object> _resolve;
+            private readonly Func<IScreen, TBaseView> _factory;
 
             public PopupAttribute PopupAttribute { get; private set; }
             
             public ScreenFactory(Type idType, Type viewType, Type logicType, Action<Type, Type> register, Func<Type, object> resolve, PopupAttribute popupAttribute)
             {
-                this.idType = idType;
-                this.resolve = resolve;
-                this.PopupAttribute = popupAttribute;
+                _idType = idType;
+                _resolve = resolve;
+                PopupAttribute = popupAttribute;
 
-                factory = idType != viewType
+                _factory = idType != viewType
                     ? viewType.CreateFactory<TBaseView>(idType)
                     : (p => (TBaseView)p);
 
@@ -204,7 +204,7 @@ namespace XShell.Services
                 ex = null;
                 try
                 {
-                    logic = resolve(idType) as IScreen;
+                    logic = _resolve(_idType) as IScreen;
                     var setupable = logic as IInternalScreen;
                     if (setupable != null)
                     {
@@ -212,7 +212,7 @@ namespace XShell.Services
                         setupable.Parameter = parameter;
                     }
 
-                    view = factory(logic);
+                    view = _factory(logic);
                     return true;
                 }
                 catch (Exception e)
@@ -227,17 +227,17 @@ namespace XShell.Services
 
         protected class ScreenHost : IDisposable
         {
-            private readonly NamedType key;
-            private readonly TBaseView view;
-            private readonly IScreen screen;
-            private readonly Func<TBaseView, IScreenHost> createScreen;
-            private readonly Func<TBaseView, PopupAttribute, IScreenHost> createPopup;
-            private readonly PopupAttribute popupAttribute;
+            private readonly NamedType _key;
+            private readonly TBaseView _view;
+            private readonly IScreen _screen;
+            private readonly Func<TBaseView, IScreenHost> _createScreen;
+            private readonly Func<TBaseView, PopupAttribute, IScreenHost> _createPopup;
+            private readonly PopupAttribute _popupAttribute;
 
-            private bool isInPopup;
-            private IScreenHost host;
+            private bool _isInPopup;
+            private IScreenHost _host;
 
-            public NamedType Key { get { return key; } }
+            public NamedType Key => _key;
 
             public ScreenHost(NamedType key,
                 TBaseView view,
@@ -246,41 +246,41 @@ namespace XShell.Services
                 Func<TBaseView, PopupAttribute, IScreenHost> createPopup,
                 PopupAttribute popupAttribute)
             {
-                this.key = key;
-                this.view = view;
-                this.screen = screen;
-                this.createScreen = createScreen;
-                this.createPopup = createPopup;
-                this.popupAttribute = popupAttribute;
-                this.screen.PropertyChanged += OnPropertyChanged;
+                _key = key;
+                _view = view;
+                _screen = screen;
+                _createScreen = createScreen;
+                _createPopup = createPopup;
+                _popupAttribute = popupAttribute;
+                _screen.PropertyChanged += OnPropertyChanged;
             }
 
             public event Action<ScreenHost> Closed;
 
             public void Close()
             {
-                this.host.Close();
+                _host.Close();
             }
 
             public void Show(bool isPopup)
             {
-                host = isPopup ? createPopup(view, popupAttribute) : createScreen(view);
+                _host = isPopup ? _createPopup(_view, _popupAttribute) : _createScreen(_view);
 
-                if (screen != null)
-                    host.Title = screen.Title;
+                if (_screen != null)
+                    _host.Title = _screen.Title;
 
-                host.ScreenClosed += OnScreenClosed;
-                isInPopup = isPopup;
+                _host.ScreenClosed += OnScreenClosed;
+                _isInPopup = isPopup;
             }
 
             public void BringToFront(bool isPopup)
             {
-                if (isPopup == isInPopup)
-                    host.BringToFront();
+                if (isPopup == _isInPopup)
+                    _host.BringToFront();
                 else
                 {
-                    host.ScreenClosed -= OnScreenClosed;
-                    host.Close();
+                    _host.ScreenClosed -= OnScreenClosed;
+                    _host.Close();
                     Show(isPopup);
                 }
             }
@@ -294,14 +294,14 @@ namespace XShell.Services
 
             public void SetParameter(object parameter)
             {
-                var cast = screen as IInternalScreen;
+                var cast = _screen as IInternalScreen;
                 if (cast != null)
                     cast.Parameter = parameter;
             }
 
             public object GetParameter()
             {
-                var cast = screen as IInternalScreen;
+                var cast = _screen as IInternalScreen;
                 return cast != null ? cast.Parameter : null;
             }
 
@@ -314,14 +314,14 @@ namespace XShell.Services
                     ex = null;
                     if (svc == null) return true;
 
-                    var persistable = view as IPersistable;
+                    var persistable = _view as IPersistable;
                     if (persistable != null)
-                        svc.Restore(GetViewName(), view as IPersistable);
+                        svc.Restore(GetViewName(), _view as IPersistable);
                     
-                    if (ReferenceEquals(screen, view)) return true; // In case of there is no screen type defined
+                    if (ReferenceEquals(_screen, _view)) return true; // In case of there is no screen type defined
 
                     // ReSharper disable SuspiciousTypeConversion.Global
-                    persistable = screen as IPersistable;
+                    persistable = _screen as IPersistable;
                     // ReSharper restore SuspiciousTypeConversion.Global
                     if (persistable != null)
                         svc.Restore(GetLogicName(), persistable);
@@ -341,13 +341,13 @@ namespace XShell.Services
                     ex = null;
                     if (svc == null) return true;
 
-                    var persistable = view as IPersistable;
+                    var persistable = _view as IPersistable;
                     if (persistable != null)
                         svc.Persist(GetViewName(), persistable);
-                    if (ReferenceEquals(screen, view)) return true; // In case of there is no screen type defined
+                    if (ReferenceEquals(_screen, _view)) return true; // In case of there is no screen type defined
 
                     // ReSharper disable SuspiciousTypeConversion.Global
-                    persistable = screen as IPersistable;
+                    persistable = _screen as IPersistable;
                     // ReSharper restore SuspiciousTypeConversion.Global
                     if (persistable != null)
                         svc.Persist(GetLogicName(), persistable);
@@ -362,12 +362,12 @@ namespace XShell.Services
 
             private string GetViewName()
             {
-                return string.Format("{0}_{1}_View", key.Type, key.Name);
+                return string.Format("{0}_{1}_View", _key.Type, _key.Name);
             }
 
             private string GetLogicName()
             {
-                return string.Format("{0}_{1}_Logic", key.Type, key.Name);
+                return string.Format("{0}_{1}_Logic", _key.Type, _key.Name);
             }
 
             #endregion
@@ -377,7 +377,7 @@ namespace XShell.Services
             private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
             {
                 if(e.PropertyName == "Title")
-                    host.Title = screen.Title;
+                    _host.Title = _screen.Title;
             }
 
             #endregion
@@ -386,11 +386,11 @@ namespace XShell.Services
 
             public void Dispose()
             {
-                screen.PropertyChanged -= OnPropertyChanged;
-                host.ScreenClosed -= OnScreenClosed;
-                host = null;
+                _screen.PropertyChanged -= OnPropertyChanged;
+                _host.ScreenClosed -= OnScreenClosed;
+                _host = null;
 
-                var disposable = screen as IDisposable;
+                var disposable = _screen as IDisposable;
                 if (disposable != null)
                     disposable.Dispose();
             }
@@ -399,7 +399,7 @@ namespace XShell.Services
 
             public override string ToString()
             {
-                return string.Format("View: {0}, Logic: {1}", view, screen);
+                return string.Format("View: {0}, Logic: {1}", _view, _screen);
             }
         }
 

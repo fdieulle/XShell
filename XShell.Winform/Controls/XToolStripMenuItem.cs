@@ -15,15 +15,15 @@ namespace XShell.Winform.Controls
             set { Text = value; }
         }
 
-        private string iconFilePath;
+        private string _iconFilePath;
         public string IconFilePath
         {
-            get { return iconFilePath; }
+            get { return _iconFilePath; }
             set
             {
-                iconFilePath = value;
-                if (iconFilePath != null && File.Exists(iconFilePath))
-                    Image = new Bitmap(iconFilePath);
+                _iconFilePath = value;
+                if (_iconFilePath != null && File.Exists(_iconFilePath))
+                    Image = new Bitmap(_iconFilePath);
                 else Image = null;
             }
         }

@@ -15,15 +15,15 @@ namespace XShell.Wpf.Controls
             set { Header = value; }
         }
 
-        private string iconFilePath;
+        private string _iconFilePath;
         public string IconFilePath
         {
-            get { return iconFilePath; }
+            get { return _iconFilePath; }
             set
             {
-                if (iconFilePath == value) return;
-                iconFilePath = value;
-                Icon = !string.IsNullOrEmpty(iconFilePath) ? new Image { Source = new BitmapImage(new Uri(iconFilePath)) } : null;
+                if (_iconFilePath == value) return;
+                _iconFilePath = value;
+                Icon = !string.IsNullOrEmpty(_iconFilePath) ? new Image { Source = new BitmapImage(new Uri(_iconFilePath)) } : null;
             }
         }
 

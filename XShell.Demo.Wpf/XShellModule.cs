@@ -13,29 +13,29 @@ namespace XShell.Demo.Wpf
 {
     public class XShellModule
     {
-        private readonly IContainer container;
+        private readonly IContainer _container;
 
         public XShellModule(MainWindow window)
         {
-            container = new Container();
+            _container = new Container();
 
             var persistenceService = new PersistenceService();
             var menuManager = new DefaultMenuManager(window.MainMenu);
             var screenManager = new WindowAvalonDockScreenManager(
                 window, window.MainPane,
-                (p1, p2) => container.Register(p1, p2, setup: Setup.With(allowDisposableTransient: true)),
-                container.Resolve, menuManager, persistenceService);
+                (p1, p2) => _container.Register(p1, p2, setup: Setup.With(allowDisposableTransient: true)),
+                _container.Resolve, menuManager, persistenceService);
 
-            container.RegisterInstance<IPersistenceService>(persistenceService);
-            container.RegisterInstance<IMenuManager>(menuManager);
-            container.RegisterInstance<IScreenContainer>(screenManager);
-            container.RegisterInstance<IScreenManager>(screenManager);
-            container.Register<IViewBox, ViewBox>();
-            container.Register<IUiDispatcher, UiDispatcher>(Reuse.Singleton);
-            container.Register<IBackgroundTaskManager, BackgroundTaskManager>(Reuse.Singleton);
-            container.RegisterInstance(new StatusBarManager(window.BackgroundWorkerView, container.Resolve<IBackgroundTaskManager>()));
+            _container.RegisterInstance<IPersistenceService>(persistenceService);
+            _container.RegisterInstance<IMenuManager>(menuManager);
+            _container.RegisterInstance<IScreenContainer>(screenManager);
+            _container.RegisterInstance<IScreenManager>(screenManager);
+            _container.Register<IViewBox, ViewBox>();
+            _container.Register<IUiDispatcher, UiDispatcher>(Reuse.Singleton);
+            _container.Register<IBackgroundTaskManager, BackgroundTaskManager>(Reuse.Singleton);
+            _container.RegisterInstance(new StatusBarManager(window.BackgroundWorkerView, _container.Resolve<IBackgroundTaskManager>()));
 
-            RegisterServices(container);
+            RegisterServices(_container);
             RegisterScreens(screenManager);
 
             window.Closed += OnClosed;
@@ -56,7 +56,7 @@ namespace XShell.Demo.Wpf
 
         private void OnClosed(object sender, EventArgs e)
         {
-            container.Dispose();
+            _container.Dispose();
         }
     }
 }

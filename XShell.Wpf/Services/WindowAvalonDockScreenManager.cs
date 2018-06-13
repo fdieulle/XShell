@@ -10,8 +10,8 @@ namespace XShell.Wpf.Services.Shell
 {
     public class WindowAvalonDockScreenManager : AbstractScreenManager<FrameworkElement>
     {
-        private readonly Window mainWindow;
-        private readonly LayoutDocumentPane dockingManager;
+        private readonly Window _mainWindow;
+        private readonly LayoutDocumentPane _dockingManager;
 
         public WindowAvalonDockScreenManager(
             Window mainWindow, LayoutDocumentPane dockingManager,
@@ -19,8 +19,8 @@ namespace XShell.Wpf.Services.Shell
             IMenuManager menuManager = null, IPersistenceService persistenceService = null)
             : base(register, resolve, menuManager, persistenceService)
         {
-            this.mainWindow = mainWindow;
-            this.dockingManager = dockingManager;
+            _mainWindow = mainWindow;
+            _dockingManager = dockingManager;
         }
 
         #region Overrides of AbstractScreenManager<FrameworkElement>
@@ -28,14 +28,14 @@ namespace XShell.Wpf.Services.Shell
         protected override IScreenHost CreateScreen(FrameworkElement view)
         {
             var doc = new XDockContent { Content = view };
-            dockingManager.Children.Add(doc);
+            _dockingManager.Children.Add(doc);
             doc.IsActive = true;
             return doc;
         }
 
         protected override IScreenHost CreatePopup(FrameworkElement view, PopupAttribute attribute)
         {
-            var popup = new XWindow { Owner = mainWindow, Content = view };
+            var popup = new XWindow { Owner = _mainWindow, Content = view };
 
             if (attribute != null)
                 SetupPopup(popup, attribute);

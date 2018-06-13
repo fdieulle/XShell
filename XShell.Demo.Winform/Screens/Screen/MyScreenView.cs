@@ -9,8 +9,8 @@ namespace XShell.Demo.Winform.Screens.Screen
         {
             InitializeComponent();
 
-            this.browseFilePathButton.Bind(logic.BrowseCommand, bindName: true, toolTip: "Browse file path ...");
-            this.filePathTextBox.Bind(logic, nameof(logic.FilePath));
+            browseFilePathButton.Bind(logic.BrowseCommand, bindName: true, toolTip: "Browse file path ...");
+            filePathTextBox.Bind(logic, nameof(logic.FilePath));
         }
     }
 }

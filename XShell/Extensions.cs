@@ -241,11 +241,11 @@ namespace XShell
                                    .Invoke(null, new object[] { ctor });
             }
 
-            throw new ArgumentException("Invalid view type. It should has a ctor to inject the logic instance as follow: public " + viewType.Name + "(" + idType.Name + " logic) {...}", "viewType");
+            throw new ArgumentException("Invalid view type. It should has a ctor to inject the logic instance as follow: public " + viewType.Name + "(" + idType.Name + " logic) {...}", nameof(viewType));
         }
 
         private static readonly MethodInfo createFactoryMethod = MethodBase.GetCurrentMethod()
-            .DeclaringType.GetMethod("CreateFactory", BindingFlags.NonPublic | BindingFlags.Static);
+            .DeclaringType?.GetMethod("CreateFactory", BindingFlags.NonPublic | BindingFlags.Static);
         // ReSharper disable UnusedMember.Local
         private static Func<TBaseParameter, TBaseObject> CreateFactory<TBaseParameter, TBaseObject, TParameter, TObject>(ConstructorInfo ctor)
             // ReSharper restore UnusedMember.Local

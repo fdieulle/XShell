@@ -6,11 +6,11 @@ namespace XShell.Demo.Winform.Screens.ScreenWithoutInterface
     [ScreenMenuItem("Screens/Screen without Interface")]
     public class ScreenWithoutInterfaceController : AbstractLogic
     {
-        private readonly IService service;
+        private readonly IService _service;
 
         public ScreenWithoutInterfaceController(IService service)
         {
-            this.service = service;
+            _service = service;
 
             Title = "Screen without Interface";
         }
