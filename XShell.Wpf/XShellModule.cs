@@ -2,10 +2,11 @@
 using System.IO;
 using DryIoc;
 using XShell.Services;
-using XShell.Winform.Controls;
-using XShell.Winform.Services;
+using XShell.Wpf.Controls;
+using XShell.Wpf.Services;
+using XShell.Wpf.Services.Shell;
 
-namespace XShell.Winform
+namespace XShell.Wpf
 {
     public abstract class XShellModule : IDisposable
     {
@@ -13,7 +14,7 @@ namespace XShell.Winform
 
         protected IContainer Container { get; }
 
-        public MainForm MainWindow { get; private set; }
+        public MainWindow MainWindow { get; private set; }
 
         protected XShellModule(string name, IContainer container = null)
         {
@@ -47,24 +48,24 @@ namespace XShell.Winform
 
         private void RunUi()
         {
-            MainWindow = new MainForm
+            MainWindow = new MainWindow
             {
-                Text = $@"{Name} {GetRunningVersion()}"
+                Title = $@"{Name} {GetRunningVersion()}"
             };
-            
-            var menuManager = new ToolStripMenuManager(MainWindow.MainMenuStrip);
-            var screenManager = new FormDockPanelScreenManager(MainWindow, MainWindow.MainDockPanel,
-                (p1, p2) => Container.Register(p1, p2, setup: Setup.With(allowDisposableTransient: true)), 
-                Container.Resolve,
-                menuManager, Container.Resolve<IPersistenceService>());
+
+            var menuManager = new DefaultMenuManager(MainWindow.Menu);
+            var screenManager = new WindowAvalonDockScreenManager(
+                MainWindow, MainWindow.Docker,
+                (p1, p2) => Container.Register(p1, p2, setup: Setup.With(allowDisposableTransient: true)),
+                Container.Resolve, menuManager, Container.Resolve<IPersistenceService>());
 
             Container.UseInstance<IMenuManager>(menuManager);
             Container.UseInstance<IScreenContainer>(screenManager);
             Container.UseInstance<IScreenManager>(screenManager);
-            Container.UseInstance<IUiDispatcher>(new UiDispatcher(MainWindow));
-            Container.Register<IViewBox, ViewBox>();
+            Container.Register<IUiDispatcher, UiDispatcher>(Reuse.Singleton);
+            Container.Register<IViewBox, ViewBox>(Reuse.Singleton);
             Container.Register<IBackgroundTaskManager, BackgroundTaskManager>(Reuse.Singleton);
-            Container.UseInstance(new StatusBarManager(MainWindow.StatusProgressBar, MainWindow.StatusProgressLabel, Container.Resolve<IBackgroundTaskManager>()));
+            Container.UseInstance(new StatusBarManager(MainWindow.BackgroundWorker, Container.Resolve<IBackgroundTaskManager>()));
 
             SetupScreens(screenManager);
         }

@@ -14,7 +14,7 @@ namespace XShell.Demo.Winform
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var module = new MyShellModule();
+            var module = new MyXShellModule();
             module.Run();
 
             Application.Run(module.MainWindow);
