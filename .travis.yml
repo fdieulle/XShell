@@ -1,0 +1,8 @@
+language: csharp
+solution: XShell.sln
+install:
+ - nuget restore XShell.sln
+ - nuget install NUnit.Console -Version 3.10.0 -OutputDirectory testrunner
+script:
+ - msbuild /p:Configuration=Release XShell.sln
+ - mono ./testrunner/NUnit.ConsoleRunner.3.10.0/tools/nunit3-console.exe ./XShell.Tests/bin/Release/net472/XShell.Tests.dll
