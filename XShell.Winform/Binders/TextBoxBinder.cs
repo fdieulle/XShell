@@ -42,17 +42,11 @@ namespace XShell.Winform.Binders
                 ? text : $@"{Control.Text}{Environment.NewLine}{text}";
         }
 
-        private void OnControlTextChanged(object sender, EventArgs e)
-        {
-            UpdateDataContext(Control.Text);
-        }
+        private void OnControlTextChanged(object sender, EventArgs e) => UpdateDataContext(Control.Text);
 
         #region Overrides of AbstractOneWayBinder<TextBox,string>
 
-        protected override void UpdateControl(string value)
-        {
-            Control.Text = value;
-        }
+        protected override void UpdateControl(string value) => Control.Text = value;
 
         protected override void Disposing()
         {

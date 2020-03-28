@@ -3,7 +3,7 @@
 namespace XShell
 {
     /// <summary>
-    /// This service allows you to execute big tasks in asynchrone. 
+    /// This service allows you to execute big tasks in asynchronously. 
     /// Each steps of your task is reported in the main ui thread to allows you to display 
     /// the state of your asynchronous task.
     /// </summary>
@@ -30,7 +30,7 @@ namespace XShell
         /// The report callback is send in the main ui thread.
         /// </summary>
         /// <typeparam name="TResult">Background work result type.</typeparam>
-        /// <param name="onWork">Function which is executed asyncronously. The first parameter allows you to report the state of the background work. The 2nd parameter is the state given on the Dispatch method.</param>
+        /// <param name="onWork">Function which is executed asynchronously. The first parameter allows you to report the state of the background work. The 2nd parameter is the state given on the Dispatch method.</param>
         /// <param name="onCompleted">Callback called in the main ui thread when the work is finished. We provide the result and the state as parameters.</param>
         /// <param name="state">User instance state forward on the onWork and onComplete callbacks.</param>
         void Dispatch<TResult>(Func<IBackgroundTask, object, TResult> onWork, Action<TResult, object> onCompleted = null, object state = null);
@@ -39,7 +39,7 @@ namespace XShell
         /// Run asynchronously a task in another thread with an indeterminate time of work. 
         /// </summary>
         /// <typeparam name="TResult">Background work result type.</typeparam>
-        /// <param name="onWork">Function which is executed asyncronously. The 1st parameter is the state given on the Dispatch method.</param>
+        /// <param name="onWork">Function which is executed asynchronously. The 1st parameter is the state given on the Dispatch method.</param>
         /// <param name="onCompleted">Callback called in the main ui thread when the work is finished. We provide the result and the state as parameters.</param>
         /// <param name="state">User instance state forward on the onWork and onComplete callbacks.</param>
         void Dispatch<TResult>(Func<object, TResult> onWork, Action<TResult, object> onCompleted = null, object state = null);

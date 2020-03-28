@@ -11,14 +11,14 @@ namespace XShell.Wpf.Controls
 
         public string DisplayName
         {
-            get { return Header as string; }
-            set { Header = value; }
+            get => Header as string;
+            set => Header = value;
         }
 
         private string _iconFilePath;
         public string IconFilePath
         {
-            get { return _iconFilePath; }
+            get => _iconFilePath;
             set
             {
                 if (_iconFilePath == value) return;
@@ -31,8 +31,8 @@ namespace XShell.Wpf.Controls
 
         public new bool IsVisible
         {
-            get { return Visibility == Visibility.Visible; }
-            set { Visibility = value ? Visibility.Visible : Visibility.Collapsed; }
+            get => Visibility == Visibility.Visible;
+            set => Visibility = value ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion
@@ -41,9 +41,7 @@ namespace XShell.Wpf.Controls
         {
             base.OnClick();
 
-            var action = Action;
-            if (action != null)
-                action();
+            Action?.Invoke();
         }
     }
 }

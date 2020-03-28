@@ -47,22 +47,15 @@ namespace XShell.Services
             }
         }
 
-        private void RaiseTaskStarted(IBackgroundTask task, object state)
-        {
-            var handler = TaskStarted;
-            if (handler != null) handler(task, state);
-        }
+        private void RaiseTaskStarted(IBackgroundTask task, object state) 
+            => TaskStarted?.Invoke(task, state);
 
-        private void RaiseReportStateChanged(double percent, object state)
-        {
-            var handler = ReportStateChanged;
-            if (handler != null) handler(percent, state);
-        }
+        private void RaiseReportStateChanged(double percent, object state) 
+            => ReportStateChanged?.Invoke(percent, state);
 
         private void RaiseTaskCompleted(IBackgroundTask task, object state)
         {
-            var handler = TaskCompleted;
-            if (handler != null) handler(task, state);
+            TaskCompleted?.Invoke(task, state);
 
             lock (_tasks)
             {
@@ -106,8 +99,7 @@ namespace XShell.Services
                         var result = _onWork(this, s);
                         _uiDispatcher.Dispatch(() =>
                         {
-                            if (_onCompleted != null)
-                                _onCompleted(result, s);
+                            _onCompleted?.Invoke(result, s);
 
                             _manager.RaiseTaskCompleted(this, _state);
                         });

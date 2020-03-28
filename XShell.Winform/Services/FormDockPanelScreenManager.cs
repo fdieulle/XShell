@@ -98,10 +98,7 @@ namespace XShell.Winform.Services
             popup.TopMost = attribute.TopMost;
         }
 
-        protected override void OnException(string message, Exception e)
-        {
-            throw e;
-        }
+        protected override void OnException(string message, Exception e) => throw e;
 
         #endregion
     }

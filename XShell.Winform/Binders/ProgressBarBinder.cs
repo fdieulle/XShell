@@ -27,10 +27,6 @@ namespace XShell.Winform.Binders
                 Control.Minimum = _getMaxValue(DataContext);
         }
 
-        #region Overrides of AbstractOneWayBinder<ProgressBar,double>
-
-        #region Overrides of AbstractOneWayBinder<ProgressBar,int>
-
         protected override void OnDataContextPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnDataContextPropertyChanged(sender, e);
@@ -54,13 +50,6 @@ namespace XShell.Winform.Binders
             }
         }
 
-        #endregion
-
-        protected override void UpdateControl(int value)
-        {
-            Control.Value = value;
-        }
-
-        #endregion
+        protected override void UpdateControl(int value) => Control.Value = value;
     }
 }

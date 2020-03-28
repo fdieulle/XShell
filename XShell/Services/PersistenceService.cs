@@ -36,9 +36,7 @@ namespace XShell.Services
 
             try
             {
-                var folder = Folder ?? @".\";
-                if (!Directory.Exists(folder))
-                    Directory.CreateDirectory(folder);
+                var folder = GetFolder();
 
                 // Process the persistence in 2 times to avoid to corrupt persisted files.
                 using (var ms = new MemoryStream())
@@ -66,9 +64,7 @@ namespace XShell.Services
         {
             try
             {
-                var folder = Folder ?? @".\";
-                if (!Directory.Exists(folder))
-                    Directory.CreateDirectory(folder);
+                var folder = GetFolder();
 
                 var sb = new StringBuilder();
                 sb.Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
@@ -85,10 +81,16 @@ namespace XShell.Services
             {}
         }
 
-        private static string GetFilePath(string folder, string name, string extension = "data")
+        private string GetFolder()
         {
-            return Path.Combine(folder ?? @".\", string.Format("{0}.{1}", name ?? string.Empty, extension ?? "data"));
+            var folder = Folder ?? @".\";
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+            return folder;
         }
+
+        private static string GetFilePath(string folder, string name, string extension = "data") 
+            => Path.Combine(folder ?? @".\", $"{name ?? string.Empty}.{extension ?? "data"}");
 
         #endregion
     }

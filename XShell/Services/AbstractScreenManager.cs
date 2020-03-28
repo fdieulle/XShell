@@ -68,23 +68,20 @@ namespace XShell.Services
         public void SetParameter(Type idType, string instanceId, object parameter)
         {
             var key = new NamedType(idType, instanceId);
-            ScreenHost host;
-            if (_screens.TryGetValue(key, out host))
+            if (_screens.TryGetValue(key, out var host))
                 host.SetParameter(parameter);
         }
 
         public object GetParameter(Type idType, string instanceId)
         {
             var key = new NamedType(idType, instanceId);
-            ScreenHost host;
-            return _screens.TryGetValue(key, out host) ? host.GetParameter() : null;
+            return _screens.TryGetValue(key, out var host) ? host.GetParameter() : null;
         }
 
         public void Close(Type idType, string instanceId = null)
         {
             var key = new NamedType(idType, instanceId);
-            ScreenHost host;
-            if (_screens.TryGetValue(key, out host))
+            if (_screens.TryGetValue(key, out var host))
                 host.Close();
         }
 
@@ -99,39 +96,34 @@ namespace XShell.Services
         private static void CheckParameters(Type idType, Type viewType, Type logicType)
         {
             if(idType == null)
-                throw new ArgumentNullException("idType");
+                throw new ArgumentNullException(nameof(idType));
             if (viewType == null)
-                throw new ArgumentNullException("viewType");
+                throw new ArgumentNullException(nameof(viewType));
             if (logicType == null)
-                throw new ArgumentNullException("logicType");
+                throw new ArgumentNullException(nameof(logicType));
 
             if (!idType.InheritsFrom(typeof(IScreen)))
-                throw new ArgumentException("The idType which allows you to resolve and display screen has to implement IScreen interface, but was: " + idType.FullName, "idType");
+                throw new ArgumentException("The idType which allows you to resolve and display screen has to implement IScreen interface, but was: " + idType.FullName, nameof(idType));
             if (!viewType.InheritsFrom(typeof(TBaseView)))
-                throw new ArgumentException("The viewType which allows you to resolve and display screen has to inherit from " + typeof(TBaseView).FullName + ", but was: " + viewType.FullName, "viewType");
+                throw new ArgumentException("The viewType which allows you to resolve and display screen has to inherit from " + typeof(TBaseView).FullName + ", but was: " + viewType.FullName, nameof(viewType));
             if (!logicType.InheritsFrom(idType))
-                throw new ArgumentException("The logicType which will resolve and display screen has to implement " + idType.FullName + " interface, but was: " + logicType.FullName, "logicType");
+                throw new ArgumentException("The logicType which will resolve and display screen has to implement " + idType.FullName + " interface, but was: " + logicType.FullName, nameof(logicType));
         }
 
         private void Show(Type idType, string instanceId, object parameter, bool isPopup)
         {
             var key = new NamedType(idType, instanceId);
-            ScreenHost host;
-            if (_screens.TryGetValue(key, out host))
+            if (_screens.TryGetValue(key, out var host))
             {
                 host.BringToFront(isPopup);
                 return;
             }
 
-            ScreenFactory factory;
-            if (!_factories.TryGetValue(key.Type, out factory)) return;
+            if (!_factories.TryGetValue(key.Type, out var factory)) return;
 
-            IScreen logic;
-            TBaseView view;
-            Exception e;
-            if (!factory.TryCreate(instanceId, parameter, out logic, out view, out e))
+            if (!factory.TryCreate(instanceId, parameter, out var logic, out var view, out var e))
             {
-                OnException(string.Format("Unable to create screen: {0}", key), e);
+                OnException($"Unable to create screen: {key}", e);
                 return;
             }
 
@@ -139,12 +131,11 @@ namespace XShell.Services
             _screens.Add(key, host);
             host.Closed += OnHostClosed;
 
-            var setupable = logic as IInternalScreen;
-            if(setupable != null)
-                setupable.Setup(host.Close);
+            if(logic is IInternalScreen internalScreen)
+                internalScreen.Setup(host.Close);
 
             if (!host.Restore(_persistenceService, out e))
-                OnException(string.Format("Unable to restore screen: {0}", key), e);
+                OnException($"Unable to restore screen: {key}", e);
 
             host.Show(isPopup);
         }
@@ -153,9 +144,8 @@ namespace XShell.Services
         {
             host.Closed -= OnHostClosed;
             _screens.Remove(host.Key);
-            Exception e;
-            if(!host.Persist(_persistenceService, out e))
-                OnException(string.Format("Unable to restore screen: {0}", host.Key), e);
+            if(!host.Persist(_persistenceService, out var e))
+                OnException($"Unable to restore screen: {host.Key}", e);
             host.Dispose();
         }
 
@@ -184,7 +174,7 @@ namespace XShell.Services
             private readonly Func<Type, object> _resolve;
             private readonly Func<IScreen, TBaseView> _factory;
 
-            public PopupAttribute PopupAttribute { get; private set; }
+            public PopupAttribute PopupAttribute { get; }
             
             public ScreenFactory(Type idType, Type viewType, Type logicType, Action<Type, Type> register, Func<Type, object> resolve, PopupAttribute popupAttribute)
             {
@@ -205,11 +195,10 @@ namespace XShell.Services
                 try
                 {
                     logic = _resolve(_idType) as IScreen;
-                    var setupable = logic as IInternalScreen;
-                    if (setupable != null)
+                    if (logic is IInternalScreen internalScreen)
                     {
-                        setupable.Setup(instanceId);
-                        setupable.Parameter = parameter;
+                        internalScreen.Setup(instanceId);
+                        internalScreen.Parameter = parameter;
                     }
 
                     view = _factory(logic);
@@ -285,24 +274,18 @@ namespace XShell.Services
                 }
             }
 
-            private void OnScreenClosed(IScreenHost screenHost)
-            {
-                var handler = Closed;
-                if (handler != null)
-                    handler(this);
-            }
+            private void OnScreenClosed(IScreenHost screenHost) 
+                => Closed?.Invoke(this);
 
             public void SetParameter(object parameter)
             {
-                var cast = _screen as IInternalScreen;
-                if (cast != null)
+                if (_screen is IInternalScreen cast)
                     cast.Parameter = parameter;
             }
 
             public object GetParameter()
             {
-                var cast = _screen as IInternalScreen;
-                return cast != null ? cast.Parameter : null;
+                return _screen is IInternalScreen cast ? cast.Parameter : null;
             }
 
             #region Persistency
@@ -314,9 +297,8 @@ namespace XShell.Services
                     ex = null;
                     if (svc == null) return true;
 
-                    var persistable = _view as IPersistable;
-                    if (persistable != null)
-                        svc.Restore(GetViewName(), _view as IPersistable);
+                    if (_view is IPersistable persistable)
+                        svc.Restore(GetViewName(), persistable);
                     
                     if (ReferenceEquals(_screen, _view)) return true; // In case of there is no screen type defined
 
@@ -341,8 +323,7 @@ namespace XShell.Services
                     ex = null;
                     if (svc == null) return true;
 
-                    var persistable = _view as IPersistable;
-                    if (persistable != null)
+                    if (_view is IPersistable persistable)
                         svc.Persist(GetViewName(), persistable);
                     if (ReferenceEquals(_screen, _view)) return true; // In case of there is no screen type defined
 
@@ -360,15 +341,9 @@ namespace XShell.Services
                 }
             }
 
-            private string GetViewName()
-            {
-                return string.Format("{0}_{1}_View", _key.Type, _key.Name);
-            }
+            private string GetViewName() => $"{_key.Type}_{_key.Name}_View";
 
-            private string GetLogicName()
-            {
-                return string.Format("{0}_{1}_Logic", _key.Type, _key.Name);
-            }
+            private string GetLogicName() => $"{_key.Type}_{_key.Name}_Logic";
 
             #endregion
 
@@ -390,17 +365,13 @@ namespace XShell.Services
                 _host.ScreenClosed -= OnScreenClosed;
                 _host = null;
 
-                var disposable = _screen as IDisposable;
-                if (disposable != null)
+                if (_screen is IDisposable disposable)
                     disposable.Dispose();
             }
 
             #endregion
 
-            public override string ToString()
-            {
-                return string.Format("View: {0}, Logic: {1}", _view, _screen);
-            }
+            public override string ToString() => $"View: {_view}, Logic: {_screen}";
         }
 
         #endregion

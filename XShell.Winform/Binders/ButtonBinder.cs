@@ -49,20 +49,13 @@ namespace XShell.Winform.Binders
             }
         }
 
-        private void OnCommandCanExecuteChanged(object sender, EventArgs e)
-        {
-            _button.Enabled = _command.CanExecute(_getParameter?.Invoke());
-        }
+        private void OnCommandCanExecuteChanged(object sender, EventArgs e) 
+            => _button.Enabled = _command.CanExecute(_getParameter?.Invoke());
 
-        private void OnButtonClick(object sender, EventArgs e)
-        {
-            _command.Execute(_getParameter?.Invoke());
-        }
+        private void OnButtonClick(object sender, EventArgs e) 
+            => _command.Execute(_getParameter?.Invoke());
 
-        private void OnButtonDisposed(object sender, EventArgs e)
-        {
-            Dispose();
-        }
+        private void OnButtonDisposed(object sender, EventArgs e) => Dispose();
 
         #region Implementation of IDisposable
 

@@ -148,8 +148,7 @@ namespace XShell.Core
 
                 var result = _canExecute(parameter);
 
-                if (_dynamicPredicates != null)
-                    _dynamicPredicates.ForEach(p => result &= p(parameter));
+                _dynamicPredicates?.ForEach(p => result &= p(parameter));
 
                 return result;
             }
@@ -173,12 +172,7 @@ namespace XShell.Core
         /// <summary>
         /// Force the command invalidation by calling canExecute predicate.
         /// </summary>
-        public void InvalidateCanExecute()
-        {
-            var handler = CanExecuteChanged;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
-        }
+        public void InvalidateCanExecute() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 
         public void AddCanExecute(Func<T, bool> predicate)
         {
@@ -225,10 +219,10 @@ namespace XShell.Core
             if (_adaptParameter != null)
                 return _adaptParameter(parameter);
 
-            if (parameter is T)
-                return (T)parameter;
+            if (parameter is T variable)
+                return variable;
 
-            return default(T);
+            return default;
         }
     }
 

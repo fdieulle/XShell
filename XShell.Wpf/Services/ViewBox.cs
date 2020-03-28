@@ -38,7 +38,6 @@ namespace XShell.Wpf.Services
         {
             switch(b)
             {
-                case ViewboxButtons.Ok:
                 default:
                     return MessageBoxButton.OK;
                 case ViewboxButtons.OkCancel:

@@ -2,7 +2,7 @@
 using System.Windows;
 using XShell.Wpf.Controls;
 
-namespace XShell.Wpf.Services.Shell
+namespace XShell.Wpf.Services
 {
     public class StatusBarManager : IDisposable
     {

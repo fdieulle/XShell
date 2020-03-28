@@ -8,7 +8,7 @@ namespace XShell.Winform.Binders
     public class ComboBoxBinder : AbstractBinder<ComboBox>
     {
         private readonly ICollectionSelector _selector;
-        private IDisposable _itemsSuscription;
+        private IDisposable _itemsSubscription;
 
         public ComboBoxBinder(ComboBox comboBox, ICollectionSelector selector)
             :base(comboBox)
@@ -22,10 +22,8 @@ namespace XShell.Winform.Binders
             _selector.PropertyChanged += OnSelectorPropertyChanged;
         }
 
-        private void OnComboBoxSelectedIndexChanged(object sender, EventArgs e)
-        {
-            _selector.SelectedIndex = Control.SelectedIndex;
-        }
+        private void OnComboBoxSelectedIndexChanged(object sender, EventArgs e) 
+            => _selector.SelectedIndex = Control.SelectedIndex;
 
         private void OnSelectorPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -46,13 +44,13 @@ namespace XShell.Winform.Binders
 
         private void UpdateItems()
         {
-            _itemsSuscription?.Dispose();
-            _itemsSuscription = Control.Items.Bind(_selector.Items);
+            _itemsSubscription?.Dispose();
+            _itemsSubscription = Control.Items.Bind(_selector.Items);
         }
 
         protected override void Disposing()
         {
-            _itemsSuscription?.Dispose();
+            _itemsSubscription?.Dispose();
 
             Control.SelectedIndexChanged -= OnComboBoxSelectedIndexChanged;
             _selector.PropertyChanged -= OnSelectorPropertyChanged;

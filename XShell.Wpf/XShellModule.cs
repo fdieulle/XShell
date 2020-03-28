@@ -4,7 +4,6 @@ using DryIoc;
 using XShell.Services;
 using XShell.Wpf.Controls;
 using XShell.Wpf.Services;
-using XShell.Wpf.Services.Shell;
 
 namespace XShell.Wpf
 {

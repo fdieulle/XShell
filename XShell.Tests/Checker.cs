@@ -14,15 +14,11 @@ namespace XShell.Tests
             Assert.AreEqual(name, data.Name);
         }
 
-        public static void Check(this Data x, Data y)
-        {
-            x.Check(y.Id, y.Name);
-        }
+        public static void Check(this Data x, Data y) 
+            => x.Check(y.Id, y.Name);
 
-        public static void CheckReference<T>(this T x, T y, bool equals = true)
-        {
-            Assert.AreEqual(equals, ReferenceEquals(x, y));
-        }
+        public static void CheckReference<T>(this T x, T y, bool equals = true) 
+            => Assert.AreEqual(equals, ReferenceEquals(x, y));
 
         public static Queue<T> CheckNext<T>(this Queue<T> queue, Action<T> check)
         {
@@ -36,15 +32,11 @@ namespace XShell.Tests
             return queue;
         }
 
-        public static void IsEmpty<T>(this IEnumerable<T> collection)
-        {
-            Assert.AreEqual(0, collection.Count(), "Count");
-        }
+        public static void IsEmpty<T>(this IEnumerable<T> collection) 
+            => Assert.AreEqual(0, collection.Count(), "Count");
 
-        public static T Next<T>(this Queue<T> queue)
-        {
-            return queue.Dequeue();
-        }
+        public static T Next<T>(this Queue<T> queue) 
+            => queue.Dequeue();
 
         public static T CheckProperty<T, TProperty>(this T data, Func<T, TProperty> getter, TProperty value,
                                                        string message = null)
@@ -59,10 +51,8 @@ namespace XShell.Tests
             return command;
         }
 
-        public static void Is<T>(this T value, T expected, string message = null)
-        {
-            Assert.AreEqual(expected, value, message);
-        }
+        public static void Is<T>(this T value, T expected, string message = null) 
+            => Assert.AreEqual(expected, value, message);
     }
 
     public class Data
@@ -71,10 +61,7 @@ namespace XShell.Tests
 
         public string Name { get; set; }
 
-        public Data()
-        {
-            
-        }
+        public Data() { }
 
         public Data(int id, string name)
         {

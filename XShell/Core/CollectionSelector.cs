@@ -100,7 +100,7 @@ namespace XShell.Core
             if (_items == null) return;
 
             _skipIndexOf = true;
-            SelectedItem = newValue < 0 || newValue > _items.Count ? default(T) : _items[newValue];
+            SelectedItem = newValue < 0 || newValue > _items.Count ? default : _items[newValue];
             _skipIndexOf = false;
         }
 

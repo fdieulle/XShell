@@ -48,13 +48,13 @@ namespace XShell.Core
             }
         }
 
-        public IRelayCommand ApplyCommand { get; private set; }
+        public IRelayCommand ApplyCommand { get; }
 
-        public IRelayCommand CancelCommand { get; private set; }
+        public IRelayCommand CancelCommand { get; }
 
         public ObjectEditor(
             Func<T, T> clone = null,
-            T data = default(T))
+            T data = default)
         {
             _clone = clone ?? (p => p);
             _origin = data;

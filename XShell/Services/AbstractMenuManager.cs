@@ -19,8 +19,7 @@ namespace XShell.Services
             foreach (var item in split)
             {
                 if(string.IsNullOrEmpty(item)) continue;
-                Node child;
-                if (!node._children.TryGetValue(item, out child))
+                if (!node._children.TryGetValue(item, out var child))
                 {
                     var menuItem = CreateMenuItem(node._item);
                     menuItem.DisplayName = item;
@@ -46,8 +45,7 @@ namespace XShell.Services
             foreach (var item in split)
             {
                 if (string.IsNullOrEmpty(item)) continue;
-                Node child;
-                if (!node._children.TryGetValue(item, out child))
+                if (!node._children.TryGetValue(item, out var child))
                     return null;
 
                 node = child;
@@ -63,14 +61,13 @@ namespace XShell.Services
             foreach (var item in split)
             {
                 if (string.IsNullOrEmpty(item)) continue;
-                Node child;
-                if (!node._children.TryGetValue(item, out child))
+                if (!node._children.TryGetValue(item, out var child))
                     return;
 
                 node = child;
             }
 
-            DeleteMenuItem(node._parent != null ? node._parent._item : null, node._item);
+            DeleteMenuItem(node._parent?._item, node._item);
         }
 
         #endregion

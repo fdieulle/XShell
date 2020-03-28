@@ -10,7 +10,7 @@ namespace XShell.Winform.Binders
 {
     public static class Binder
     {
-        private static readonly ToolTip globalTootlTip = new ToolTip();
+        private static readonly ToolTip globalToolTip = new ToolTip();
 
         /// <summary>
         /// Binds a <see cref="IRelayCommand"/> to a <see cref="Button"/>.
@@ -23,10 +23,8 @@ namespace XShell.Winform.Binders
         /// <returns>Returns an <see cref="IDisposable"/> instance. Dispose it to ends binding.</returns>
         public static IDisposable Bind(this Button button, 
             IRelayCommand command, Func<object> getParameter = null,
-            bool bindName = false, string toolTip = null)
-        {
-            return new ButtonBinder(button, command, getParameter, bindName, globalTootlTip, toolTip);
-        }
+            bool bindName = false, string toolTip = null) 
+            => new ButtonBinder(button, command, getParameter, bindName, globalToolTip, toolTip);
 
         /// <summary>
         /// Binds a data context property to a <see cref="Label.Text"/>.
@@ -35,10 +33,8 @@ namespace XShell.Winform.Binders
         /// <param name="dataContext">Data context which provides the property name.</param>
         /// <param name="propertyName">Property name from data context.</param>
         /// <returns>Returns an <see cref="IDisposable"/> instance. Dispose it to ends binding.</returns>
-        public static IDisposable Bind(this Label label, object dataContext, string propertyName)
-        {
-            return new LabelBinder(label, dataContext, propertyName);
-        }
+        public static IDisposable Bind(this Label label, object dataContext, string propertyName) 
+            => new LabelBinder(label, dataContext, propertyName);
 
         /// <summary>
         /// Binds a data context property to a <see cref="TextBox.Text"/>.
@@ -48,22 +44,18 @@ namespace XShell.Winform.Binders
         /// <param name="propertyName">Property name from data context.</param>
         /// <param name="allowDragDrop">Defines if the <see cref="TextBox"/> allows drag and drop behavior.</param>
         /// <returns>Returns an <see cref="IDisposable"/> instance. Dispose it to ends binding.</returns>
-        public static IDisposable Bind(this TextBox textBox, object dataContext, string propertyName, bool allowDragDrop = false)
-        {
-            return new TextBoxBinder(textBox, dataContext, propertyName, allowDragDrop);
-        }
+        public static IDisposable Bind(this TextBox textBox, object dataContext, string propertyName, bool allowDragDrop = false) 
+            => new TextBoxBinder(textBox, dataContext, propertyName, allowDragDrop);
 
         /// <summary>
         /// Binds a <see cref="IList"/> instance to another <see cref="IEnumerable"/> source.
-        /// Usefull if the source implements <see cref="INotifyCollectionChanged"/> interface.
+        /// Useful if the source implements <see cref="INotifyCollectionChanged"/> interface.
         /// </summary>
         /// <param name="view">view</param>
         /// <param name="source">source</param>
         /// <returns>Returns an <see cref="IDisposable"/> instance. Dispose it to ends binding.</returns>
-        public static IDisposable Bind(this IList view, IEnumerable source)
-        {
-            return view == null ? AnonymousDisposable.Empty : new ListBinder(view, source);
-        }
+        public static IDisposable Bind(this IList view, IEnumerable source) 
+            => view == null ? AnonymousDisposable.Empty : new ListBinder(view, source);
 
         /// <summary>
         /// Binds a <see cref="ICollectionSelector"/> to a <see cref="ComboBox"/>.
@@ -71,12 +63,8 @@ namespace XShell.Winform.Binders
         /// <param name="comboBox"><see cref="TextBox"/> to apply binding.</param>
         /// <param name="selector"><see cref="ICollectionSelector"/> to bind.</param>
         /// <returns>Returns an <see cref="IDisposable"/> instance. Dispose it to ends binding.</returns>
-        public static IDisposable Bind(this ComboBox comboBox, ICollectionSelector selector)
-        {
-            if (comboBox == null) return AnonymousDisposable.Empty;
-
-            return new ComboBoxBinder(comboBox, selector);
-        }
+        public static IDisposable Bind(this ComboBox comboBox, ICollectionSelector selector) 
+            => comboBox == null ? AnonymousDisposable.Empty : new ComboBoxBinder(comboBox, selector);
 
         /// <summary>
         /// Binds a data context property to a <see cref="ProgressBar.Value"/>.
@@ -88,21 +76,15 @@ namespace XShell.Winform.Binders
         /// <param name="maxPropertyName">Property name from data context to bind on <see cref="ProgressBar.Maximum"/>.</param>
         /// <returns>Returns an <see cref="IDisposable"/> instance. Dispose it to ends binding.</returns>
         public static IDisposable Bind(this ProgressBar progressBar, object dataContext, string propertyName,
-            string minPropertyName = null, string maxPropertyName = null)
-        {
-            if (progressBar == null) return AnonymousDisposable.Empty;
-
-            return new ProgressBarBinder(progressBar, dataContext, propertyName, minPropertyName, maxPropertyName);
-        }
+            string minPropertyName = null, string maxPropertyName = null) 
+            => progressBar == null ? AnonymousDisposable.Empty : new ProgressBarBinder(progressBar, dataContext, propertyName, minPropertyName, maxPropertyName);
 
         #region Reflection 
 
         private static readonly Dictionary<Type, Dictionary<string, PropertyAccessor>>  typesMapping = new Dictionary<Type, Dictionary<string, PropertyAccessor>>();
 
-        public static Func<object, TProperty> BuildPropertyGetter<TProperty>(this object dataContext, string propertyName)
-        {
-            return dataContext.GetType().BuildPropertyGetter<TProperty>(propertyName);
-        }
+        public static Func<object, TProperty> BuildPropertyGetter<TProperty>(this object dataContext, string propertyName) 
+            => dataContext.GetType().BuildPropertyGetter<TProperty>(propertyName);
 
         public static Func<object, TProperty> BuildPropertyGetter<TProperty>(this Type type, string propertyName)
         {
@@ -136,10 +118,8 @@ namespace XShell.Winform.Binders
             return p => getPropertyValue((TType) p);
         }
 
-        public static Action<object, TProperty> BuildPropertySetter<TProperty>(this object dataContext, string propertyName)
-        {
-            return dataContext.GetType().BuildPropertySetter<TProperty>(propertyName);
-        }
+        public static Action<object, TProperty> BuildPropertySetter<TProperty>(this object dataContext, string propertyName) 
+            => dataContext.GetType().BuildPropertySetter<TProperty>(propertyName);
 
         public static Action<object, TProperty> BuildPropertySetter<TProperty>(this Type type, string propertyName)
         {
@@ -181,19 +161,10 @@ namespace XShell.Winform.Binders
 
             public Delegate Setter { get; set; }
 
-            public PropertyAccessor(string name)
-            {
-                _name = name;
-            }
+            public PropertyAccessor(string name) 
+                => _name = name;
 
-            #region Overrides of Object
-
-            public override string ToString()
-            {
-                return _name;
-            }
-
-            #endregion
+            public override string ToString() => _name;
         }
 
         #endregion

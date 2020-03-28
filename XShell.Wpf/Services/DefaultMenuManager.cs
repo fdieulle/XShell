@@ -2,16 +2,13 @@
 using XShell.Services;
 using XShell.Wpf.Controls;
 
-namespace XShell.Wpf.Services.Shell
+namespace XShell.Wpf.Services
 {
     public class DefaultMenuManager : AbstractMenuManager<XMenuItem>
     {
         private readonly Menu _menu;
 
-        public DefaultMenuManager(Menu menu)
-        {
-            _menu = menu;
-        }
+        public DefaultMenuManager(Menu menu) => _menu = menu;
 
         #region Overrides of AbstractMenuManager<XMenuItem>
 

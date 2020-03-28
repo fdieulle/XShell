@@ -9,20 +9,20 @@ namespace XShell.Wpf.Controls
     {
         public bool IsIndeterminate
         {
-            get { return ProgressBar.IsIndeterminate; }
-            set { ProgressBar.IsIndeterminate = value; }
+            get => ProgressBar.IsIndeterminate;
+            set => ProgressBar.IsIndeterminate = value;
         }
 
         public double Percent
         {
-            get { return ProgressBar.Value; }
-            set { ProgressBar.Value = value; }
+            get => ProgressBar.Value;
+            set => ProgressBar.Value = value;
         }
 
         public string State
         {
-            get { return ProgressState.Text; }
-            set { ProgressState.Text = value; }
+            get => ProgressState.Text;
+            set => ProgressState.Text = value;
         }
 
         public BackgroundTaskView()

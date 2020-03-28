@@ -7,18 +7,8 @@ namespace XShell.Winform.Services
     {
         private readonly Control _control;
 
-        public UiDispatcher(Control control)
-        {
-            _control = control;
-        }
+        public UiDispatcher(Control control) => _control = control;
 
-        #region Implementation of IUiDispatcher
-
-        public void Dispatch(Action action)
-        {
-            _control.BeginInvoke(action);
-        }
-
-        #endregion
+        public void Dispatch(Action action) => _control.BeginInvoke(action);
     }
 }

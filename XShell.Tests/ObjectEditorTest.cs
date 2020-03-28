@@ -10,7 +10,7 @@ namespace XShell.Tests
         [Test]
         public void Test()
         {
-            var editor = new ObjectEditor<Data>(p => p != null ? p.Clone() : null);
+            var editor = new ObjectEditor<Data>(p => p?.Clone());
             
             var properties = new Queue<string>();
             var applyQueue = new Queue<T>();
@@ -42,7 +42,8 @@ namespace XShell.Tests
             editor.Editable.CheckReference(data, false);
             editor.Editable.Check(1, "Test");
 
-            cancelQueue.CheckNext(p => { p.OldValue.CheckReference(editable); p.NewValue.Check(data); });
+            var editable1 = editable;
+            cancelQueue.CheckNext(p => { p.OldValue.CheckReference(editable1); p.NewValue.Check(data); });
             cancelQueue.IsEmpty();
             properties.CheckNext(p => Assert.AreEqual("Editable", p));
             properties.IsEmpty();

@@ -9,11 +9,8 @@ namespace XShell.Wpf.Controls
         #region Implementation of IScreenHost
 
         public event Action<IScreenHost> ScreenClosed;
-        
-        public void BringToFront()
-        {
-            IsActive = true;
-        }
+
+        public void BringToFront() => IsActive = true;
 
         #endregion
 
@@ -21,9 +18,7 @@ namespace XShell.Wpf.Controls
         {
             base.OnClosed();
 
-            var handler = ScreenClosed;
-            if (handler != null)
-                handler(this);
+            ScreenClosed?.Invoke(this);
         }
     }
 }

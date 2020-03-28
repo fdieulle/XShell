@@ -2,11 +2,11 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using XShell.Wpf.Controls;
-using XShell.Services;
 using Xceed.Wpf.AvalonDock.Layout;
+using XShell.Services;
+using XShell.Wpf.Controls;
 
-namespace XShell.Wpf.Services.Shell
+namespace XShell.Wpf.Services
 {
     public class WindowAvalonDockScreenManager : AbstractScreenManager<FrameworkElement>
     {
@@ -56,7 +56,8 @@ namespace XShell.Wpf.Services.Shell
                 case StartupLocation.MousePosition:
                     popup.WindowStartupLocation = WindowStartupLocation.Manual;
                     var position = Mouse.GetPosition(Application.Current.MainWindow);
-                    position = Application.Current.MainWindow.PointToScreen(position);
+                    if (Application.Current.MainWindow != null)
+                        position = Application.Current.MainWindow.PointToScreen(position);
                     popup.Top = position.Y;
                     popup.Left = position.X;
                     break;

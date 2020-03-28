@@ -125,7 +125,7 @@ namespace XShell.Tests
             private readonly ConcurrentQueue<Action> _tasks = new ConcurrentQueue<Action>();
             private bool _isRunning = true;
 
-            public int ThreadId { get { return _thread.ManagedThreadId; } }
+            public int ThreadId => _thread.ManagedThreadId;
 
             public MockUiDispatcher()
             {
@@ -141,8 +141,7 @@ namespace XShell.Tests
 
                     while (_tasks.Count > 0)
                     {
-                        Action action;
-                        if (_tasks.TryDequeue(out action))
+                        if (_tasks.TryDequeue(out var action))
                             action();
                     }
 

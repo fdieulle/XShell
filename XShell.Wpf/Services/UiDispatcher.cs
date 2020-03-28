@@ -2,20 +2,13 @@
 using System.Windows;
 using System.Windows.Threading;
 
-namespace XShell.Wpf.Services.Shell
+namespace XShell.Wpf.Services
 {
     public class UiDispatcher : IUiDispatcher
     {
         private static readonly Dispatcher dispatcher = Application.Current != null 
             ? Application.Current.Dispatcher : Dispatcher.CurrentDispatcher;
 
-        #region Implementation of IUiDispatcher
-
-        public void Dispatch(Action action)
-        {
-            dispatcher.BeginInvoke(DispatcherPriority.Background, action);
-        }
-
-        #endregion
+        public void Dispatch(Action action) => dispatcher.BeginInvoke(DispatcherPriority.Background, action);
     }
 }
