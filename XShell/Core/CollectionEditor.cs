@@ -118,7 +118,7 @@ namespace XShell.Core
 
         private bool CanExecuteAddCommand(object parameter)
         {
-            return _allowAdd && items != null && (_itemFactory != null || hasDefaultCtor);
+            return _allowAdd && Items != null && (_itemFactory != null || hasDefaultCtor);
         }
 
         private void ExecuteAddCommand(object parameter)
@@ -130,8 +130,8 @@ namespace XShell.Core
                 newItem = Activator.CreateInstance<T>();
             else return;
 
-            items.Add(newItem);
-            SelectedIndex = items.Count - 1;
+            Items.Add(newItem);
+            SelectedIndex = Items.Count - 1;
         }
 
         #endregion
@@ -156,14 +156,14 @@ namespace XShell.Core
 
         private bool CanExecuteRemoveCommand(object parameter)
         {
-            return _allowRemove && items != null && _selectedIndex >= 0 && _selectedIndex < items.Count;
+            return _allowRemove && Items != null && _selectedIndex >= 0 && _selectedIndex < Items.Count;
         }
 
         private void ExecuteRemoveCommand(object parameter)
         {
-            var mem = Math.Min(_selectedIndex, items.Count - 2);
-            
-            items.RemoveAt(_selectedIndex);
+            var mem = Math.Min(_selectedIndex, Items.Count - 2);
+
+            Items.RemoveAt(_selectedIndex);
             
             _selectedIndex = -1;
             SelectedIndex = mem;
@@ -207,16 +207,16 @@ namespace XShell.Core
 
         private bool CanExecuteCloneCommand(object parameter)
         {
-            return _allowClone && (_itemCloner != null || implementsICloneable) && items != null && _selectedIndex >= 0 && _selectedIndex < items.Count;
+            return _allowClone && (_itemCloner != null || implementsICloneable) && Items != null && _selectedIndex >= 0 && _selectedIndex < Items.Count;
         }
 
         private void ExecuteCloneCommand(object parameter)
         {
             var cloned = _itemCloner != null 
-                ? _itemCloner(items[_selectedIndex]) : 
-                (T)((ICloneable)items[_selectedIndex]).Clone();
-            
-            items.Insert(_selectedIndex + 1, cloned);
+                ? _itemCloner(Items[_selectedIndex]) : 
+                (T)((ICloneable)Items[_selectedIndex]).Clone();
+
+            Items.Insert(_selectedIndex + 1, cloned);
             SelectedIndex = SelectedIndex + 1;
         }
 
@@ -245,23 +245,23 @@ namespace XShell.Core
 
         private bool CanExecuteMoveUpCommand(object parameter)
         {
-            return _allowMove && items != null && _selectedIndex > 0 && _selectedIndex < items.Count;
+            return _allowMove && Items != null && _selectedIndex > 0 && _selectedIndex < Items.Count;
         }
 
         private void ExecuteMoveUpCommand(object parameter)
         {
-            items.Move(_selectedIndex, _selectedIndex - 1);
+            Items.Move(_selectedIndex, _selectedIndex - 1);
             SelectedIndex = _selectedIndex - 1;
         }
 
         private bool CanExecuteMoveDownCommand(object parameter)
         {
-            return _allowMove && items != null && _selectedIndex >= 0 && _selectedIndex < items.Count - 1;
+            return _allowMove && Items != null && _selectedIndex >= 0 && _selectedIndex < Items.Count - 1;
         }
 
         private void ExecuteMoveDownCommand(object parameter)
         {
-            items.Move(_selectedIndex, _selectedIndex + 1);
+            Items.Move(_selectedIndex, _selectedIndex + 1);
             SelectedIndex = _selectedIndex + 1;
         }
 
@@ -287,12 +287,12 @@ namespace XShell.Core
 
         private bool CanExecuteClearCommand(object parameter)
         {
-            return _allowClear && items != null;
+            return _allowClear && Items != null;
         }
 
         private void ExecuteClearCommand(object parameter)
         {
-            items.Clear();
+            Items.Clear();
             SelectedIndex = -1;
         }
 
@@ -340,12 +340,12 @@ namespace XShell.Core
             var imported = _importer();
             if (imported == null) return;
 
-            if (items == null)
-                items = new ObservableCollection<T>(imported);
+            if (Items == null)
+                Items = new ObservableCollection<T>(imported);
             else
             {
                 foreach (var item in imported)
-                    items.Add(item);   
+                    Items.Add(item);   
             }
         }
 
@@ -385,12 +385,12 @@ namespace XShell.Core
 
         private bool CanExecuteExportCommand(object parameter)
         {
-            return _allowExport && items != null && _exporter != null;
+            return _allowExport && Items != null && _exporter != null;
         }
 
         private void ExecuteExportCommand(object parameter)
         {
-            _exporter(items);
+            _exporter(Items);
         }
 
         #endregion
