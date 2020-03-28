@@ -1,6 +1,4 @@
 ## XShell 
-[![Build Status](https://api.travis-ci.com/fdieulle/XShell.svg?branch=master)](https://travis-ci.com/fdieulle/XShell)
-
 Shell for any client application framework based on Ioc
 This framework allows you to build client applications easly by providing many services to manage your screens, menus, background tasks and more. It supports the 3 main design patterns used in client application: Mvc, Mvp and Mvvm.
 
