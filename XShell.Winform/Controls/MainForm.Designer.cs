@@ -1,4 +1,4 @@
-﻿namespace XShell.Demo.Winform
+﻿namespace XShell.Winform.Controls
 {
     partial class MainForm
     {
@@ -38,9 +38,11 @@
             // 
             // mainMenu
             // 
+            this.mainMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.mainMenu.Location = new System.Drawing.Point(0, 0);
             this.mainMenu.Name = "mainMenu";
-            this.mainMenu.Size = new System.Drawing.Size(284, 24);
+            this.mainMenu.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
+            this.mainMenu.Size = new System.Drawing.Size(426, 24);
             this.mainMenu.TabIndex = 0;
             this.mainMenu.Text = "mainMenu";
             // 
@@ -48,24 +50,27 @@
             // 
             this.mainDockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainDockPanel.Location = new System.Drawing.Point(0, 24);
+            this.mainDockPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.mainDockPanel.Name = "mainDockPanel";
-            this.mainDockPanel.Size = new System.Drawing.Size(284, 215);
+            this.mainDockPanel.Size = new System.Drawing.Size(426, 356);
             this.mainDockPanel.TabIndex = 1;
             // 
             // mainStatusBar
             // 
+            this.mainStatusBar.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.mainStatusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.progressBar,
             this.progressLabel});
-            this.mainStatusBar.Location = new System.Drawing.Point(0, 239);
+            this.mainStatusBar.Location = new System.Drawing.Point(0, 380);
             this.mainStatusBar.Name = "mainStatusBar";
-            this.mainStatusBar.Size = new System.Drawing.Size(284, 22);
+            this.mainStatusBar.Padding = new System.Windows.Forms.Padding(2, 0, 21, 0);
+            this.mainStatusBar.Size = new System.Drawing.Size(426, 22);
             this.mainStatusBar.TabIndex = 4;
             // 
             // progressBar
             // 
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(100, 16);
+            this.progressBar.Size = new System.Drawing.Size(150, 25);
             this.progressBar.Visible = false;
             // 
             // progressLabel
@@ -76,14 +81,15 @@
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.ClientSize = new System.Drawing.Size(426, 402);
             this.Controls.Add(this.mainDockPanel);
             this.Controls.Add(this.mainMenu);
             this.Controls.Add(this.mainStatusBar);
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.mainMenu;
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "MainForm";
             this.Text = "XShell Demo";
             this.mainStatusBar.ResumeLayout(false);
