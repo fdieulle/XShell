@@ -6,7 +6,7 @@ namespace XShell
     {
         void Display(Type idType, string instanceId = null, object parameter = null);
 
-        void Popup(Type idType, string instanceId = null, object parameter = null);
+        void Popup(Type idType, string instanceId = null, object parameter = null, PopupAttribute popupAttribute = null);
 
         void SetParameter(Type idType, string instanceId, object parameter);
 
@@ -14,6 +14,6 @@ namespace XShell
 
         void Close(Type idType, string instanceId = null);
 
-        void CloseAll(Type idType);
+        void CloseAll(Type idType = null);
     }
 }

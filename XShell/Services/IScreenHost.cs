@@ -11,5 +11,12 @@ namespace XShell.Services
         void Close();
 
         void BringToFront();
+
+        string GetPersistenceId();
+    }
+
+    public interface IPopupScreenHost : IScreenHost
+    {
+        RectangleSettings GetPositionAndSize();
     }
 }

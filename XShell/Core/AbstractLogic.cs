@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using XShell.Services;
 
 namespace XShell.Core
@@ -41,17 +42,22 @@ namespace XShell.Core
             }
         }
 
-        void IInternalScreen.Setup(string instanceId)
-        {
-            InstanceId = instanceId;
-        }
+        void IInternalScreen.Setup(string instanceId) => InstanceId = instanceId;
 
         internal virtual void Setup(object param) { }
 
-        void IInternalScreen.Setup(Action onClose)
-        {
-            _close = onClose;
-        }
+        void IInternalScreen.Setup(Action onClose) => _close = onClose;
+
+        void IInternalScreen.SerializeParameter(Stream stream) 
+            => InternalSerializeParameter(stream);
+
+        internal virtual void InternalSerializeParameter(Stream stream) { }
+
+        object IInternalScreen.DeserializeParameter(Stream stream) 
+            => InternalDeserializeParameter(stream);
+
+        internal virtual object InternalDeserializeParameter(Stream stream) 
+            => default;
 
         #endregion
 

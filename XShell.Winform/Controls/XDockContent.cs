@@ -6,11 +6,21 @@ namespace XShell.Winform.Controls
 {
     public class XDockContent : DockContent, IScreenHost
     {
+        private readonly string _persistenceId = Guid.NewGuid().ToString("N");
+
         #region Implementation of IScreenHost
 
         public event Action<IScreenHost> ScreenClosed;
 
-        public string Title { get { return Text; } set { Text = value; } }
+        public string Title { get => Text; set => Text = value; }
+
+        public string GetPersistenceId() => _persistenceId;
+
+        #endregion
+
+        #region Overrides of DockContent
+
+        protected override string GetPersistString() => _persistenceId;
 
         #endregion
 
@@ -18,8 +28,7 @@ namespace XShell.Winform.Controls
         {
             base.OnClosed(e);
 
-            var handler = ScreenClosed;
-            if (handler != null) handler(this);
+            ScreenClosed?.Invoke(this);
         }
     }
 }

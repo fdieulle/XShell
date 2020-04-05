@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Windows;
 using DryIoc;
 using XShell.Services;
 using XShell.Wpf.Controls;
@@ -35,7 +36,7 @@ namespace XShell.Wpf
         {
             var persistenceService = new PersistenceService
             {
-                Folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Name ?? "XShell")
+                Folder = Path.Combine(GetAppDataFolder(), "Data")
             };
 
             Container.UseInstance<IPersistenceService>(persistenceService);
@@ -58,11 +59,17 @@ namespace XShell.Wpf
                 (p1, p2) => Container.Register(p1, p2, setup: Setup.With(allowDisposableTransient: true)),
                 Container.Resolve, menuManager, Container.Resolve<IPersistenceService>());
 
+            Container.Register<IViewBox, ViewBox>(Reuse.Singleton);
+            var workspaceManager = new WorkspaceManager<FrameworkElement, XDockContent, XWindow>(MainWindow, screenManager, Container.Resolve<IViewBox>())
+            {
+                Folder = Path.Combine(GetAppDataFolder(), "Workspace")
+            };
+
+            Container.UseInstance<IWorkspaceManager>(workspaceManager);
             Container.UseInstance<IMenuManager>(menuManager);
             Container.UseInstance<IScreenContainer>(screenManager);
             Container.UseInstance<IScreenManager>(screenManager);
             Container.Register<IUiDispatcher, UiDispatcher>(Reuse.Singleton);
-            Container.Register<IViewBox, ViewBox>(Reuse.Singleton);
             Container.Register<IBackgroundTaskManager, BackgroundTaskManager>(Reuse.Singleton);
             Container.UseInstance(new StatusBarManager(MainWindow.BackgroundWorker, Container.Resolve<IBackgroundTaskManager>()));
 
@@ -72,6 +79,10 @@ namespace XShell.Wpf
         protected abstract void SetupScreens(IScreenContainer container);
 
         protected abstract void Initialize(IContainer container);
+
+        private string GetAppDataFolder()
+            => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                Name ?? "XShell");
 
         private string GetRunningVersion()
         {

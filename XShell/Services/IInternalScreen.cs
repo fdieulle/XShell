@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace XShell.Services
 {
@@ -9,5 +10,9 @@ namespace XShell.Services
         void Setup(string instanceId);
 
         void Setup(Action onClose);
+
+        void SerializeParameter(Stream stream);
+
+        object DeserializeParameter(Stream stream);
     }
 }

@@ -8,7 +8,7 @@ using XShell.Wpf.Controls;
 
 namespace XShell.Wpf.Services
 {
-    public class WindowAvalonDockScreenManager : AbstractScreenManager<FrameworkElement>
+    public class WindowAvalonDockScreenManager : AbstractScreenManager<FrameworkElement, XDockContent, XWindow>
     {
         private readonly Window _mainWindow;
         private readonly LayoutDocumentPane _dockingManager;
@@ -25,24 +25,26 @@ namespace XShell.Wpf.Services
 
         #region Overrides of AbstractScreenManager<FrameworkElement>
 
-        protected override IScreenHost CreateScreen(FrameworkElement view)
+        protected override XDockContent CreateScreen(FrameworkElement view) 
+            => new XDockContent { Content = view };
+
+        protected override void ShowScreen(XDockContent screen)
         {
-            var doc = new XDockContent { Content = view };
-            _dockingManager.Children.Add(doc);
-            doc.IsActive = true;
-            return doc;
+            _dockingManager.Children.Add(screen);
+            screen.IsActive = true;
         }
 
-        protected override IScreenHost CreatePopup(FrameworkElement view, PopupAttribute attribute)
+        protected override XWindow CreatePopup(FrameworkElement view, PopupAttribute attribute)
         {
             var popup = new XWindow { Owner = _mainWindow, Content = view };
 
             if (attribute != null)
                 SetupPopup(popup, attribute);
-
-            popup.Show();
+           
             return popup;
         }
+
+        protected override void ShowPopup(XWindow popup) => popup.Show();
 
         private void SetupPopup(Window popup, PopupAttribute attribute)
         {

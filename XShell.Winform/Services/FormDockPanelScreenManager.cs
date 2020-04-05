@@ -7,7 +7,7 @@ using XShell.Winform.Controls;
 
 namespace XShell.Winform.Services
 {
-    public class FormDockPanelScreenManager : AbstractScreenManager<Control>
+    public class FormDockPanelScreenManager : AbstractScreenManager<Control, XDockContent, XForm>
     {
         private readonly Form _mainForm;
         private readonly DockPanel _mainPanel;
@@ -26,29 +26,33 @@ namespace XShell.Winform.Services
 
         #region Overrides of AbstractScreenManager<TabPage>
 
-        protected override IScreenHost CreateScreen(Control view)
+        protected override XDockContent CreateScreen(Control view)
         {
-            var host = new XDockContent();
+            var screen = new XDockContent();
             view.Dock = DockStyle.Fill;
             view.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            host.Controls.Add(view);
-            host.Show(_mainPanel, DockState.Document);
-            return host;
+            screen.Controls.Add(view);
+            
+            return screen;
         }
 
-        protected override IScreenHost CreatePopup(Control view, PopupAttribute attribute)
+        protected override void ShowScreen(XDockContent screen) 
+            => screen.Show(_mainPanel, DockState.Document);
+
+        protected override XForm CreatePopup(Control view, PopupAttribute attribute)
         {
-            var host = new XForm();
+            var popup = new XForm();
             view.Dock = DockStyle.Fill;
             view.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            host.Controls.Add(view);
+            popup.Controls.Add(view);
 
             if(attribute != null)
-                SetupPopup(host, attribute);
-
-            host.Show(_mainForm);
-            return host;
+                SetupPopup(popup, attribute);
+            
+            return popup;
         }
+
+        protected override void ShowPopup(XForm popup) => popup.Show(_mainForm);
 
         private void SetupPopup(XForm popup, PopupAttribute attribute)
         {

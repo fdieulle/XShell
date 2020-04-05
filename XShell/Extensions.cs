@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using XShell.Services;
 
 namespace XShell
 {
@@ -263,6 +265,55 @@ namespace XShell
             var func = (Func<TParameter, TObject>)dynamic.CreateDelegate(typeof(Func<TParameter, TObject>));
             return p => func((TParameter)p);
         }
+
+        public static void Write<T>(this MemoryStream memory, Stream writer, T data, Action<MemoryStream, T> write)
+        {
+            memory.Position = 0;
+            memory.SetLength(0);
+            write(memory, data);
+            var length = (int)memory.Length;
+            writer.Write(length);
+            writer.Write(memory.GetBuffer(), 0, length);
+        }
+
+        public static T Read<T>(this MemoryStream memory, Stream reader, Func<MemoryStream, T> read)
+        {
+            var length = memory.ReadInt32(reader);
+            memory.Position = 0;
+            memory.SetLength(length);
+            reader.Read(memory.GetBuffer(), 0, length);
+            return read(memory);
+        }
+
+        public static void Write(this Stream writer, int value)
+        {
+            var data = BitConverter.GetBytes(value);
+            writer.Write(data, 0, data.Length);
+        }
+
+        public static int ReadInt32(this MemoryStream memory, Stream reader)
+        {
+            memory.Position = 0;
+            memory.SetLength(sizeof(int));
+            reader.Read(memory.GetBuffer(), 0, (int)memory.Length);
+            return BitConverter.ToInt32(memory.GetBuffer(), 0);
+        }
+
+        public static void Write(this BinaryWriter writer, RectangleSettings position)
+        {
+            writer.Write(position.Top);
+            writer.Write(position.Left);
+            writer.Write(position.Width);
+            writer.Write(position.Height);
+        }
+
+        public static RectangleSettings ReadRectangleSettings(this BinaryReader reader) => new RectangleSettings
+        {
+            Top = reader.ReadDouble(),
+            Left = reader.ReadDouble(),
+            Width = reader.ReadDouble(),
+            Height = reader.ReadDouble(),
+        };
 
         #endregion
     }

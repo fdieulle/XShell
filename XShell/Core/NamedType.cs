@@ -34,10 +34,7 @@ namespace XShell.Core
             return obj is NamedType type && Equals(type);
         }
 
-        public override int GetHashCode()
-        {
-            return _hashCode;
-        }
+        public override int GetHashCode() => _hashCode;
 
         public static bool operator ==(NamedType left, NamedType right)
         {

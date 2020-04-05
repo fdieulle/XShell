@@ -12,7 +12,7 @@
         <StatusBar DockPanel.Dock="Bottom" x:Name="MainStatusBar" HorizontalAlignment="Stretch" Height="20">
             <controls:BackgroundTaskView x:Name="BackgroundWorkerView" Visibility="Collapsed" />
         </StatusBar>
-        <xcad:DockingManager>
+        <xcad:DockingManager x:Name="DockingManager">
             <xcad:LayoutRoot>
                 <xcad:LayoutPanel>
                     <xcad:LayoutDocumentPaneGroup>
