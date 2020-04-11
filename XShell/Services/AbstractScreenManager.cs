@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Xml.Serialization;
 using XShell.Core;
 
@@ -169,7 +168,7 @@ namespace XShell.Services
 
         #region Manage workspaces
 
-        public void SaveWorkspace(FileStream stream, Encoding encoding, bool leaveOpen)
+        public void SaveWorkspace(Stream stream)
         {
             var screens = _screens.Values.ToList();
             var memory = new MemoryStream();
@@ -178,12 +177,15 @@ namespace XShell.Services
             {
                 var settings = screen.GetWorkspaceSettings();
 
-                memory.Write(stream, settings, ScreenSettings.Serialize);
-                memory.Write(stream, screen, (m, d) => d.SerializeParameter(m));
+                ScreenSettings.Serialize(memory, settings);
+                memory.Commit(stream);
+
+                screen.SerializeParameter(memory);
+                memory.Commit(stream);
             }
         }
 
-        public Dictionary<string, TScreen> LoadWorkspace(FileStream stream)
+        public Dictionary<string, TScreen> LoadWorkspace(Stream stream)
         {
             var result = new Dictionary<string, TScreen>();
             var memory = new MemoryStream();
@@ -191,13 +193,16 @@ namespace XShell.Services
 
             for (var i = 0; i < count; i++)
             {
-                var settings = memory.Read(stream, ScreenSettings.Deserialize);
-                var screen = memory.Read(stream, m => CreateScreenHost(
+                memory.Fetch(stream);
+                var settings = ScreenSettings.Deserialize(memory);
+
+                memory.Fetch(stream);
+                var screen = CreateScreenHost(
                     Type.GetType(settings.Type),
                     settings.Name,
-                    s => s.DeserializeParameter(m),
+                    s => s.DeserializeParameter(memory),
                     settings.IsPopup,
-                    settings.ToPopupAttribute()));
+                    settings.ToPopupAttribute());
 
                 if (settings.IsPopup)
                     screen.Show(true);

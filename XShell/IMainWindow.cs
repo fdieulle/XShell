@@ -13,8 +13,8 @@ namespace XShell
         RectangleSettings GetPositionAndSize();
         void SetPositionAndSize(RectangleSettings rectangle);
 
-        void SaveWorkspace(Stream stream, Encoding encoding, bool leaveOpen);
+        void SaveWorkspace(Stream stream);
 
-        void LoadWorkspace(Stream stream, Func<string, TScreen> createContent, bool leaveOpen);
+        void LoadWorkspace(Stream stream, Func<string, TScreen> createContent);
     }
 }

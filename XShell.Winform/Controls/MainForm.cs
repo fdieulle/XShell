@@ -55,22 +55,12 @@ namespace XShell.Winform.Controls
             Height = (int)rectangle.Height;
         }
 
-        public void SaveWorkspace(Stream stream, Encoding encoding, bool leaveOpen)
-        {
-            var memory = new MemoryStream();
-            memory.Write(stream, MainDockPanel, (m, d) => d.SaveAsXml(m, encoding));
-        }
+        public void SaveWorkspace(Stream stream) 
+            => MainDockPanel.SaveAsXml(stream, Encoding.Unicode);
 
-        public void LoadWorkspace(Stream stream, Func<string, XDockContent> createContent, bool leaveOpen)
-        {
-            var memory = new MemoryStream();
-            memory.Read<object>(stream, m =>
-            {
-                MainDockPanel.LoadFromXml(m, id => createContent(id));
-                return null;
-            });
-        } 
-        
+        public void LoadWorkspace(Stream stream, Func<string, XDockContent> createContent) 
+            => MainDockPanel.LoadFromXml(stream, id => createContent(id));
+
         #endregion
     }
 }

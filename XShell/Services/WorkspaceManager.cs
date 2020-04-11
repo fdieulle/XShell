@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace XShell.Services
 {
@@ -51,16 +50,21 @@ namespace XShell.Services
                     var binaryWriter = new BinaryWriter(writer);
                     binaryWriter.Write(1); // Write version
 
-                    _screenManager.SaveWorkspace(writer, Encoding.Unicode, true);
+                    var memory = new MemoryStream();
+                    _screenManager.SaveWorkspace(memory);
+                    memory.Commit(writer);
+
                     binaryWriter.Write(_mainWindow.GetPositionAndSize() ?? new RectangleSettings { Width = 300, Height = 300 });
-                    _mainWindow.SaveWorkspace(writer, Encoding.Unicode, true);
+
+                    _mainWindow.SaveWorkspace(memory);
+                    memory.Commit(writer);
                 }
 
                 File.WriteAllText(GetCurrentFile(), name);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                _viewBox.Show($"Workspace {name} can't be saved !", "Workspace issue", ViewboxButtons.Ok, ViewboxImage.Error);
+                ShowError($"Workspace {name} can't be saved !", e);
             }
         }
 
@@ -84,18 +88,24 @@ namespace XShell.Services
                     var version = binaryReader.ReadInt32();
                     if (version != 1)
                     {
-                        _viewBox.Show($"Workspace version not supported !{Environment.NewLine}Name: {name}, Version: {version}", "Workspace issue", ViewboxButtons.Ok, ViewboxImage.Error);
+                        ShowError($"Workspace version not supported !{Environment.NewLine}Name: {name}, Version: {version}");
                         return;
                     }
 
-                    var hosts = _screenManager.LoadWorkspace(reader);
+                    var memory = new MemoryStream();
+
+                    memory.Fetch(reader);
+                    var hosts = _screenManager.LoadWorkspace(memory);
+
                     _mainWindow.SetPositionAndSize(binaryReader.ReadRectangleSettings());
-                    _mainWindow.LoadWorkspace(reader, id => hosts[id], true);
+
+                    memory.Fetch(reader);
+                    _mainWindow.LoadWorkspace(memory, id => hosts[id]);
                 }
             }
             catch (Exception e)
             {
-                _viewBox.Show($"Workspace {name} corrupted !", "Workspace issue", ViewboxButtons.Ok, ViewboxImage.Error);
+                ShowError($"Workspace {name} corrupted !", e);
             }
         }
 
@@ -116,5 +126,10 @@ namespace XShell.Services
         }
 
         private string GetCurrentFile() => Path.Combine(GetFolder(), ".current");
+
+        private void ShowError(string message, Exception e = null)
+        {
+            _viewBox.Show(message, "Workspace issue", ViewboxButtons.Ok, ViewboxImage.Error);
+        }
     }
 }

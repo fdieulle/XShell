@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
@@ -266,23 +267,23 @@ namespace XShell
             return p => func((TParameter)p);
         }
 
-        public static void Write<T>(this MemoryStream memory, Stream writer, T data, Action<MemoryStream, T> write)
+        public static void Commit(this MemoryStream memory, Stream stream)
         {
-            memory.Position = 0;
-            memory.SetLength(0);
-            write(memory, data);
             var length = (int)memory.Length;
-            writer.Write(length);
-            writer.Write(memory.GetBuffer(), 0, length);
+            var lengthData = BitConverter.GetBytes(length);
+            stream.Write(lengthData, 0, lengthData.Length);
+            stream.Write(memory.GetBuffer(), 0, length);
+            memory.SetLength(0);
         }
 
-        public static T Read<T>(this MemoryStream memory, Stream reader, Func<MemoryStream, T> read)
+        public static void Fetch(this MemoryStream memory, Stream stream)
         {
-            var length = memory.ReadInt32(reader);
-            memory.Position = 0;
+            memory.SetLength(sizeof(int));
+            stream.Read(memory.GetBuffer(), 0, sizeof(int));
+            var length = BitConverter.ToInt32(memory.GetBuffer(), 0);
             memory.SetLength(length);
-            reader.Read(memory.GetBuffer(), 0, length);
-            return read(memory);
+            memory.Position = 0;
+            stream.Read(memory.GetBuffer(), 0, length);
         }
 
         public static void Write(this Stream writer, int value)

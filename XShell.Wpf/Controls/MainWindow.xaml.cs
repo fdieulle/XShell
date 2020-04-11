@@ -55,13 +55,13 @@ namespace XShell.Wpf.Controls
             Height = rectangle.Height;
         }
 
-        public void SaveWorkspace(Stream stream, Encoding encoding, bool leaveOpen)
+        public void SaveWorkspace(Stream stream)
         {
             var serializer = new XmlLayoutSerializer(DockingManager);
             serializer.Serialize(stream);
         }
 
-        public void LoadWorkspace(Stream stream, Func<string, XDockContent> createContent, bool leaveOpen)
+        public void LoadWorkspace(Stream stream, Func<string, XDockContent> createContent)
         {
             var serializer = new XmlLayoutSerializer(DockingManager);
             serializer.LayoutSerializationCallback += (s, e) => { };
