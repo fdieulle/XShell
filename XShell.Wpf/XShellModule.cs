@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Windows;
+﻿using System.Windows;
 using DryIoc;
 using XShell.Services;
 using XShell.Wpf.Controls;
@@ -8,105 +6,45 @@ using XShell.Wpf.Services;
 
 namespace XShell.Wpf
 {
-    public abstract class XShellModule : IDisposable
+    public abstract class XShellModule : AbstractXShellModule<IContainer, MainWindow, XDockContent, XWindow, FrameworkElement>
     {
-        public string Name { get; }
-
-        protected IContainer Container { get; }
-
-        public MainWindow MainWindow { get; private set; }
-
         protected XShellModule(string name, IContainer container = null)
-        {
-            Name = name;
-            Container = container ?? new Container();
-        }
+            : base(name, container ?? new Container()) { }
 
-        public void Run(bool withUi = true)
-        {
-            RunServices();
+        #region Overrides of XShellModule<IContainer,MainForm,XDockContent,XForm,Control>
 
-            if (withUi)
-                RunUi();
+        protected override void RegisterService<T>(T instance)
+            => Container.UseInstance(instance);
 
-            Initialize(Container);
-        }
+        protected override T ResolveService<T>()
+            => Container.Resolve<T>();
 
-        private void RunServices()
-        {
-            var persistenceService = new PersistenceService
-            {
-                Folder = Path.Combine(GetAppDataFolder(), "Data")
-            };
+        protected override MainWindow CreateMainWindow(string title)
+            => new MainWindow { Title = title };
 
-            Container.UseInstance<IPersistenceService>(persistenceService);
+        protected override IMenuManager CreateMenuManager(MainWindow mainWindow)
+            => new DefaultMenuManager(mainWindow.Menu);
 
-            SetupServices(Container);
-        }
-
-        protected abstract void SetupServices(IContainer container);
-
-        private void RunUi()
-        {
-            MainWindow = new MainWindow
-            {
-                Title = $@"{Name} {GetRunningVersion()}"
-            };
-
-            var menuManager = new DefaultMenuManager(MainWindow.Menu);
-            var screenManager = new WindowAvalonDockScreenManager(
-                MainWindow, MainWindow.Docker,
+        protected override AbstractScreenManager<FrameworkElement, XDockContent, XWindow> CreateScreenManager(
+            MainWindow mainWindow, IMenuManager menuManager, IPersistenceService persistenceService)
+            => new WindowAvalonDockScreenManager(
+                mainWindow,
+                mainWindow.Docker,
                 (p1, p2) => Container.Register(p1, p2, setup: Setup.With(allowDisposableTransient: true)),
-                Container.Resolve, menuManager, Container.Resolve<IPersistenceService>());
+                Container.Resolve,
+                menuManager,
+                persistenceService);
 
-            Container.Register<IViewBox, ViewBox>(Reuse.Singleton);
-            var workspaceManager = new WorkspaceManager<FrameworkElement, XDockContent, XWindow>(MainWindow, screenManager, Container.Resolve<IViewBox>())
-            {
-                Folder = Path.Combine(GetAppDataFolder(), "Workspace")
-            };
+        protected override IViewBox CreateViewBox()
+            => new ViewBox();
 
-            Container.UseInstance<IWorkspaceManager>(workspaceManager);
-            Container.UseInstance<IMenuManager>(menuManager);
-            Container.UseInstance<IScreenContainer>(screenManager);
-            Container.UseInstance<IScreenManager>(screenManager);
-            Container.Register<IUiDispatcher, UiDispatcher>(Reuse.Singleton);
-            Container.Register<IBackgroundTaskManager, BackgroundTaskManager>(Reuse.Singleton);
+        protected override IUiDispatcher CreateUiDispatcher()
+            => new UiDispatcher();
+
+        protected override void SetupUi()
+        {
+            base.SetupUi();
             Container.UseInstance(new StatusBarManager(MainWindow.BackgroundWorker, Container.Resolve<IBackgroundTaskManager>()));
-
-            SetupScreens(screenManager);
-        }
-
-        protected abstract void SetupScreens(IScreenContainer container);
-
-        protected abstract void Initialize(IContainer container);
-
-        private string GetAppDataFolder()
-            => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                Name ?? "XShell");
-
-        private string GetRunningVersion()
-        {
-#if DEBUG
-            return "Debug";
-#else
-            try
-            {
-                return ApplicationDeployment.IsNetworkDeployed ? 
-                    ApplicationDeployment.CurrentDeployment.CurrentVersion : 
-                    Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            }
-            catch
-            {
-                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            }
-#endif
-        }
-
-        #region IDisposable
-
-        public void Dispose()
-        {
-            Container?.Dispose();
         }
 
         #endregion

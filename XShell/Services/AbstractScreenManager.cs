@@ -22,8 +22,11 @@ namespace XShell.Services
         private readonly Dictionary<Type, ScreenFactory> _factories = new Dictionary<Type, ScreenFactory>();
         private readonly Dictionary<NamedType, ScreenHost> _screens = new Dictionary<NamedType, ScreenHost>();
 
-        protected AbstractScreenManager(Action<Type, Type> register, Func<Type, object> resolve,
-            IMenuManager menuManager = null, IPersistenceService persistenceService = null)
+        protected AbstractScreenManager(
+            Action<Type, Type> register, 
+            Func<Type, object> resolve,
+            IMenuManager menuManager = null, 
+            IPersistenceService persistenceService = null)
         {
             _register = register;
             _resolve = resolve;
