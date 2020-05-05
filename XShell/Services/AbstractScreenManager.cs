@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 using XShell.Core;
+using XShell.Tools;
 
 namespace XShell.Services
 {
@@ -99,8 +100,12 @@ namespace XShell.Services
 
         public void CloseAll(Type idType = null)
         {
-            foreach (var key in _screens.Select(p => p.Key).Where(p => p == null || p.Type == idType).ToArray())
+            var keys = _screens.Select(p => p.Key).Where(p => idType == null || p.Type == idType).ToArray();
+            foreach (var key in keys)
+            {
                 Close(key.Type, key.Name);
+                _screens.Remove(key);
+            }
         }
 
         #endregion
@@ -174,7 +179,7 @@ namespace XShell.Services
         public void SaveWorkspace(Stream stream)
         {
             var screens = _screens.Values.ToList();
-            var memory = new MemoryStream();
+            var memory = new MemoryStreamNoDispose();
             stream.Write(screens.Count);
             foreach (var screen in screens)
             {
@@ -191,7 +196,7 @@ namespace XShell.Services
         public Dictionary<string, TScreen> LoadWorkspace(Stream stream)
         {
             var result = new Dictionary<string, TScreen>();
-            var memory = new MemoryStream();
+            var memory = new MemoryStreamNoDispose();
             var count = memory.ReadInt32(stream);
 
             for (var i = 0; i < count; i++)

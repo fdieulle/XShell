@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using XShell.Tools;
 
 namespace XShell.Services
 {
@@ -50,7 +51,7 @@ namespace XShell.Services
                     var binaryWriter = new BinaryWriter(writer);
                     binaryWriter.Write(1); // Write version
 
-                    var memory = new MemoryStream();
+                    var memory = new MemoryStreamNoDispose();
                     _screenManager.SaveWorkspace(memory);
                     memory.Commit(writer);
 
