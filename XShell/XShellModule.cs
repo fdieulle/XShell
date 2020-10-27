@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using XShell.Services;
 
 namespace XShell
@@ -120,9 +121,7 @@ namespace XShell
 #else
             try
             {
-                return ApplicationDeployment.IsNetworkDeployed ? 
-                    ApplicationDeployment.CurrentDeployment.CurrentVersion : 
-                    Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
             }
             catch
             {
