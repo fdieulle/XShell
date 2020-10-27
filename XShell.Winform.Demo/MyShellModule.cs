@@ -10,7 +10,7 @@ namespace XShell.Demo.Winform
 {
     public class MyXShellModule : XShellModule
     {
-        public MyXShellModule() : base("XShell Demo") { }
+        public MyXShellModule() : base("XShell for Windows Forms Demo") { }
 
         #region Overrides of ShellModule
 

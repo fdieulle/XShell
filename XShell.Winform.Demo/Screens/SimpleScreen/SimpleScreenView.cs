@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
-using XShell.Demo.Winform.Annotations;
 using XShell.Demo.Winform.Services.Service;
 
 namespace XShell.Demo.Winform.Screens.SimpleScreen
@@ -25,7 +24,6 @@ namespace XShell.Demo.Winform.Screens.SimpleScreen
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             var handler = PropertyChanged;
