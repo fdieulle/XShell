@@ -1,6 +1,7 @@
 ﻿using System.Windows;
+using XShell.Demo.Wpf;
 
-namespace XShell.Demo.Wpf
+namespace XShell.Wpf.Demo
 {
     /// <summary>
     /// Interaction logic for App.xaml

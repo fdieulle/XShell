@@ -10,7 +10,7 @@ namespace XShell.Demo.Wpf
 {
     public class MyXShellModule : XShellModule
     {
-        public MyXShellModule() : base("XShell Demo") { }
+        public MyXShellModule() : base("XShell for Wpf Demo") { }
 
         #region Overrides of ShellModule
 
