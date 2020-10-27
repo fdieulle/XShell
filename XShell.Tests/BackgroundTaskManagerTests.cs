@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using NUnit.Framework;
 using XShell.Services;
+using Xunit;
 
 namespace XShell.Tests
 {
-    [TestFixture]
     public class BackgroundTaskManagerTests
     {
-        [Test]
+        [Fact]
         public void DispatchIndeterminateTest()
         {
             var uiDispatcher = new MockUiDispatcher();
@@ -21,41 +20,41 @@ namespace XShell.Tests
 
             manager.TaskStarted += (t, s) =>
             {
-                Assert.IsTrue(t.IsIndeterminate);
-                Assert.AreEqual(s, state);
-                Assert.AreEqual(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
-                Assert.AreEqual(4, countdown.CurrentCount);
+                Assert.True(t.IsIndeterminate);
+                Assert.Equal(s, state);
+                Assert.Equal(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
+                Assert.Equal(4, countdown.CurrentCount);
                 countdown.Signal();
             };
 
             manager.TaskCompleted += (t, s) =>
             {
-                Assert.IsTrue(t.IsIndeterminate);
-                Assert.AreEqual(s, state);
-                Assert.AreEqual(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
-                Assert.AreEqual(1, countdown.CurrentCount);
+                Assert.True(t.IsIndeterminate);
+                Assert.Equal(s, state);
+                Assert.Equal(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
+                Assert.Equal(1, countdown.CurrentCount);
                 countdown.Signal();
             };
 
             manager.Dispatch(s =>
             {
-                Assert.AreEqual(state, s);
-                Assert.AreNotEqual(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
-                Assert.AreEqual(3, countdown.CurrentCount);
+                Assert.Equal(state, s);
+                Assert.NotEqual(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
+                Assert.Equal(3, countdown.CurrentCount);
                 countdown.Signal();
                 return "Result";
             }, (r, s) =>
             {
-                Assert.AreEqual("Result", r);
-                Assert.AreEqual(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
-                Assert.AreEqual(2, countdown.CurrentCount);
+                Assert.Equal("Result", r);
+                Assert.Equal(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
+                Assert.Equal(2, countdown.CurrentCount);
                 countdown.Signal();
             }, state);
 
-            Assert.IsTrue(countdown.Wait(5000));
+            Assert.True(countdown.Wait(5000));
         }
 
-        [Test]
+        [Fact]
         public void DispatchAndReportTest()
         {
             var uiDispatcher = new MockUiDispatcher();
@@ -69,34 +68,34 @@ namespace XShell.Tests
 
             manager.TaskStarted += (t, s) =>
             {
-                Assert.IsFalse(t.IsIndeterminate);
-                Assert.AreEqual(s, state);
-                Assert.AreEqual(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
-                Assert.AreEqual(4 + steps, countdown.CurrentCount);
+                Assert.False(t.IsIndeterminate);
+                Assert.Equal(s, state);
+                Assert.Equal(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
+                Assert.Equal(4 + steps, countdown.CurrentCount);
                 countdown.Signal();
             };
 
             manager.ReportStateChanged += (p, s) =>
             {
-                Assert.AreEqual(p + " %", s);
-                Assert.AreEqual(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
-                Assert.AreEqual(3 + steps - p / steps, countdown.CurrentCount);
+                Assert.Equal(p + " %", s);
+                Assert.Equal(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
+                Assert.Equal(3 + steps - p / steps, countdown.CurrentCount);
                 countdown.Signal();
             };
 
             manager.TaskCompleted += (t, s) =>
             {
-                Assert.IsFalse(t.IsIndeterminate);
-                Assert.AreEqual(s, state);
-                Assert.AreEqual(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
-                Assert.AreEqual(1, countdown.CurrentCount);
+                Assert.False(t.IsIndeterminate);
+                Assert.Equal(s, state);
+                Assert.Equal(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
+                Assert.Equal(1, countdown.CurrentCount);
                 countdown.Signal();
             };
 
             manager.Dispatch((t, s) =>
             {
-                Assert.AreEqual(state, s);
-                Assert.AreNotEqual(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
+                Assert.Equal(state, s);
+                Assert.NotEqual(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
 
                 for (var i = 0; i < steps; i++)
                 {
@@ -104,18 +103,18 @@ namespace XShell.Tests
                     Thread.Sleep(10);
                 }
 
-                Assert.AreEqual(3, countdown.CurrentCount);
+                Assert.Equal(3, countdown.CurrentCount);
                 countdown.Signal();
                 return "Result";
             }, (r, s) =>
             {
-                Assert.AreEqual("Result", r);
-                Assert.AreEqual(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
-                Assert.AreEqual(2, countdown.CurrentCount);
+                Assert.Equal("Result", r);
+                Assert.Equal(uiDispatcher.ThreadId, Thread.CurrentThread.ManagedThreadId);
+                Assert.Equal(2, countdown.CurrentCount);
                 countdown.Signal();
             }, state);
 
-            Assert.IsTrue(countdown.Wait(5000));
+            Assert.True(countdown.Wait(5000));
         }
 
         public class MockUiDispatcher : IUiDispatcher, IDisposable

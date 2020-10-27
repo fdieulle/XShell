@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
-using NUnit.Framework;
 using XShell.Core;
+using Xunit;
 
 namespace XShell.Tests
 {
-    [TestFixture]
     public class ObjectEditorTest
     {
-        [Test]
+        [Fact]
         public void Test()
         {
             var editor = new ObjectEditor<Data>(p => p?.Clone());
@@ -24,8 +23,8 @@ namespace XShell.Tests
             
             editor.Object = data;
             
-            properties.CheckNext(p => Assert.AreEqual("Object", p));
-            properties.CheckNext(p => Assert.AreEqual("Editable", p));
+            properties.CheckNext(p => Assert.Equal("Object", p));
+            properties.CheckNext(p => Assert.Equal("Editable", p));
             properties.IsEmpty();
 
             editor.Object.CheckReference(data);
@@ -45,7 +44,7 @@ namespace XShell.Tests
             var editable1 = editable;
             cancelQueue.CheckNext(p => { p.OldValue.CheckReference(editable1); p.NewValue.Check(data); });
             cancelQueue.IsEmpty();
-            properties.CheckNext(p => Assert.AreEqual("Editable", p));
+            properties.CheckNext(p => Assert.Equal("Editable", p));
             properties.IsEmpty();
             
             editable = editor.Editable;
@@ -60,8 +59,8 @@ namespace XShell.Tests
 
             applyQueue.CheckNext(p => { p.OldValue.CheckReference(data); p.NewValue.CheckReference(editable); });
             applyQueue.IsEmpty();
-            properties.CheckNext(p => Assert.AreEqual("Object", p));
-            properties.CheckNext(p => Assert.AreEqual("Editable", p));
+            properties.CheckNext(p => Assert.Equal("Object", p));
+            properties.CheckNext(p => Assert.Equal("Editable", p));
             properties.IsEmpty();
 
 

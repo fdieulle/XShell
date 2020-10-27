@@ -1,12 +1,11 @@
-﻿using NUnit.Framework;
-using XShell.Core;
+﻿using XShell.Core;
+using Xunit;
 
 namespace XShell.Tests
 {
-    [TestFixture]
     public class RelayCommandTests
     {
-        [Test]
+        [Fact]
         public void TestExecute()
         {
             var executedCount = 0;
@@ -22,19 +21,19 @@ namespace XShell.Tests
 
             command.Execute("Test");
 
-            Assert.AreEqual(1, executedCount);
-            Assert.AreEqual("Test", executedParameter);
-            Assert.AreEqual(1, canExecuteCount);
+            Assert.Equal(1, executedCount);
+            Assert.Equal("Test", executedParameter);
+            Assert.Equal(1, canExecuteCount);
 
-            Assert.IsTrue(command.CanExecute("Test"));
-            Assert.IsFalse(command.CanExecute("Wrong parameter"));
+            Assert.True(command.CanExecute("Test"));
+            Assert.False(command.CanExecute("Wrong parameter"));
 
             // Do not execute
             command.Execute("Wrong parameter");
-            Assert.AreEqual(1, executedCount);
+            Assert.Equal(1, executedCount);
             
             command.InvalidateCanExecute();
-            Assert.AreEqual(2, canExecuteCount);
+            Assert.Equal(2, canExecuteCount);
         }
     }
 }

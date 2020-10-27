@@ -1,11 +1,10 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 
 namespace XShell.Tests
 {
-    [TestFixture]
     public class MenuManagerTests
     {
-        [Test]
+        [Fact]
         public void Test()
         {
             

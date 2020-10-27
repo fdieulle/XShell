@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
-using NUnit.Framework;
 using XShell.Core;
+using Xunit;
 
 namespace XShell.Tests
 {
-    [TestFixture]
     public class CollectionSelectorTests
     {
-        [Test]
+        [Fact]
         public void NominalTest()
         {
             var pcQueue = new Queue<PropertyChangedEventArgs>();
@@ -45,8 +44,8 @@ namespace XShell.Tests
 
         private static void Check(CollectionSelector<string> selector, int selectedIndex, string selectedItem)
         {
-            Assert.AreEqual(selectedIndex, selector.SelectedIndex, "SelectedIndex");
-            Assert.AreEqual(selectedItem, selector.SelectedItem, "SelectedItem");
+            Assert.Equal(selectedIndex, selector.SelectedIndex);
+            Assert.Equal(selectedItem, selector.SelectedItem);
         }
     }
 }
